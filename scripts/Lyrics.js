@@ -1,6 +1,6 @@
 (function() {  
 
-  const morphTime = 800; // in ms
+  const morphTime = 200; // in ms
 
   const player = new Player(
     { 

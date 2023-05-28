@@ -2,7 +2,7 @@
 
 import * as THREE from 'three';
 
-function main() {
+(function() {
     const backCanvas =  document.querySelector("#background");
     const backRenderer =  new THREE.WebGL1Renderer({antialias: true, backCanvas});
 
@@ -37,6 +37,5 @@ function main() {
         //requestAnimationFrame passes time since the page loaadeed to our function.
     }
     requestAnimationFrame(animate); //Starts loop, continously calls requestAnimationFrame() on animate.
-}
+}());
 
-main();
