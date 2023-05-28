@@ -1,38 +1,59 @@
 <!DOCTYPE html>
-<div>
-  <section id="loading" className="full-screen">
-    <p>Loading...</p>
-    <button onClick={playMusic} className="hidden">Play</button>
-  </section>
-  <section className="full-screen">
-
-    <section id="container">
-      <span id="text1"></span>
-      <span id="text2"></span>
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="/images/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <title>Mutation</title>
+  <meta
+    name="description"
+    content="Magical Mirai 2023 programming contest entry"
+  />
+  <link rel="stylesheet" href="/styles/index.css" />
+  <link rel="stylesheet" href="/styles/lyrics.css" />
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/textalive-app-api/dist/index.js"></script>
+  <script>
+    const { Player } = TextAliveApp;
+  </script>
+  <script src="/scripts/Lyrics.js"></script>
+</head>
+<body>
+  <main>
+    <section id="loading" class="full-screen">
+      <p>Loading...</p>
+      <button class="hidden play-btn">Play</button>
     </section>
-    <section id="media"></section>
-    
-    <svg id="filters">
-      <defs>
-        <filter id="threshold">
-          <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0
-                0 1 0 0 0
-                0 0 1 0 0
-                0 0 0 255 -140" />
-        </filter>
-      </defs>
-    </svg>
+    <section class="full-screen">
 
-  </section>
+      <section id="container">
+        <span id="text1"></span>
+        <span id="text2"></span>
+      </section>
+      <section id="media"></section>
+      
+      <svg id="filters">
+        <defs>
+          <filter id="threshold">
+            <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0
+                  0 1 0 0 0
+                  0 0 1 0 0
+                  0 0 0 255 -140" />
+          </filter>
+        </defs>
+      </svg>
+
+    </section>
+  </main>
   <footer>
     <p>
       <span id="position"><strong>-</strong> [ms]</span>
     </p>
     <div id="control">
-      <button onClick={playMusic} >Play</button>
-      <button onClick={jumpMusic} >jump</button>
-      <button onClick={pauseMusic} >pause</button>
-      <button onClick={resetMusic} >rewind</button>
+      <button class="play-btn" >Play</button>
+      <button id="jump-btn" >jump</button>
+      <button id="pause-btn" >pause</button>
+      <button id="reset-btn" >rewind</button>
     </div>
   </footer>
-</div>
+</body>

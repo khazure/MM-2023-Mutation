@@ -1,23 +1,28 @@
-import { Player } from "textalive-app-api";
-import { useMemo } from 'react';
-import'../styles/lyrics.css';
-
-function Lyrics() {  
+(function() {  
 
   const morphTime = 800; // in ms
 
-  const player = useMemo(
-    () => {
-      return new Player({ 
-        app: {
-          token: "8oZeCHYcDmC9Olyu",
-        },
-        mediaElement: document.getElementById("media"),
-      })
-    },
-    []
-  );
+  const player = new Player(
+    { 
+      app: {token: "8oZeCHYcDmC9Olyu"},
+      mediaElement: document.getElementById("media"),
+    });
 
+  /**
+   * Called when all TextAlive processes are done loading
+   */
+  function init() {
+    qsa(".play-btn").forEach(btn => {
+      btn.addEventListener("click", playMusic);
+    });
+
+    id("jump-btn").addEventListener("click", jumpMusic);
+    id("pause-btn").addEventListener("click", pauseMusic);
+    id("reset-btn").addEventListener("click", resetMusic);
+
+    qs('#loading button').classList.remove("hidden");
+    qs('#loading p').classList.add("hidden");
+  }
 
   /**
    * Animates the word this function is assigned to
@@ -77,15 +82,6 @@ function Lyrics() {
 
   function resetMusic() {
     player.video && player.requestMediaSeek(0);
-  }
-
-  /**
-   * Called when video is done loading
-   * Initalizes the lyrics
-   */
-  function init() {
-    qs('#loading button').classList.remove("hidden");
-    qs('#loading p').classList.add("hidden");
   }
 
   /**
@@ -186,46 +182,5 @@ function Lyrics() {
   function qsa(name) {
     return document.querySelectorAll(name);
   }
+}());
 
-  return (
-    <div>
-      <section id="loading" className="full-screen">
-        <p>Loading...</p>
-        <button onClick={playMusic} className="hidden">Play</button>
-      </section>
-      <section className="full-screen">
-
-        <section id="container">
-          <span id="text1"></span>
-          <span id="text2"></span>
-        </section>
-        <section id="media"></section>
-        
-        <svg id="filters">
-          <defs>
-            <filter id="threshold">
-              <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0
-                    0 1 0 0 0
-                    0 0 1 0 0
-                    0 0 0 255 -140" />
-            </filter>
-          </defs>
-        </svg>
-
-      </section>
-      <footer>
-        <p>
-          <span id="position"><strong>-</strong> [ms]</span>
-        </p>
-        <div id="control">
-          <button onClick={playMusic} >Play</button>
-          <button onClick={jumpMusic} >jump</button>
-          <button onClick={pauseMusic} >pause</button>
-          <button onClick={resetMusic} >rewind</button>
-        </div>
-      </footer>
-    </div>
-  );
-}
-
-export default Lyrics;
