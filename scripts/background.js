@@ -2,10 +2,10 @@ import * as THREE from 'three';
 
 // function main() {
     const backCanvas =  document.querySelector('#c');
+
     const backRenderer =  new THREE.WebGL1Renderer({antialias: true, backCanvas});
     backRenderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( backRenderer.domElement );
-
  
     const backCamera = new THREE.PerspectiveCamera(75, 2, 0.1, 5);
 
@@ -13,6 +13,16 @@ import * as THREE from 'three';
     backCamera.position.z = 2; //Move camera back by 2 units since we create cube at origin
 
     const scene = new THREE.Scene();
+    scene.background =  new THREE.Color(0xcc33ff);
+
+    const box = new THREE.Box3();
+
+    const mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(),
+        new THREE.MeshBasicMaterial()
+    );
+
+    mesh.geometry.computeBoundingBox();
 
     { //Setting up lights?
         const color = 0xFFFFFF;
@@ -37,7 +47,7 @@ import * as THREE from 'three';
     function animate(time) {
         //console.log(time);
         time *= 0.001; //convert to seconds.
-    
+        box.copy( mesh.geometry.boundingBox ).applyMatrix4( mesh.matrixWorld );
         myCube.rotation.x = time;
         myCube.rotation.y = time;
         //console.log(time);
