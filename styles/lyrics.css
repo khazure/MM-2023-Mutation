@@ -22,7 +22,7 @@
   top: 0;
   bottom: 0;
 
-  /* filter: url(#threshold); */
+  filter: url(#threshold) blur(0.2px);
 }
 
 #text1,
@@ -37,6 +37,14 @@
   text-align: center;
 
   user-select: none;
+}
+
+#text1 {
+  color: greenyellow;
+}
+
+#text2 {
+  color: orange;
 }
 
 #media, footer {

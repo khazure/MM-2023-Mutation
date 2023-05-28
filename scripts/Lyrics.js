@@ -1,6 +1,6 @@
 (function() {  
 
-  const morphTime = 200; // in ms
+  const morphTime = 1000; // in ms
 
   const player = new Player(
     { 
@@ -32,26 +32,51 @@
   const animateChar = function (now, unit) {
     if (unit.contains(now)) {
       id("text1").textContent = unit.text;
-      id("text2").textContent = unit.next.text;
+      id("text2").textContent = unit.next.text;  
+
+      let unitInterval = unit.endTime - unit.startTime;
+
+      // num from 0 to 1 representing progress of current unit. x
+      let intervalFrac = (now - unit.startTime) / unitInterval;
+
+      // follows an upsidedown parabola, max is 1, min is 0
+      let y = -Math.pow(((2 * intervalFrac) - 1), 2) + 1;
+
+      //id("text1").style.opacity = y;
+      id("text1").style.filter = "blur(" + (1 - y) * 6 + "px)";
+      console.log( "blur (" + (1 - y) * 6 + "px)")
 
       // if next phrase comes within morphTime
-      if (unit.next.startTime - now <= morphTime) {
-        const diff = (unit.next.startTime - now) / morphTime;
+      // if (unit.next.startTime - now <= morphTime) {
+      //   const diff = (unit.next.startTime - now) / morphTime;
+      //   console.log("morph into next word with diff: " + diff);
 
-        // here, diff 1 --> 0
-        id("text1").style.opacity = diff;
-        id("text2").style.opacity = 1 - diff;
-      } else if (now - unit.previous.endTime < morphTime) {
-        // if current phrase is within [morphTime] of the previous page
-        const diff = (now - unit.previous.endTime) / morphTime;
+      //   id("text1").textContent = unit.text;
+      //   id("text2").textContent = unit.next.text;  
 
-        // here, diff 0 --> 1
-        id("text1").style.opacity = diff;
-        id("text2").style.opacity = 1 - diff;
-      } else {
-        id("text1").style.opacity = 1;
-        id("text2").style.opacity = 0;
-      }
+      //   // here, diff 1 --> 0
+      //   id("text1").style.opacity = diff;
+      //   id("text2").style.opacity = 1 - diff;
+      // } else if (now - unit.previous.endTime < morphTime) {
+      //   // if current phrase is within [morphTime] of the previous page
+      //   const diff = (now - unit.previous.endTime) / morphTime;
+
+      //   console.log("morphing from last word with diff: " + diff)
+
+      //   id("text1").textContent = unit.previous.text;
+      //   id("text2").textContent = unit.text;  
+
+      //   // here, diff 0 --> 1
+      //   id("text1").style.opacity = 1 - diff;
+      //   id("text2").style.opacity = diff;
+      // } else {
+      //   id("text1").textContent = unit.text;
+      //   id("text2").textContent = unit.next.text;  
+
+      //   console.log("solid text");
+      //   id("text1").style.opacity = 1;
+      //   id("text2").style.opacity = 0;
+      // }
     }
   };
 
