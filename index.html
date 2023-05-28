@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<div>
+  <section id="loading" className="full-screen">
+    <p>Loading...</p>
+    <button onClick={playMusic} className="hidden">Play</button>
+  </section>
+  <section className="full-screen">
+
+    <section id="container">
+      <span id="text1"></span>
+      <span id="text2"></span>
+    </section>
+    <section id="media"></section>
+    
+    <svg id="filters">
+      <defs>
+        <filter id="threshold">
+          <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 255 -140" />
+        </filter>
+      </defs>
+    </svg>
+
+  </section>
+  <footer>
+    <p>
+      <span id="position"><strong>-</strong> [ms]</span>
+    </p>
+    <div id="control">
+      <button onClick={playMusic} >Play</button>
+      <button onClick={jumpMusic} >jump</button>
+      <button onClick={pauseMusic} >pause</button>
+      <button onClick={resetMusic} >rewind</button>
+    </div>
+  </footer>
+</div>
