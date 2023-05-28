@@ -1,8 +1,11 @@
 import * as THREE from 'three';
 
-function main() {
+// function main() {
     const backCanvas =  document.querySelector('#c');
     const backRenderer =  new THREE.WebGL1Renderer({antialias: true, backCanvas});
+    backRenderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( backRenderer.domElement );
+
  
     const backCamera = new THREE.PerspectiveCamera(75, 2, 0.1, 5);
 
@@ -43,7 +46,6 @@ function main() {
         //requestAnimationFrame passes time since the page loaadeed to our function.
     }
     requestAnimationFrame(animate); //Starts loop, continously calls requestAnimationFrame() on animate.
-};
+// }
 
-main();
-
+// main();
