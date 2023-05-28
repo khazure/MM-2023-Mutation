@@ -5,7 +5,7 @@
   const player = new Player(
     { 
       app: {token: "8oZeCHYcDmC9Olyu"},
-      mediaElement: document.getElementById("media"),
+      mediaElement: id("media")
     });
 
   /**
@@ -35,7 +35,7 @@
       id("text2").textContent = unit.next.text;
 
       // if next phrase comes within morphTime
-      if (unit.next.startTime - now < morphTime) {
+      if (unit.next.startTime - now <= morphTime) {
         const diff = (unit.next.startTime - now) / morphTime;
 
         // here, diff 1 --> 0

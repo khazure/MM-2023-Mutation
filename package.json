@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "textalive-app-api": "^0.3.2",
+    "three": "^0.152.2",
+    "vite": "^4.3.9"
+  }
+}
