@@ -1,17 +1,23 @@
-
-
 import * as THREE from 'three';
 
 function main() {
-    const backCanvas =  document.querySelector("#background");
+    const backCanvas =  document.querySelector('#c');
     const backRenderer =  new THREE.WebGL1Renderer({antialias: true, backCanvas});
-
+ 
     const backCamera = new THREE.PerspectiveCamera(75, 2, 0.1, 5);
 
     //By default, the camera will be looking down -Z with, positioned at (0, 0, 0)
     backCamera.position.z = 2; //Move camera back by 2 units since we create cube at origin
 
     const scene = new THREE.Scene();
+
+    { //Setting up lights?
+        const color = 0xFFFFFF;
+        const intensity = 1;
+        const light = new THREE.DirectionalLight(color, intensity);
+        light.position.set(-1, 2, 4);
+        scene.add(light);
+    }
 
     //Shape of object
     //(boxWidth, boxHeight, BoxDepth)
