@@ -1,61 +1,154 @@
 import * as THREE from 'three';
+//Importmap recognizes three/addons
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-// function main() {
-    const backCanvas =  document.querySelector('#c');
+/*
+      "imports": {
+        "three": "https://unpkg.com/three@v0.152.2/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@v0.152.2/examples/jsm/"
+      }
+*/
 
-    const backRenderer =  new THREE.WebGL1Renderer({antialias: true, backCanvas});
-    backRenderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( backRenderer.domElement );
- 
-    const backCamera = new THREE.PerspectiveCamera(75, 2, 0.1, 5);
+//Shapes.
+let cube, cubeOfCubes;
 
-    //By default, the camera will be looking down -Z with, positioned at (0, 0, 0)
-    backCamera.position.z = 2; //Move camera back by 2 units since we create cube at origin
+const backCanvas =  document.querySelector('#c');
 
-    const scene = new THREE.Scene();
-    scene.background =  new THREE.Color(0xcc33ff);
+const renderer =  new THREE.WebGL1Renderer({antialias: true, backCanvas});
 
-    const box = new THREE.Box3();
+//(fov, aspect, minRender, maxRender);
+const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 100);
 
-    const mesh = new THREE.Mesh(
-        new THREE.SphereGeometry(),
-        new THREE.MeshBasicMaterial()
-    );
+//Controls for Camera, add-on for three.js
+const camControls =  new OrbitControls(camera, renderer.domElement);
 
-    mesh.geometry.computeBoundingBox();
+const scene = new THREE.Scene();
 
-    { //Setting up lights?
-        const color = 0xFFFFFF;
-        const intensity = 1;
-        const light = new THREE.DirectionalLight(color, intensity);
-        light.position.set(-1, 2, 4);
-        scene.add(light);
-    }
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-    //Shape of object
-    //(boxWidth, boxHeight, BoxDepth)
-    const cubeVertices = new THREE.BoxGeometry(1, 1, 1);
 
-    //How to draw the object.
-    //const cubeColor = new THREE.MeshBasicMaterial({color: 0x44aa88});
-    const cubeColor = new THREE.MeshPhongMaterial({color: 0x44aa88});
+/***********CAMERA AND ITS CONTROLS***********/
+//By default, the camera will be looking down -Z with, positioned at (0, 0, 0)
+camera.position.set(2, 1, 15); //x, y, z
+camControls.update();
 
-    //Combines Geometry, Material, and position.
-    const myCube = new THREE.Mesh(cubeVertices, cubeColor); //Create the cube with input data.
-    scene.add(myCube);
-    //renderer.render(scene, camera); //Renders cube once.
-    function animate(time) {
-        //console.log(time);
-        time *= 0.001; //convert to seconds.
-        box.copy( mesh.geometry.boundingBox ).applyMatrix4( mesh.matrixWorld );
-        myCube.rotation.x = time;
-        myCube.rotation.y = time;
-        //console.log(time);
-        backRenderer.render(scene, backCamera);
-        requestAnimationFrame(animate);//Request to brower to animate something
-        //requestAnimationFrame passes time since the page loaadeed to our function.
-    }
-    requestAnimationFrame(animate); //Starts loop, continously calls requestAnimationFrame() on animate.
+camControls.listenToKeyEvents( window );
+
+//Damping slows down camera speed?
+camControls.enableDamping = true;
+camControls.dampingFactor = 0.05;
+
+camControls.screenSpacePanning = false;
+
+//Min and Max distance we can zoom on camera
+camControls.minDistance = 0;
+camControls.maxDistance = 50;
+camControls.maxPolarAngle = Math.PI / 2;
+
+camControls.enablePan = true;
+camControls.enableRotate = true;
+camControls.enableZoom = true;
+
+//camControls.update() must be called after any manual changes to the camera's transform
+
+scene.background =  new THREE.Color(0xcc33ff);
+
+/***********LIGHTING***********/
+{
+    const color = 0xFFFFFF;
+    const intensity = 1;
+    const light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(-1, 2, 4);
+    scene.add(light);
+}
+
+
+/***********SHAPES***********/
+cube =  makeCube(1, 1, 1, 0x44aa88, 2, 2, 2);
+cubeOfCubes = makeCubeOf(cube, 2, 2, 2, 3, 3, 3);
+//renderer.render(scene, camera); //Renders cube once.
+
+/***********EVENTS***********/
+window.addEventListener( 'resize', onWindowResize);
+
+function animate(time) {
+    time *= 0.001; //convert to seconds.
+    //myCube.rotation.x = time;
+    //myCube.rotation.y = time;
+    cubeOfCubes.forEach((cube, ndx) => {
+        const speed = 1 + ndx * .1;
+        const rot = time * speed;
+        cube.rotation.x = rot;
+        cube.rotation.y = rot;
+    })
+    requestAnimationFrame(animate);//Request to brower to animate something
+    camControls.update(); //Requires if(enableDamping || autoRotate)
+    
+    
+    renderer.render(scene, camera);
+    //requestAnimationFrame passes time since the page loaadeed to our function.
+}
+requestAnimationFrame(animate); //Starts loop, continously calls requestAnimationFrame() on animate.
 // }
 
-// main();
+
+function makeCube(boxW, boxH, boxD, color, xPos, yPos, zPos) {
+    //Shape of object
+    //(boxWidth, boxHeight, BoxDepth)
+    const cubeVertices = new THREE.BoxGeometry(boxW, boxH, boxD);
+    const material =  new THREE.MeshPhongMaterial({color});
+
+    //Combines Geometry, Material, and position.
+    const cube =  new THREE.Mesh(cubeVertices, material);
+    //scene.add(cube);
+    cube.position.x = xPos;
+    cube.position.y = yPos;
+    cube.position.z = zPos;
+
+    return cube;
+}
+
+/**
+ * Makes cube made of inputted shape.
+ * 
+ * @param gaps describes the distance between each shape.
+ * @param width describes how many shapes on x-axis.
+ * @param height describes how many shapes on x-axis.
+ * @param depth describes how many shapes on x-axis.
+ * 
+ * @returns array contains shapes in this cube.
+ */
+function makeCubeOf(shape, xGap, yGap, zGap, width, height, depth) {
+    let shapes = [];
+    let totalHeight = height * yGap;
+    let totalWidth = width * xGap;
+    let totalDepth = depth * zGap;
+    let currShape;
+
+    //TODO need something more efficient than 3 for loops.
+    for(let x = 0; x <= totalWidth; x = xGap + x) {
+        for(let y = 0; y <= totalHeight; y = yGap + y) {
+            for(let z = 0; z <= totalDepth; z = zGap + z) {
+                //shapes.push(makeCube(1, 1, 1, 0x44aa88, x, y, z));
+                currShape = shape.clone();
+                currShape.position.x = x;
+                currShape.position.y = y;
+                currShape.position.z = z;
+                scene.add(currShape);
+                shapes.push(currShape);
+            }
+        }
+    }
+
+    return shapes;
+}
+
+/**
+ * Resizes window when browser resizes.
+ */
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix(); //
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
