@@ -11,7 +11,7 @@
 
 #loading {
   z-index: 1;
-  background-color: turquoise;
+  background-color: gray;
 }
 
 #container {
@@ -27,12 +27,11 @@
 
 #text1,
 #text2 {
+  font-family: 'DotGothic16', sans-serif;
   position: absolute;
   width: 100%;
   display: inline-block;
-
-  font-family: "Raleway", sans-serif;
-  font-size: 80pt;
+  font-size: 5vw;
 
   text-align: center;
 
@@ -40,7 +39,7 @@
 }
 
 #text1 {
-  color: greenyellow;
+  color: var(--main-text-color);
 }
 
 #text2 {
@@ -58,5 +57,9 @@
 
 footer {
   left: 0 ;
+}
+
+.active-word {
+  background-color: var(--accent-color);
 }
 

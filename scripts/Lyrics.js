@@ -8,6 +8,12 @@
       mediaElement: id("media")
     });
 
+    // Keeps track of the current lyric unit at phrase level
+    let currPhrase = null;
+
+    // Keeps track of current lyric at word level
+    let currWord = null;
+
   /**
    * Called when all TextAlive processes are done loading
    */
@@ -30,6 +36,44 @@
    * @param {*} unit - unit to be animated
    */
   const animateChar = function (now, unit) {
+    // unit is at word level
+    if (unit.contains(now)) {
+      if (currPhrase === null || currPhrase !== unit.parent) {
+
+        // if new phrase, create the span objects
+        currPhrase = unit.parent;
+        let textContainer = id("text1");
+
+        // clear previous
+        textContainer.innerHTML = "";
+
+        unit.parent.children.forEach(child => {
+          let word = document.createElement("span");
+          word.textContent = child.text;
+          word.id = child.text.replace(" ", "-");
+
+          textContainer.append(word);
+        });
+      }
+
+      // if word is new,
+      // then identify current word in span objects and highlight
+      if (currWord === null || currWord !== unit) {
+        currWord = unit;
+
+        let activeWord = qs(".active-word")
+        if (activeWord) {
+          activeWord.classList.remove("active-word");
+        }
+        let wordId = unit.text.replace(" ", "-");
+   
+
+        id(wordId).classList.add("active-word"); 
+      }
+    }
+  };
+
+  function oldTextMorphing() {
     if (unit.contains(now)) {
       id("text1").textContent = unit.text;
       id("text2").textContent = unit.next.text;  
@@ -78,7 +122,7 @@
       //   id("text2").style.opacity = 0;
       // }
     }
-  };
+  }
 
   player.addListener({
     onAppReady,
@@ -153,7 +197,7 @@
    * @param {*} v - not sure
    */
   function onVideoReady(v) {
-    let c = player.video.firstPhrase;
+    let c = player.video.firstWord;
     while(c) {
       c.animate = animateChar;
       c = c.next;
