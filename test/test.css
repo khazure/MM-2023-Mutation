@@ -1,0 +1,26 @@
+
+/* testing css */
+
+:root {
+    --main-text-color: black;
+    --accent-color: rgb(175, 255, 151);
+}  
+
+body {
+    margin: 0;
+    font-family: 'DotGothic16', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }  
+
+p {
+  font-family: 'DotGothic16', sans-serif;
+  position: absolute;
+  width: 100%;
+  display: inline-block;
+  font-size: 5vw;
+
+  text-align: center;
+
+  user-select: none;
+}

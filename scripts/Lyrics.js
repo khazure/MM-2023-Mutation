@@ -5,7 +5,7 @@
   const player = new Player(
     { 
       app: {token: "8oZeCHYcDmC9Olyu"},
-      mediaElement: id("media")
+      mediaElement: document.getElementById("media")
     });
 
     // Keeps track of the current lyric unit at phrase level
