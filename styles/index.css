@@ -5,6 +5,10 @@
   --accent-color: rgb(175, 255, 151);
 }
 
+main {
+  pointer-events: none;
+}
+
 body {
   margin: 0;
   font-family: 'DotGothic16', sans-serif;
