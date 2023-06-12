@@ -18,6 +18,15 @@ const camControls =  new OrbitControls(camera, renderer.domElement);
 
 const scene = new THREE.Scene();
 
+//Cube Constants used
+const numOfCubes = [10, 10, 10]; //x, y, z;
+const cubeSize = [1, 1, 1]; //x, y, z multipliers.
+const cubeGaps = [1.5, 1.5, 1.5];
+// cubeSize.forEach((length) => {
+//     cubeGaps.push(length * 1.5); //gaps is 1.5 * the size?
+// })
+
+
 /**********HELPER VISUALS (DELETE BEFORE FINAL RELEASE)**********/
 //x, y, z axes, points in positive direction.
 const axes = new THREE.AxesHelper(5)
@@ -25,14 +34,13 @@ axes.setColors('red', 'blue', 'green'); //x = r, y = b, z = g.
 scene.add(axes);
 
 
+
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-
-
 /***********CAMERA AND ITS CONTROLS***********/
 //By default, the camera will be looking down -Z with, positioned at (0, 0, 0)
-camera.position.set(20, 20, 20); //x, y, z
+camera.position.set(numOfCubes[0] * 3, numOfCubes[1] * 3, numOfCubes[2] * 3); //x, y, z
 camControls.update(); //update everytime position changes.
 
 camControls.listenToKeyEvents( window );
@@ -44,7 +52,7 @@ camControls.dampingFactor = 0.025;
 camControls.screenSpacePanning = false;
 
 //Min and Max distance we can zoom on camera
-camControls.minDistance = 0;
+camControls.minDistance = 0; //Neg does nothing?
 camControls.maxDistance = 50;
 camControls.maxPolarAngle = Math.PI / 2; //90 degrees
 
@@ -63,12 +71,19 @@ scene.background =  new THREE.Color(0xCFD8DC);
     light.position.set(-1, 5, 3);
     //By default the light will look at (0, 0, 0), change with light.target()
     scene.add(light);
+
+
+    //HELPER VISUAL 
+    const lightHelper = new THREE.DirectionalLightHelper( light, 5, 0xC52AB1);
+    // lightHelper.color = 0xC52AB1;
+    scene.add( lightHelper );
 }
 
 
 /***********SHAPES***********/
-cube =  makeCube(1, 1, 1, 'white', 2, 2, 2);
-cubeOfCubes = makeCubeOf(cube, 1.5, 1.5, 1.5, 10, 10, 10);
+cube =  makeCube(1, 1, 1, 'white', 2, 2, 2); //Pos does not matter here, since it never in scene.
+cubeOfCubes = makeCubeOf(cube, cubeGaps[0], cubeGaps[1], cubeGaps[2],
+                         numOfCubes[0], numOfCubes[1], numOfCubes[2]);
 //renderer.render(scene, camera); //Renders cube once.
 
 /***********EVENTS***********/
