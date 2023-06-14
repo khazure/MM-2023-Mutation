@@ -1,7 +1,5 @@
 (function() {  
 
-  const morphTime = 1000; // in ms
-
   const player = new Player(
     { 
       app: {token: "8oZeCHYcDmC9Olyu"},

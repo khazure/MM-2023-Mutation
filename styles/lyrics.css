@@ -24,6 +24,7 @@ footer {
   overflow:hidden;
   transition: 300ms;
   white-space: nowrap;
+  font-size: 2vw;
 }
   
 .lyric span {
@@ -78,6 +79,7 @@ footer {
   position: absolute;
   bottom: 40vh;
   align-items: start;
+  left: calc(11% - 30px);
 }
 
 #loading {

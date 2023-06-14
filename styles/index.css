@@ -30,6 +30,12 @@ button:hover {
   display: none !important;
 }
 
+.vertical-bar {
+  height: 100%;
+  background-color: var(--default-color);
+  width: 5.55%;
+}
+
 #text-animation-main {
   pointer-events: none;
 }
