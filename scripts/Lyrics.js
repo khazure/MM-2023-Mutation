@@ -3,7 +3,8 @@
   const player = new Player(
     { 
       app: {token: "8oZeCHYcDmC9Olyu"},
-      mediaElement: document.getElementById("media")
+      mediaElement: document.querySelector("#media"),
+      mediaBannerPosition: "bottom right"
     });
 
     // Keeps track of the current lyric unit at phrase level
@@ -11,6 +12,9 @@
 
     // Keeps track of current lyric at word level
     let currWord = null;
+
+    // keeps track of current beat
+    let currBeat = null;
 
   /**
    * Called when all TextAlive processes are done loading
@@ -26,6 +30,8 @@
 
     qs('#loading button').classList.remove("hidden");
     qs('#loading p').classList.add("hidden");
+
+    console.log(player.mediaElement)
   }
 
   /**
@@ -46,8 +52,6 @@
 
         //move up container of lyrics
         movePreviousLyricsUp();
-
-        console.log("after movePreviousLyricsUp")
 
         let textContainer = document.createElement("h1");
         textContainer.id = "current-container";
@@ -149,7 +153,6 @@
 
       //id("text1").style.opacity = y;
       id("text1").style.filter = "blur(" + (1 - y) * 6 + "px)";
-      console.log( "blur (" + (1 - y) * 6 + "px)")
 
       // if next phrase comes within morphTime
       // if (unit.next.startTime - now <= morphTime) {
@@ -249,8 +252,16 @@
     // さらに精確な情報が必要な場合は `player.timer.position` でいつでも取得できます
     // More precise timing information can be retrieved by `player.timer.position` at any time
 
-    // more animate
-    morphAnimate(position);
+    // animate if new beat is encountered
+    let beat = player.findBeat(position);
+    if (beat && beat != currBeat) {
+      currBeat = beat;
+      console.log(currBeat);
+      id("beat-reactor").style.scale = "1.5";
+    } else {
+      console.log("no new beat found")
+      id("beat-reactor").style.scale = "1";
+    }
   }
 
   /**
@@ -258,6 +269,9 @@
    * @param {*} v - not sure
    */
   function onVideoReady(v) {
+
+    // add animation function to each unit
+    // TODO: make names consistent
     let c = player.video.firstWord;
     while(c) {
       c.animate = animateChar;
