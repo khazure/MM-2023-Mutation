@@ -40,19 +40,21 @@
     if (unit.contains(now)) {
       if (currPhrase === null || currPhrase !== unit.parent) {
 
-        console.log("new phrase encounterd");
         // if new phrase, create the new line for it
         currPhrase = unit.parent;
 
         // reassign the id
         id("current-container").id = "";
-        console.log("replaced id");
+
+        //move up container of lyrics
+        movePreviousLyricsUp();
+
+        console.log("after movePreviousLyricsUp")
 
         let textContainer = document.createElement("h1");
         textContainer.id = "current-container";
         textContainer.classList.add("lyric");
 
-        console.log("created new container");
         unit.parent.children.forEach(child => {
           let word = document.createElement("span");
           word.textContent = child.text;
@@ -60,9 +62,7 @@
 
           textContainer.append(word);
         });
-        console.log("completed child appending");
         id("text-animation-main").appendChild(textContainer);
-        console.log("added new container")
       }
 
       // if word is new,
@@ -81,6 +81,22 @@
       }
     }
   };
+
+  function movePreviousLyricsUp() {
+    let prevLyrics = qsa(".lyric");
+    for (let i = 0; i < prevLyrics.length; i++) {
+      let lyric = prevLyrics[i];
+
+      // if out of viewport, delete
+      if(!isInViewport(lyric)) {
+        lyric.remove();
+      } else {
+
+        // else, move up
+        lyric.style.transform = `translateY(-${(30 * (prevLyrics.length - i))}px)`;
+      }
+    }
+  }
 
   function textHighlighting() {
      // unit is at word level
@@ -267,25 +283,7 @@
   // - else doCooldown 
   //    
   function morphAnimate(time) {
-
-    // let newTime = time;
-    // let shouldIncrementIndex = cooldown > 0;
-    // let dt = (newTime - time) / 1000;
-    // time = newTime;
-
-    // cooldown -= dt;
-
-    // // if not in cooldown mode, morph
-    // if (cooldown <= 0) {
-    //     if (shouldIncrementIndex) {
-    //         textIndex++;
-    //     }
-
-    //     doMorph();
-    // } else {
-    //     doCooldown();
-    // }
-}
+  }
 
   function id(name) {
     return document.getElementById(name);
@@ -298,5 +296,16 @@
   function qsa(name) {
     return document.querySelectorAll(name);
   }
+
+  // https://www.javascripttutorial.net/dom/css/check-if-an-element-is-visible-in-the-viewport/
+  function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
 }());
 

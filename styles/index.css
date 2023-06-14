@@ -2,7 +2,8 @@
 
 :root {
   --main-text-color: black;
-  --accent-color: rgb(175, 255, 151);
+  --default-color: #2D2D2D;
+  --accent-color: #3661ff;
 }
 
 body {

@@ -9,9 +9,6 @@ footer {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
 }
 
 .active-word {
@@ -20,17 +17,18 @@ footer {
 
 .lyric {
   position: relative;
-  /* width: 300px; */
-  margin: 15px 0;
+  margin: 0;
   background-color: #fff;
   text-align: center;
   line-height: 1.5em;
   overflow:hidden;
+  transition: 300ms;
+  white-space: nowrap;
 }
   
 .lyric span {
   color: #fff;
-  background-color: #2D2D2D;
+  background-color: var(--default-color);
 
   padding: 0.225rem 0;
 
@@ -61,6 +59,16 @@ footer {
     mix-blend-mode: lighten;
   }
   
+}
+
+@keyframes reveal-to-right {
+  from {
+    max-width: 0%;
+  }
+
+  to {
+    max-width: 100%;
+  }
 }
 
 #text-animation-main {
@@ -122,9 +130,14 @@ footer {
   right: 0;
 }
 
+#current-container {
+  animation-name: reveal-to-right;
+  animation-duration: 1000ms;
+}
+
 #current-container span {
   /* background: linear-gradient(60deg, #3629a2, #00ceff); */
-  background-color: #3661ff;
+  background-color: var(--accent-color);
 }
 
 
