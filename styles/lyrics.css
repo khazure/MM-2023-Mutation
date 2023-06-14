@@ -1,20 +1,87 @@
 /* Styles for the lyrics */
 
+footer {
+  left: 0 ;
+}
+
 .full-screen {
   position: absolute;
   height: 100%;
   width: 100%;
-  display: flex;
+  overflow: hidden;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
+}
+
+.active-word {
+  background-color: var(--accent-color);
+}
+
+.lyric {
+  position: relative;
+  /* width: 300px; */
+  margin: 15px 0;
+  background-color: #fff;
+  text-align: center;
+  line-height: 1.5em;
+  overflow:hidden;
+}
+  
+.lyric span {
+  color: #fff;
+  background-color: #2D2D2D;
+
+  padding: 0.225rem 0;
+
+  /* Needs prefixing */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.lyric span:first-child {
+  padding: 0.225rem 0 0.225rem 0.5rem;
+}
+
+.lyric span:last-child {
+  padding: 0.225rem 0.5rem 0.225rem 0;
+}
+
+@supports(mix-blend-mode: lighten) {
+  
+  .lyric::after {
+    position: absolute;
+    content: '';
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+
+    mix-blend-mode: lighten;
+  }
+  
+}
+
+#text-animation-main {
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  position: absolute;
+  bottom: 40vh;
+  align-items: start;
 }
 
 #loading {
   z-index: 1;
   background-color: gray;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#container {
+/* #container {
   position: absolute;
   margin: auto;
   width: 100vw;
@@ -23,9 +90,9 @@
   bottom: 0;
 
   filter: url(#threshold) blur(0.2px);
-}
+} */
 
-#text1,
+/* #text1,
 #text2 {
   font-family: 'DotGothic16', sans-serif;
   position: absolute;
@@ -36,15 +103,15 @@
   text-align: center;
 
   user-select: none;
-}
+} */
 
-#text1 {
+/* #text1 {
   color: var(--main-text-color);
 }
 
 #text2 {
   color: orange;
-}
+} */
 
 #media, footer {
   position: absolute;
@@ -55,11 +122,9 @@
   right: 0;
 }
 
-footer {
-  left: 0 ;
+#current-container span {
+  /* background: linear-gradient(60deg, #3629a2, #00ceff); */
+  background-color: #3661ff;
 }
 
-.active-word {
-  background-color: var(--accent-color);
-}
 

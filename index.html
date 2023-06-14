@@ -37,13 +37,14 @@
       <p>Loading...</p>
       <button class="hidden play-btn">Play</button>
     </section>
-    <section id="text-animation-main" class="full-screen">
-      <section id="container">
-        <span id="text1"></span>
-        <span id="text2" class="hidden"></span>
-      </section>
-      <section id="media"></section>
-      <svg id="filters">
+    <section class="full-screen">
+      <div id="text-animation-main">
+        <h1 id="current-container">
+          <span id="text1"></span>
+          <span id="text2" class="hidden"></span>
+        </h1>  
+      </div>
+      <!-- <svg id="filters">
         <defs>
           <filter id="threshold">
             <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0
@@ -52,8 +53,9 @@
                   0 0 0 255 -140" />
           </filter>
         </defs>
-      </svg>
+      </svg> -->
       <canvas id="c" color="turquoise"></canvas>
+      <div id="media"></div>
     </section>
   </main>
   <footer>

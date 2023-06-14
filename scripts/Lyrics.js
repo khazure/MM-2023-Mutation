@@ -40,6 +40,53 @@
     if (unit.contains(now)) {
       if (currPhrase === null || currPhrase !== unit.parent) {
 
+        console.log("new phrase encounterd");
+        // if new phrase, create the new line for it
+        currPhrase = unit.parent;
+
+        // reassign the id
+        id("current-container").id = "";
+        console.log("replaced id");
+
+        let textContainer = document.createElement("h1");
+        textContainer.id = "current-container";
+        textContainer.classList.add("lyric");
+
+        console.log("created new container");
+        unit.parent.children.forEach(child => {
+          let word = document.createElement("span");
+          word.textContent = child.text;
+          word.id = child.text.replace(" ", "-");
+
+          textContainer.append(word);
+        });
+        console.log("completed child appending");
+        id("text-animation-main").appendChild(textContainer);
+        console.log("added new container")
+      }
+
+      // if word is new,
+      // then identify current word in span objects and highlight
+      if (currWord === null || currWord !== unit) {
+        currWord = unit;
+
+        let activeWord = qs(".active-word")
+        if (activeWord) {
+          activeWord.classList.remove("active-word");
+        }
+        let wordId = unit.text.replace(" ", "-");
+   
+
+        id(wordId).classList.add("active-word"); 
+      }
+    }
+  };
+
+  function textHighlighting() {
+     // unit is at word level
+     if (unit.contains(now)) {
+      if (currPhrase === null || currPhrase !== unit.parent) {
+
         // if new phrase, create the span objects
         currPhrase = unit.parent;
         let textContainer = id("text1");
@@ -71,7 +118,7 @@
         id(wordId).classList.add("active-word"); 
       }
     }
-  };
+  }
 
   function oldTextMorphing() {
     if (unit.contains(now)) {
