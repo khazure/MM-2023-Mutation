@@ -1,3 +1,7 @@
+/**
+ * Animates the lyrics of the composition,
+ * and any other HTML element
+ */
 (function() {  
 
   const player = new Player(
@@ -256,10 +260,13 @@
     let beat = player.findBeat(position);
     if (beat && beat != currBeat) {
       currBeat = beat;
-      console.log(currBeat);
       id("beat-reactor").style.scale = "1.5";
+
+      // somehow access the 3d objects here to change with beat
+      // cubeOfCubes.forEach( cube => {
+      //   cube.scale += 0.01;
+      // })
     } else {
-      console.log("no new beat found")
       id("beat-reactor").style.scale = "1";
     }
   }
