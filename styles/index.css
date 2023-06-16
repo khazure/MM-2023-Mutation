@@ -26,6 +26,19 @@ button:hover {
   cursor: pointer;
 }
 
+.grid {
+  display: grid;
+  grid-template-columns: 5.5% auto 11%;
+}
+
+.col1 {
+  grid-column-start: 1;
+}
+
+.col3 {
+  grid-column-start: 3;
+}
+
 .hidden {
   display: none !important;
 }
@@ -33,10 +46,17 @@ button:hover {
 .vertical-bar {
   height: 100%;
   background-color: var(--default-color);
-  width: 5.55%;
 }
 
-#text-animation-main {
+.top-level {
+  z-index: 1;
+}
+
+.bottom-level {
+  z-index: -1;
+}
+
+.full-screen:not(#loading) {
   pointer-events: none;
 }
 

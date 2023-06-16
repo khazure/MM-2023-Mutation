@@ -11,7 +11,7 @@ let cube, cubeOfCubes;
 const backCanvas =  document.querySelector('#c');
 
 // alpha true defaults to transparent bg
-const renderer =  new THREE.WebGL1Renderer({ alpha: true, antialias: true, backCanvas});
+const renderer =  new THREE.WebGL1Renderer({alpha: true, antialias: true, backCanvas});
 
 //(fov, aspect, minRender, maxRender);
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 100);
@@ -104,7 +104,7 @@ camControls.enableZoom = true;
 onWindowResize(); //Calc aspect for first time.
 //camControls.update() must be called after any manual changes to the camera's transform
 
-scene.background =  new THREE.Color(0xCFD8DC);
+//scene.background =  new THREE.Color(0xCFD8DC);
 
 /***********LIGHTING***********/
 {
@@ -221,3 +221,13 @@ function onWindowResize() {
     camera.updateProjectionMatrix(); //
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
+
+export function rotateCubes() {
+    for(let i = 0; i < 10000; i++) {
+        currShape.rotation.x += 0.5;
+    
+        currShape.updateMatrix();
+        testObj.setMatrixAt(i, currShape.matrix);
+    }
+}
+
