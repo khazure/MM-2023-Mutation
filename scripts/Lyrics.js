@@ -1,3 +1,5 @@
+import { Player } from "textalive-app-api";
+
 /**
  * Animates the lyrics of the composition,
  * and any other HTML element

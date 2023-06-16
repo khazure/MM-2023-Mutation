@@ -23,12 +23,7 @@
       }
     }
   </script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script src="https://unpkg.com/textalive-app-api/dist/index.js"></script>
   <script type = "module" src="./scripts/background.js"></script>
-  <script>
-    const { Player } = TextAliveApp;
-  </script>
 </head>
 <body>
   <div id="media"></div>
@@ -63,5 +58,5 @@
   </footer>
 </body>
 <!-- Must be after html so it can access the media div -->
-<script src="/scripts/Lyrics.js"></script>
+<script type="module" src="/scripts/Lyrics.js"></script>
 

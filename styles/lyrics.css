@@ -15,6 +15,7 @@ footer {
   background-color: var(--accent-color);
 }
 
+/* Inspiration of text styling from: https://codepen.io/matthiasott/pen/aQxBOB */
 .lyric {
   position: relative;
   margin: 0;
