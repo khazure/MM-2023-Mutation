@@ -2,6 +2,8 @@ import * as THREE from 'three';
 //Importmap recognizes three/addons
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import WebGL from 'three/addons/capabilities/WebGL.js';
+import { BloomEffect, PixelationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
+
 
 //Shapes.
 let cube, cubeOfCubes;
@@ -9,7 +11,7 @@ let cube, cubeOfCubes;
 const backCanvas =  document.querySelector('#c');
 
 // alpha true defaults to transparent bg
-const renderer =  new THREE.WebGL1Renderer({alpha: true, antialias: true, backCanvas});
+const renderer =  new THREE.WebGL1Renderer({ alpha: true, antialias: true, backCanvas});
 
 //(fov, aspect, minRender, maxRender);
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 100);
@@ -18,6 +20,11 @@ const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 100);
 const camControls =  new OrbitControls(camera, renderer.domElement);
 
 const scene = new THREE.Scene();
+
+// composer for postprocessing
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+composer.addPass(new EffectPass(camera, new PixelationEffect(5)));
 
 //Cube Constants used
 const numOfCubes = [10, 10, 10]; //x, y, z;
@@ -37,6 +44,7 @@ scene.add(axes);
 
 
 renderer.setSize(window.innerWidth, window.innerHeight);
+composer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 /***********CAMERA AND ITS CONTROLS***********/
@@ -61,7 +69,7 @@ camControls.enableZoom = true;
 onWindowResize(); //Calc aspect for first time.
 //camControls.update() must be called after any manual changes to the camera's transform
 
-//scene.background =  new THREE.Color(0xCFD8DC);
+scene.background =  new THREE.Color(0xCFD8DC);
 
 /***********LIGHTING***********/
 {
@@ -105,8 +113,8 @@ function animate(time) {
     requestAnimationFrame(animate);//Request to brower to animate something
     camControls.update(); //Requires if(enableDamping || autoRotate)
     
-    
-    renderer.render(scene, camera);
+    composer.render();
+    //renderer.render(scene, camera);
     //requestAnimationFrame passes time since the page loaadeed to our function.
 }
 
