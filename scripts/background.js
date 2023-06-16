@@ -34,6 +34,41 @@ const cubeGaps = [1.5, 1.5, 1.5];
 //     cubeGaps.push(length * 1.5); //gaps is 1.5 * the size?
 // })
 
+//Instancing test.
+const testShape =  new THREE.BoxGeometry();
+const testMaterial = new THREE.MeshPhongMaterial({color: 0xFFFFFF});
+const testObj =  new THREE.InstancedMesh(testShape, testMaterial, 10000);
+
+
+scene.add(testObj);
+
+let meshNum = 0;
+const currShape = new THREE.Object3D();
+// for(let x = 0; x < numOfCubes[0] * cubeGaps[0]; x = cubeGaps[0] + x) {
+//     for(let y = 0; y < numOfCubes[1] * cubeGaps[1]; y = cubeGaps[1] + y) {
+//         for(let z = 0; z < numOfCubes[2] * cubeGaps[2]; z = cubeGaps[2] + z) {
+//             //shapes.push(makeCube(1, 1, 1, 0x44aa88, x, y, z));
+//             currShape.position.x = x;
+//             currShape.position.y = y;
+//             currShape.position.z = z;
+
+//             currShape.updateMatrix();
+//             testObj.setMatrixAt(meshNum, currShape.matrix);
+//             meshNum++;
+//         }
+//     }
+// }
+
+for(let i = 0; i < 10000; i++) {
+    currShape.position.x = Math.random() * 100 - 20; //80 to -20
+    currShape.position.y = Math.random() * 100 - 20;
+    currShape.position.z = Math.random() * 100 - 20;
+
+    currShape.updateMatrix();
+    testObj.setMatrixAt(i, currShape.matrix);
+}
+
+
 
 /**********HELPER VISUALS (DELETE BEFORE FINAL RELEASE)**********/
 //x, y, z axes, points in positive direction.
@@ -90,9 +125,9 @@ scene.background =  new THREE.Color(0xCFD8DC);
 
 
 /***********SHAPES***********/
-cube =  makeCube(1, 1, 1, 'white', 2, 2, 2); //Pos does not matter here, since it never in scene.
-cubeOfCubes = makeCubeOf(cube, cubeGaps[0], cubeGaps[1], cubeGaps[2],
-                         numOfCubes[0], numOfCubes[1], numOfCubes[2]);
+//cube =  makeCube(1, 1, 1, 'white', 2, 2, 2); //Pos does not matter here, since it never in scene.
+//cubeOfCubes = makeCubeOf(cube, cubeGaps[0], cubeGaps[1], cubeGaps[2],
+                         //numOfCubes[0], numOfCubes[1], numOfCubes[2]);
 //renderer.render(scene, camera); //Renders cube once.
 
 /***********EVENTS***********/
@@ -104,12 +139,12 @@ function animate(time) {
     //Rotate cubes.
     //myCube.rotation.x = time;
     //myCube.rotation.y = time;
-    cubeOfCubes.forEach((cube, ndx) => {
+    //cubeOfCubes.forEach((cube, ndx) => {
         const speed = 0.5;
         const rot = time * speed;
-        cube.rotation.x = rot;
-        cube.rotation.y = rot;
-    })
+        //cube.rotation.x = rot;
+        //cube.rotation.y = rot;
+    //})
     requestAnimationFrame(animate);//Request to brower to animate something
     camControls.update(); //Requires if(enableDamping || autoRotate)
     
