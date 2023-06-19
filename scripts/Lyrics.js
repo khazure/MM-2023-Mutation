@@ -1,6 +1,5 @@
 import { Player } from "textalive-app-api";
 
-import { rotateCubes } from "./background";
 
 /**
  * Animates the lyrics of the composition,
@@ -270,7 +269,8 @@ import { rotateCubes } from "./background";
       // cubeOfCubes.forEach( cube => {
       //   cube.scale += 0.01;
       // })
-      rotateCubes();
+      //rotateCubes();
+      //setCubeRotation(0.001);
     } else {
       id("beat-reactor").style.scale = "1";
     }
