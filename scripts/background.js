@@ -9,9 +9,9 @@ export default class Background {
         this.parentScene = parentScene;
     }
 
-    createInstancedCubes() {
-        const cubeShape = new THREE.BoxGeometry(1, 1, 1);
-        const cubeMaterial =  new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
+    createInstancedCubes(boxW, boxH, boxD, color) {
+        const cubeShape = new THREE.BoxGeometry(boxW, boxH, boxD);
+        const cubeMaterial =  new THREE.MeshPhongMaterial({ color });
 
         this.cubeMesh = new THREE.InstancedMesh(cubeShape, cubeMaterial, 10000);
         this.parentScene.add(this.cubeMesh);
@@ -32,9 +32,12 @@ export default class Background {
         }
     }
 
+    //THIS IS CURRENTLY UNUSED, DO NOT USE.
     rotateCubesXBy(amount) {
         //const currMatrix = new THREE.Matrix4();
         const currShape =  new THREE.Object3D();
+        const moveQ = new THREE.Quaternion( 0.5, 0.5, 0.5, 0.0 ).normalize();
+        tmpQ.set( moveQ.x * delta, moveQ.y * delta, moveQ.z * delta, 1 ).normalize();
         for(let i = 0; i < this.cubeMesh.count; i++) {
             //this.cubeMesh.getMatrixAt(i, currMatrix);
             //currShape.applyMatrix4(currMatrix);
