@@ -15,6 +15,12 @@ import { rotateCubes } from "./background";
       mediaBannerPosition: "bottom right"
     });
 
+    const FIRST_CHORUS_START = 54754.3;
+    const FIRST_CHORUS_END = 80359.1;
+
+    const SECOND_CHORUS_START = 110764.6;
+    const SECOND_CHORUS_END = 136369.4;
+
     // Keeps track of the current lyric unit at phrase level
     let currPhrase = null;
 
@@ -24,10 +30,18 @@ import { rotateCubes } from "./background";
     // keeps track of current beat
     let currBeat = null;
 
+    // keeps track if in parenthesis
+    let inParen = false;
+
+    // keeps track if in chorus or not
+    let inChorus = false;
+
   /**
    * Called when all TextAlive processes are done loading
    */
   function init() {
+    //storeChoruses();
+
     qsa(".play-btn").forEach(btn => {
       btn.addEventListener("click", playMusic);
     });
@@ -36,10 +50,18 @@ import { rotateCubes } from "./background";
     id("pause-btn").addEventListener("click", pauseMusic);
     id("reset-btn").addEventListener("click", resetMusic);
 
+    //temp:
+    id("chorus-btn").addEventListener("click", jumpChorus);
+
     qs('#loading button').classList.remove("hidden");
     qs('#loading p').classList.add("hidden");
 
-    console.log(player.mediaElement)
+  }
+
+  function storeChoruses() {
+    let choruses = player.getChoruses();
+
+
   }
 
   /**
@@ -68,7 +90,7 @@ import { rotateCubes } from "./background";
         unit.parent.children.forEach(child => {
           let word = document.createElement("span");
           word.textContent = child.text;
-          word.id = child.text.replace(" ", "-");
+          //word.id = child.text.replace(" ", "-");
 
           textContainer.append(word);
         });
@@ -80,14 +102,29 @@ import { rotateCubes } from "./background";
       if (currWord === null || currWord !== unit) {
         currWord = unit;
 
-        let activeWord = qs(".active-word")
-        if (activeWord) {
-          activeWord.classList.remove("active-word");
-        }
-        let wordId = unit.text.replace(" ", "-");
+        // if (currWord.text.includes("（")) {
+        //   inParen = true;
+        //   console.log("in paren");
+        // } else if (currWord.text.includes("）")) {
+        //   inParen = false;
+        //   console.log("exiting paren")
+        // }
+
+        // let word = document.createElement("span");
+        // word.textContent = currWord.text;
+
+        // let textContainer = qs(".lyric:last-child");
+
+        // textContainer.append(word);
+
+        // let activeWord = qs(".active-word")
+        // if (activeWord) {
+        //   activeWord.classList.remove("active-word");
+        // }
+        // let wordId = unit.text.replace(" ", "-");
    
 
-        id(wordId).classList.add("active-word"); 
+        // id(wordId).classList.add("active-word"); 
       }
     }
   };
@@ -221,7 +258,13 @@ import { rotateCubes } from "./background";
     player.requestMediaSeek(player.video.firstChar.startTime);
   }
 
+  function jumpChorus() {
+    player.video &&
+    player.requestMediaSeek(FIRST_CHORUS_START);
+  }
+
   function resetMusic() {
+    id("text-animation-main").innerHTML = "";
     player.video && player.requestMediaSeek(0);
   }
 
@@ -267,12 +310,15 @@ import { rotateCubes } from "./background";
       id("beat-reactor").style.scale = "1.5";
 
       // somehow access the 3d objects here to change with beat
-      // cubeOfCubes.forEach( cube => {
-      //   cube.scale += 0.01;
-      // })
       rotateCubes();
     } else {
       id("beat-reactor").style.scale = "1";
+    }
+
+    if (player.findChorus(position)) {
+      qs(".grid").classList.replace("non-chorus", "chorus");
+    } else {
+      qs(".grid").classList.replace("chorus", "non-chorus");
     }
   }
 

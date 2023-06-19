@@ -1,7 +1,12 @@
 /* Styles for the lyrics */
 
 footer {
-  left: 0 ;
+  left: 0;
+  overflow: hidden;
+  margin: 1em;
+  background-color: rgba(30, 30, 30, 0.5);
+  border-radius: 10px;
+  color: white;
 }
 
 .full-screen {
@@ -140,5 +145,25 @@ footer {
   /* background: linear-gradient(60deg, #3629a2, #00ceff); */
   background-color: var(--accent-color);
 }
+
+#miku-container {
+  position: absolute;
+  bottom: 14.7vh;
+  left: calc(11% - 30px);
+}
+
+#miku-container img {
+  width: 8vw;
+}
+
+#speech-bubble {
+  background-color: whitesmoke;
+  width: min-content;
+  border: black 2px solid;
+  border-radius: 10px;
+  padding: 0 10px;
+  margin-left: 10vw;
+}
+
 
 
