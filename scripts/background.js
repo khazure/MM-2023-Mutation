@@ -9,13 +9,16 @@ export default class Background {
         this.parentScene = parentScene;
     }
 
-    createInstancedCubes(boxW, boxH, boxD, color) {
+    createInstancedCubes(boxW, boxH, boxD, theColor) {
         const cubeShape = new THREE.BoxGeometry(boxW, boxH, boxD);
-        const cubeMaterial =  new THREE.MeshPhongMaterial({ color });
+        const cubeMaterial =  new THREE.MeshPhongMaterial({ color: theColor });
 
         this.cubeMesh = new THREE.InstancedMesh(cubeShape, cubeMaterial, 10000);
         this.parentScene.add(this.cubeMesh);
         //this.cubeMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        for (let i = 0; i < this.cubeMesh.count; i++) {
+            this.cubeMesh.setColorAt( i, new THREE.Color(0xFFFFFF) );
+        }
     }
     
     randomizeCubePos() {
@@ -25,10 +28,17 @@ export default class Background {
             currShape.position.x = Math.random() * 100 - 20; //80 to -20
             currShape.position.y = Math.random() * 100 - 20;
             currShape.position.z = Math.random() * 100 - 20;
-        
+            
             currShape.updateMatrix();
             this.cubeMesh.setMatrixAt(i, currShape.matrix);
             //console.log("AFTER " + currShape.matrix);
+            let j = 0;
+
+            // let cubeColor = new THREE.Color();
+            // this.cubeMesh.getColorAt(1, cubeColor)
+            // cubeColor.setHex( 0xFF0000);
+            // this.cubeMesh.setColorAt(1, cubeColor );
+            // this.cubeMesh.instanceColor.needsUpdate = true;
         }
     }
 

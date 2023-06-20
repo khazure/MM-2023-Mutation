@@ -13,7 +13,7 @@ import Background from "./Background.js";
   const renderer = new THREE.WebGL1Renderer({ alpha: true, antialias: true, backCanvas });
 
   //(fov, aspect, minRender, maxRender);
-  const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 100);
+  const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 200);
 
   //Controls for Camera, add-on for three.js
   const camControls = new OrbitControls(camera, renderer.domElement);
@@ -46,7 +46,8 @@ import Background from "./Background.js";
 
   /***********CAMERA AND ITS CONTROLS***********/
   //By default, the camera will be looking down -Z with, positioned at (0, 0, 0)
-  camera.position.set(numOfCubes[0] * 3, numOfCubes[1] * 3, numOfCubes[2] * 3); //x, y, z
+  //camera.position.set(numOfCubes[0] * 3, numOfCubes[1] * 3, numOfCubes[2] * 3); //x, y, z
+  camera.position.set(30, 100, 100); 
   camControls.update(); //Must update everytime position changes.
   camControls.listenToKeyEvents(window);
 
@@ -58,7 +59,7 @@ import Background from "./Background.js";
 
   //Min and Max distance we can zoom on camera
   camControls.minDistance = 0; //Neg does nothing?
-  camControls.maxDistance = 50;
+  camControls.maxDistance = 100;
   camControls.maxPolarAngle = Math.PI / 2; //90 degrees
 
   camControls.enableZoom = true;
@@ -85,9 +86,23 @@ import Background from "./Background.js";
   // console.log(dummyCube.matrix.decompose);
   let cubeMesh = backgroundObj.cubeMesh;
   //const testShape = new THREE.Object3D();
-  
 
+  /** COLOR SETTING INSTANCES ****/
+  //NOTE: You need to perform setColorAt() for all instances 
+  //or else instance color is null and unreadable, see Background.js.
+  let cubeColor = new THREE.Color();
+  cubeMesh.getColorAt(1, cubeColor);
+  cubeColor.setColorName('red');
+  cubeMesh.setColorAt(1, cubeColor );
+  cubeMesh.instanceColor.needsUpdate = true;
   /************BELOW ARE CONSTS USED IN INSTANCE CUBE ROTATION, STILL WIP ******************************/
+  /*Steps to rotate instances cubes
+    1. Create a Quaternion, this represents a rotation 'vector'
+    2. Create a Matrix4, we will multiple the existing matrix by this.
+    3. Do Matrix4.makeRotationFromQuaternion(theQuaternion);
+    4. Store the instance's matrix in some temp matrix like currentM through instanceMesh.getMatrixAt(i, currentM)
+    5. currentM.multiply(Matrix4.)
+  */
   let lastTime = 0;
   const moveQ = new THREE.Quaternion( 0.5, 0.5, 0.5, 0.0 ).normalize();
   const tmpQ = new THREE.Quaternion();
@@ -100,12 +115,11 @@ import Background from "./Background.js";
     //time *= 0.001; //convert to seconds.
     time = performance.now();
 
-			cubeMesh.rotation.y = time * 0.00005;
+			//cubeMesh.rotation.y = time * 0.00005;
 
 			const delta = ( time - lastTime ) / 5000;
 			tmpQ.set( moveQ.x * delta, moveQ.y * delta, moveQ.z * delta, 1 ).normalize();
 			tmpM.makeRotationFromQuaternion( tmpQ );
-
       
       const testShape = new THREE.Object3D();
 			for ( let i = 0, il = cubeMesh.count; i < il; i ++ ) {
