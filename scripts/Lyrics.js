@@ -1,5 +1,4 @@
 import { Player } from "textalive-app-api";
-import { setRandomColor } from "./index.js";
 
 /**
  * Animates the lyrics of the composition,
@@ -333,7 +332,7 @@ import { setRandomColor } from "./index.js";
     if (beat && beat != currBeat) {
       currBeat = beat;
       id("beat-reactor").style.scale = "1.5";
-      setRandomColor();
+      //setRandomColor();
       // somehow access the 3d objects here to change with beat
       
     } else {
