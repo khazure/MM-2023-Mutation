@@ -29,11 +29,11 @@ import { Player } from "textalive-app-api";
     // keeps track of current beat
     let currBeat = null;
 
-    // keeps track if in parenthesis
-    let inParen = false;
-
     // keeps track if in chorus or not
     let inChorus = false;
+
+    // keeps track of starting time for miku's speech in parenthesises
+    let parenStart = null;
 
   /**
    * Called when all TextAlive processes are done loading
@@ -57,24 +57,18 @@ import { Player } from "textalive-app-api";
 
   }
 
-  function storeChoruses() {
-    let choruses = player.getChoruses();
-
-
-  }
-
   /**
    * Animates the word this function is assigned to
    * @param {*} now - current timestamp
    * @param {*} unit - unit to be animated
    */
   const animateChar = function (now, unit) {
-    // unit is at word level
+    // unit is at character level
     if (unit.contains(now)) {
-      if (currPhrase === null || currPhrase !== unit.parent) {
+      if (currPhrase === null || currPhrase !== unit.parent.parent) {
 
         // if new phrase, create the new line for it
-        currPhrase = unit.parent;
+        currPhrase = unit.parent.parent;
 
         // reassign the id
         id("current-container").id = "";
@@ -86,20 +80,49 @@ import { Player } from "textalive-app-api";
         textContainer.id = "current-container";
         textContainer.classList.add("lyric");
 
-        unit.parent.children.forEach(child => {
-          let word = document.createElement("span");
-          word.textContent = child.text;
-          //word.id = child.text.replace(" ", "-");
+        // clear miku's speech bubble
+        id("speech-bubble").innerHTML = "";
+        parenStart = null;
 
-          textContainer.append(word);
+        let encounteredParen = false;
+
+        // loop through each word in the new phrase
+        unit.parent.parent.children.forEach(word => {
+
+          // loop through each character in the word
+          word.children.forEach(child => { // child = character
+            if (child.text.includes("（")) {
+              encounteredParen = true;
+              parenStart = child.startTime;
+            }
+
+            if (!encounteredParen) {
+              // add words to  the main animated lyrics
+              let word = document.createElement("span");
+              word.textContent = child.text;
+
+              textContainer.append(word);
+            } else {
+              // add words to miku's speech bubble
+              let word = document.createElement("span");
+              word.textContent = child.text.replace("（", "").replace("）", "");
+              id("speech-bubble").append(word);
+            }
+          });
         });
         id("text-animation-main").appendChild(textContainer);
       }
 
-      // if word is new,
-      // then identify current word in span objects and highlight
+      // if char is new
       if (currWord === null || currWord !== unit) {
         currWord = unit;
+
+        // if the time for miku's speech happens, show it
+        if (parenStart && now >= parenStart) {
+          id("speech-bubble").classList.replace("hidden", "shown");
+        } else {
+          id("speech-bubble").classList.replace("shown", "hidden");
+        }
 
         // if (currWord.text.includes("（")) {
         //   inParen = true;
@@ -128,6 +151,9 @@ import { Player } from "textalive-app-api";
     }
   };
 
+  /**
+   * Translates lyrics upwards
+   */
   function movePreviousLyricsUp() {
     let prevLyrics = qsa(".lyric");
     for (let i = 0; i < prevLyrics.length; i++) {
@@ -329,7 +355,7 @@ import { Player } from "textalive-app-api";
 
     // add animation function to each unit
     // TODO: make names consistent
-    let c = player.video.firstWord;
+    let c = player.video.firstChar;
     while(c) {
       c.animate = animateChar;
       c = c.next;

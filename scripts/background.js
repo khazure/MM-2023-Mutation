@@ -15,7 +15,7 @@ export default class Background {
      */
     createInstancedCubes(boxW, boxH, boxD, theColor) {
         const cubeShape = new THREE.BoxGeometry(boxW, boxH, boxD);
-        const cubeMaterial =  new THREE.MeshPhongMaterial({ color: theColor });
+        const cubeMaterial =  new THREE.MeshStandardMaterial({ color: theColor });
 
         this.cubeMesh = new THREE.InstancedMesh(cubeShape, cubeMaterial, 10000);
         this.parentScene.add(this.cubeMesh);
