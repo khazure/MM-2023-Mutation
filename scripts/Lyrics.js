@@ -44,12 +44,16 @@ import { Player } from "textalive-app-api";
       btn.addEventListener("click", playMusic);
     });
 
-    id("jump-btn").addEventListener("click", jumpMusic);
     id("pause-btn").addEventListener("click", pauseMusic);
     id("reset-btn").addEventListener("click", resetMusic);
+    id("volume-level").addEventListener("input", changeVolume);
+
+    // set volume initially
+    changeVolume();
 
     //temp:
     id("chorus-btn").addEventListener("click", jumpChorus);
+    id("jump-btn").addEventListener("click", jumpMusic);
 
     qs('#loading button').classList.remove("hidden");
     qs('#loading p').classList.add("hidden");
@@ -275,6 +279,11 @@ import { Player } from "textalive-app-api";
 
   function pauseMusic() {
     player.video && player.requestPause();
+  }
+
+  function changeVolume() {
+    let volumeLvl = id("volume-level").value;
+    player.volume = volumeLvl;
   }
 
   function jumpMusic() {
