@@ -28,7 +28,7 @@ backgroundObj.createInstancedCubes(1, 1, 1, 0xFFFFFF);
 
 //@param numOfCubes(x, y, z), gapBetweenCubes(x, y, z), startPos(x, y, z)
 //gap of 1 means no gap.
-backgroundObj.setCubeForm(10, 10, 10, 1, 1, 1, 0, 0, 0);
+//backgroundObj.setCubeForm(1, 0, 0, 10, 10, 10, 0, 0, 0);
 
 /**********HELPER VISUALS (DELETE BEFORE FINAL RELEASE)**********/
 //x, y, z axes, points in positive direction.
@@ -208,6 +208,17 @@ function onWindowResize() {
 
 export function setRotationSpeed(newSpeed) {
   rotate_spd = newSpeed;
+}
+
+export function setRandomColor() {
+  let theInstance =  Math.ceil(Math.random() * cubeMesh.count);
+  let theColor =  Math.random() * 0xFFFFFF;
+
+  let cubeColor = new THREE.Color();
+  cubeMesh.getColorAt(0, cubeColor);
+  cubeColor.setHex(theColor);
+  cubeMesh.setColorAt(0, cubeColor );
+  cubeMesh.instanceColor.needsUpdate = true;
 }
 
 //}());
