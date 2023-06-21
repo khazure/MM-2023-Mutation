@@ -17,7 +17,7 @@ export default class Background {
         const cubeShape = new THREE.BoxGeometry(boxW, boxH, boxD);
         const cubeMaterial =  new THREE.MeshStandardMaterial({ color: theColor });
 
-        this.cubeMesh = new THREE.InstancedMesh(cubeShape, cubeMaterial, 10000);
+        this.cubeMesh = new THREE.InstancedMesh(cubeShape, cubeMaterial, 1);
         this.parentScene.add(this.cubeMesh);
         //this.cubeMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
 
