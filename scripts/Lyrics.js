@@ -335,7 +335,7 @@ import { Player } from "textalive-app-api";
       id("beat-reactor").style.scale = "1.5";
 
       // somehow access the 3d objects here to change with beat
-      //rotateCubes();
+      
     } else {
       id("beat-reactor").style.scale = "1";
     }

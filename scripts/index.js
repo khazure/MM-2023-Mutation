@@ -8,6 +8,7 @@ import Background from "./Background.js";
 //(function() {  
 ////80 Line Limit: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaA
   //Select the canvas
+let rotate_spd = 50;
 
 const backCanvas = document.querySelector('#c'); //Select the canvas
 
@@ -111,7 +112,7 @@ const amount = parseInt( window.location.search.slice( 1 ) ) || 10;
 function animate(time) {
   //time *= 0.001; //convert to seconds.
   //time = performance.now();
-  time = Date.now() * 0.001 / 2;
+  time = Date.now() * 0.001 / (100 / rotate_spd);
     //cubeMesh.rotation.y = time * 0.00005;
 
     /* ORIGINAL ROTATION, needed if rotating randomly.
@@ -205,8 +206,8 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-export function setRotationSpeed() {
-
+export function setRotationSpeed(newSpeed) {
+  rotate_spd = newSpeed;
 }
 
 //}());
