@@ -31,13 +31,21 @@ import { Player } from "textalive-app-api";
     // keeps track of current chord
     let currChord = null;
 
-    // keeps track if in chorus or not
-    let inChorus = false;
-
     // keeps track of starting time for miku's speech in parenthesises
     let parenStart = null;
 
+    // keeps track of mouse position
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  
+    /**
+     * Called when app is ready, before TextAlive is finished loading completely
+     */
+    function beforeLoad() {
+      // enable drag on draggable elements
+      qsa(".window").forEach(element => {
+        element.querySelector(".window-header").addEventListener("mousedown", dragMouseDown);
+      });
+    }
 
   /**
    * Called when all TextAlive processes are done loading
@@ -60,20 +68,12 @@ import { Player } from "textalive-app-api";
     id("chorus-btn").addEventListener("click", jumpChorus);
     id("jump-btn").addEventListener("click", jumpMusic);
 
-    qs('.window-body').classList.remove("hidden");
-    qs('.window > p').classList.add("hidden");
-
-    // enable drag on draggable elements
-    qsa(".window").forEach(element => {
-      element.querySelector(".window-header").addEventListener("mousedown", dragMouseDown);
-    })
+    // show finished loading pop up
+    id('finished-loading-pop-up').classList.remove("hidden");
   }
 
-  function enableDrag(element) {
-    console.log(element.querySelector(".window-header"));
-    element.querySelector(".window-header").addEventListener("mousedown", dragMouseDown);
-  }
-
+  // for draggable windows
+  // https://www.w3schools.com/howto/howto_js_draggable.asp
   function dragMouseDown(e) {
     e = e || window.event;
     e.preventDefault();
@@ -91,7 +91,6 @@ import { Player } from "textalive-app-api";
   function elementDrag(e, elmnt) {
     e = e || window.event;
     e.preventDefault();
-    console.log(elmnt)
     // calculate the new cursor position:
     pos1 = pos3 - e.clientX;
     pos2 = pos4 - e.clientY;
@@ -232,13 +231,23 @@ import { Player } from "textalive-app-api";
    * Play the music
    * If player is not null, then requestPlay
    */
-  function playMusic() {
-    id("loading").classList.add("hidden");
+  function playMusic(event) {
+    // hide loading overlay
+    id("loading-overlay").classList.add("hidden");
     player.video && player.requestPlay();
+
+    // hide play btn + show pause btn
+    event.currentTarget.classList.add("hidden");
+    id("pause-btn").classList.remove("hidden");
   }
 
-  function pauseMusic() {
+  function pauseMusic(event) {
     player.video && player.requestPause();
+
+    // show play btn + hide pause btn
+    event.currentTarget.classList.add("hidden");
+    id("play-btn").classList.remove("hidden");
+    
   }
 
   function changeVolume() {
@@ -262,10 +271,12 @@ import { Player } from "textalive-app-api";
   }
 
   /**
-   * When app is ready, load the song
+   * When app is ready, load the song and initialize some features
    * @param {*} app 
    */
   function onAppReady(app) {
+
+    beforeLoad();
 
     //ミュウテイション / Rin（Kuroneko Lounge） feat. 初音ミク
     if (!app.songUrl) {

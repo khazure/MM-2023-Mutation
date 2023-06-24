@@ -29,8 +29,8 @@
 <body>
   <div id="media"></div>
   <main>
-    <section id="loading" class="top-level full-screen">
-      <article class="window">
+    <section id="loading-overlay" class="top-level full-screen">
+      <article id="loading-pop-up" class="window">
         <div class="window-header">
           <p>mutation.exe</p>
           <button disabled>
@@ -39,10 +39,22 @@
             </span>  
           </button>
         </div>
-        <p>Loading...</p>
-        <div class="window-body hidden">
+        <div class="window-body">
+          <p>Installing [mutation.exe]...</p>
+        </div>
+      </article>
+      <article id="finished-loading-pop-up" class="window hidden">
+        <div class="window-header">
+          <p>mutation.exe</p>
+          <button disabled>
+            <span class="material-symbols-outlined">
+              close
+            </span>  
+          </button>
+        </div>
+        <div class="window-body">
           <img alt="Hatsune Miku" src="/images/miku.png">
-          <p>Program finished installing. Play now?</p>
+          <p>Installation complete. Run [mutation.exe]?</p>
           <button class="play-btn">Yes</button>
           <button class="play-btn">Yes</button>
         </div>
@@ -59,7 +71,7 @@
       </div>
       <div id="miku-container">
         <div id="speech-bubble" class="hidden">
-          <p>Test</p>
+          <!-- speech bubble content goes here -->
         </div>
         <img src="/images/miku.png">
       </div>
@@ -69,7 +81,7 @@
           <span id="position"><strong>-</strong> [ms]</span>
         </p>    
       </div>
-    </section>
+    </section> 
   </main>
   <nav id="control" class="window">
     <div class="window-header">
@@ -81,9 +93,14 @@
       </button>
     </div>
     <div class="window-body">
-      <button class="play-btn" >
+      <button id="play-btn" class="play-btn hidden" >
         <span class="material-symbols-outlined">
           play_circle
+        </span>
+      </button>
+      <button id="pause-btn" >
+        <span class="material-symbols-outlined">
+          pause_circle
         </span>
       </button>
       <button id="jump-btn" >
@@ -91,11 +108,6 @@
       </button>
       <button id="chorus-btn" >
         Chorus
-      </button>
-      <button id="pause-btn" >
-        <span class="material-symbols-outlined">
-          pause_circle
-        </span>
       </button>
       <button id="reset-btn" >
         <span class="material-symbols-outlined">
@@ -110,6 +122,35 @@
       <input id="volume-level" type="range" min="0" max="100" value="50">
     </div>
   </nav>
+  <!-- <footer>
+    <button id="play-btn" class="play-btn hidden" >
+      <span class="material-symbols-outlined">
+        play_circle
+      </span>
+    </button>
+    <button id="pause-btn" >
+      <span class="material-symbols-outlined">
+        pause_circle
+      </span>
+    </button>  
+    <button id="jump-btn" >
+      Lyrics start
+    </button>
+    <button id="chorus-btn" >
+      Chorus
+    </button>
+    <button id="reset-btn" >
+      <span class="material-symbols-outlined">
+        stop_circle
+      </span>
+    </button>
+    <label for="volume-level">
+      <span class="material-symbols-outlined">
+        volume_up
+      </span>
+    </label>
+    <input id="volume-level" type="range" min="0" max="100" value="50">
+  </footer> -->
 </body>
 <!-- Must be after html so it can access the media div -->
 <script type="module" src="/scripts/Lyrics.js"></script>

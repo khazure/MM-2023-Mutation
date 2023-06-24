@@ -78,7 +78,7 @@
   left: calc(11% - 30px);
 }
 
-#loading {
+#loading-overlay {
   background-color: gray;
   text-align: center;
   display: flex;
@@ -118,13 +118,10 @@
   color: orange;
 } */
 
-#media, footer {
-  position: absolute;
-  bottom: 0;
-}
-
 #media {
   right: 0;
+  bottom: 0;
+  position: absolute;
 }
 
 #current-container {

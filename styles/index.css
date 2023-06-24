@@ -11,6 +11,7 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
 body, button {
@@ -36,13 +37,16 @@ button:hover {
 }
 
 button:active {
-  scale: 1.3;
+  scale: 0.9;
+  filter: contrast(0.7);
 }
 
 footer {
-  left: 0;
-  overflow: hidden;
-  margin: 1em;
+  background-color: var(--default-color);
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 .grid {
@@ -88,7 +92,7 @@ footer {
   z-index: -1;
 }
 
-.full-screen:not(#loading) {
+.full-screen:not(#loading-overlay) {
   pointer-events: none;
 }
 
@@ -125,7 +129,7 @@ footer {
   border: var(--default-color) 2px solid;
 }
 
-.window-body > p, #loading > .window button {
+.window-body > p, #loading-overlay > .window button {
   margin: 10px;
 }
 
@@ -135,7 +139,7 @@ footer {
   padding: 0;
 }
 
-#loading > .window button.play-btn {
+#loading-overlay > .window button.play-btn {
   padding: 3px 20px;
 }
 
@@ -160,6 +164,12 @@ footer {
 
 .window-header > p, .window-header button {
   margin: 5px 10px;
+}
+
+#control {
+  left: 0;
+  bottom: 0;
+  height: min-content;
 }
 
 #control > .window-body {

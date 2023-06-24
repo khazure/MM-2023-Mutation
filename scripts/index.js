@@ -4,6 +4,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { BloomEffect, PixelationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 import InstanceShapes from './InstanceShapes.js';
+import BasicShape from './BasicShape.js';
+import BasicWireframe from './BasicWireframe.js';
 
 //Select the canvas
 const backCanvas = document.querySelector('#c'); //Select the canvas
@@ -72,6 +74,8 @@ window.addEventListener('resize', onWindowResize);
 let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial(0xFFFFFF), 1000);
 cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
 cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
+
+let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(50, 50, 50), 0x839EFF, 2);
 
 let lastTime = 0;
 
