@@ -3,14 +3,18 @@
 :root {
   --main-text-color: black;
   --default-color: #2D2D2D;
+  --default-white: #ececec;
   --accent-color: #3661ff;
 }
 
 body {
   margin: 0;
-  font-family: 'DotGothic16', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body, button {
+  font-family: 'DotGothic16', sans-serif;
 }
 
 code {
@@ -33,6 +37,12 @@ button:hover {
 
 button:active {
   scale: 1.3;
+}
+
+footer {
+  left: 0;
+  overflow: hidden;
+  margin: 1em;
 }
 
 .grid {
@@ -60,15 +70,6 @@ button:active {
 .col3 {
   grid-column-start: 3;
 }
-
-/* .start-row2 {
-  grid-row-start: 2;
-}
-
-.all-rows {
-  grid-row-start: 1;
-  grid-row-end: 3;
-} */
 
 .hidden {
   display: none !important;
@@ -105,6 +106,72 @@ button:active {
 
 .shown {
   visibility: visible;
+}
+
+.window, .window-body, .window button {
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.window {
+  background-color: var(--accent-color);
+  border: var(--default-color) 3px solid;
+  position: absolute;
+}
+
+.window-body {
+  background-color: var(--default-white);
+  margin: 3px;
+  border: var(--default-color) 2px solid;
+}
+
+.window-body > p, #loading > .window button {
+  margin: 10px;
+}
+
+.window button {
+  background-color: var(--accent-color);
+  border: var(--default-color) 2px solid;
+  padding: 0;
+}
+
+#loading > .window button.play-btn {
+  padding: 3px 20px;
+}
+
+.window-header {
+  background-color: var(--accent-color);
+  padding: 1px 0;
+  text-align: left;
+  position: relative;
+}
+
+.window-header:hover {
+  cursor: move;
+}
+
+.window-header > button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0;
+  border: none;
+}
+
+.window-header > p, .window-header button {
+  margin: 5px 10px;
+}
+
+#control > .window-body {
+  display: flex;
+  color: var(--default-color);
+}
+
+#control .window-body > button {
+  border-radius: 0;
+  border-width: 1px;
+  background-color: var(--default-white);
+  color: var(--default-color);
 }
 
 #beat-reactor {

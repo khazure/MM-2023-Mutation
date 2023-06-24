@@ -28,11 +28,25 @@
 </head>
 <body>
   <div id="media"></div>
-
   <main>
     <section id="loading" class="top-level full-screen">
-      <p>Loading...</p>
-      <button class="hidden play-btn">Play</button>
+      <article class="window">
+        <div class="window-header">
+          <p>mutation.exe</p>
+          <button disabled>
+            <span class="material-symbols-outlined">
+              close
+            </span>  
+          </button>
+        </div>
+        <p>Loading...</p>
+        <div class="window-body hidden">
+          <img alt="Hatsune Miku" src="/images/miku.png">
+          <p>Program finished installing. Play now?</p>
+          <button class="play-btn">Yes</button>
+          <button class="play-btn">Yes</button>
+        </div>
+      </article>
     </section>
     <section class="full-screen grid non-chorus" >
       <div id="beat-reactor"></div>
@@ -57,8 +71,16 @@
       </div>
     </section>
   </main>
-  <footer>
-    <div id="control">
+  <nav id="control" class="window">
+    <div class="window-header">
+      <p>controls</p>
+      <button disabled>
+        <span class="material-symbols-outlined">
+          close
+        </span>  
+      </button>
+    </div>
+    <div class="window-body">
       <button class="play-btn" >
         <span class="material-symbols-outlined">
           play_circle
@@ -87,7 +109,7 @@
       </label>
       <input id="volume-level" type="range" min="0" max="100" value="50">
     </div>
-  </footer>
+  </nav>
 </body>
 <!-- Must be after html so it can access the media div -->
 <script type="module" src="/scripts/Lyrics.js"></script>
