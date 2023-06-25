@@ -11,6 +11,7 @@
   />
   <link rel="stylesheet" href="/styles/index.css" />
   <link rel="stylesheet" href="/styles/lyrics.css" />
+  <link rel="stylesheet" href="/styles/glitch.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
@@ -27,7 +28,6 @@
   <script type = "module" src="./scripts/index.js"></script>
 </head>
 <body>
-  <div id="media"></div>
   <main>
     <section id="loading-overlay" class="top-level full-screen">
       <article id="loading-pop-up" class="window">
@@ -54,7 +54,9 @@
         </div>
         <div class="window-body">
           <img alt="Hatsune Miku" src="/images/miku.png">
-          <p>Installation complete. Run [mutation.exe]?</p>
+          <p>Installation complete. Run [ミュウテイション.exe]?</p>
+          <p>Publisher: Rin（Kuroneko Lounge）</p>
+          <p>Featuring: その名はもちろん初音ミク</p>
           <button class="play-btn">Yes</button>
           <button class="play-btn">Yes</button>
         </div>
@@ -64,10 +66,10 @@
       <div id="beat-reactor"></div>
       <div class="vertical-bar"></div>
       <div id="text-animation-main">
-        <h1 id="current-container" class="lyric">
-          <span id="text1">Mutation feat. Hatsune Miku</span>
-          <span id="text2" class="hidden"></span>
-        </h1>  
+        <!-- generated lyrics appear here -->
+        <!-- <h1 class="lyric glitch" data-text="Test">
+          <span>Test</span>
+        </h1> -->
       </div>
       <div id="miku-container">
         <div id="speech-bubble" class="hidden">
@@ -86,6 +88,11 @@
   <nav id="control" class="window">
     <div class="window-header">
       <p>controls</p>
+      <button>
+        <span class="material-symbols-outlined">
+          minimize
+        </span>
+      </button>
       <button disabled>
         <span class="material-symbols-outlined">
           close
@@ -122,6 +129,15 @@
       <input id="volume-level" type="range" min="0" max="100" value="50">
     </div>
   </nav>
+  <footer>
+    <button id="show-controls">
+      <span class="material-symbols-outlined">
+        tune
+      </span>
+      Controls
+    </button>
+    <div id="media"></div>
+  </footer>
   <!-- <footer>
     <button id="play-btn" class="play-btn hidden" >
       <span class="material-symbols-outlined">

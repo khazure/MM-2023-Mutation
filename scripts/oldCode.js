@@ -99,3 +99,29 @@ function textHighlighting() {
      // }
    }
  }
+
+
+ // goes inside animate, animates per word
+        // if (currWord.text.includes("（")) {
+        //   inParen = true;
+        //   console.log("in paren");
+        // } else if (currWord.text.includes("）")) {
+        //   inParen = false;
+        //   console.log("exiting paren")
+        // }
+
+        // let word = document.createElement("span");
+        // word.textContent = currWord.text;
+
+        // let textContainer = qs(".lyric:last-child");
+
+        // textContainer.append(word);
+
+        // let activeWord = qs(".active-word")
+        // if (activeWord) {
+        //   activeWord.classList.remove("active-word");
+        // }
+        // let wordId = unit.text.replace(" ", "-");
+   
+
+        // id(wordId).classList.add("active-word"); 

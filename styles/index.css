@@ -12,6 +12,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+  background-color: rgb(12, 12, 12);
 }
 
 body, button {
@@ -25,11 +26,8 @@ code {
 
 button {
   padding: 0.7em;
-  background: none;
-  border: none;
   text-shadow: white 1px 0 5px;
   transition: 200ms;
-  color: white;
 }
 
 button:hover {
@@ -42,8 +40,7 @@ button:active {
 }
 
 footer {
-  background-color: var(--default-color);
-  text-align: center;
+  background-color: var(--accent-color);
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -164,6 +161,7 @@ footer {
 
 .window-header > p, .window-header button {
   margin: 5px 10px;
+  color: var(--default-white);
 }
 
 #control {
@@ -184,11 +182,14 @@ footer {
   color: var(--default-color);
 }
 
+footer button {
+  border-radius: 0;
+}
+
 #beat-reactor {
   background-color: var(--accent-color);
   width: 100px;
   height: 100px;
   position: absolute;
   border-radius: 100px;
-  transition: 100ms;
 }

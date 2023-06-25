@@ -11,20 +11,24 @@
   background-color: var(--accent-color);
 }
 
-/* Inspiration of text styling from: https://codepen.io/matthiasott/pen/aQxBOB */
 .lyric {
-  position: relative;
-  margin: 0;
-  background-color: #fff;
-  text-align: center;
+  color: var(--default-white);
   line-height: 1.5em;
-  overflow:hidden;
-  transition: 300ms;
   white-space: nowrap;
   font-size: 2vw;
+  transition: 300ms;
+  margin: 0;
 }
-  
-.lyric span {
+
+/* highlighted text styling from: https://codepen.io/matthiasott/pen/aQxBOB */
+.highlighted {
+  position: relative;
+  background-color: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+
+.highlighted span {
   color: #fff;
   background-color: var(--default-color);
 
@@ -35,17 +39,17 @@
   box-decoration-break: clone;
 }
 
-.lyric span:first-child {
+.highlighted span:first-child {
   padding: 0.225rem 0 0.225rem 0.5rem;
 }
 
-.lyric span:last-child {
+.highlighted span:last-child {
   padding: 0.225rem 0.5rem 0.225rem 0;
 }
 
 @supports(mix-blend-mode: lighten) {
   
-  .lyric::after {
+  .highlighted::after {
     position: absolute;
     content: '';
     top: 0;
@@ -59,6 +63,8 @@
   
 }
 
+/* Glitch effect: https://codepen.io/longfurbyqueen/pen/YLdVjw*/
+
 @keyframes reveal-to-right {
   from {
     max-width: 0%;
@@ -66,6 +72,17 @@
 
   to {
     max-width: 100%;
+  }
+}
+
+.blinking {
+  animation: blink-animation 1.5s steps(7, start) infinite;
+
+}
+
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
   }
 }
 
@@ -86,38 +103,6 @@
   align-items: center;
 }
 
-/* #container {
-  position: absolute;
-  margin: auto;
-  width: 100vw;
-  height: 80pt;
-  top: 0;
-  bottom: 0;
-
-  filter: url(#threshold) blur(0.2px);
-} */
-
-/* #text1,
-#text2 {
-  font-family: 'DotGothic16', sans-serif;
-  position: absolute;
-  width: 100%;
-  display: inline-block;
-  font-size: 5vw;
-
-  text-align: center;
-
-  user-select: none;
-} */
-
-/* #text1 {
-  color: var(--main-text-color);
-}
-
-#text2 {
-  color: orange;
-} */
-
 #media {
   right: 0;
   bottom: 0;
@@ -129,7 +114,7 @@
   animation-duration: 1000ms;
 }
 
-#current-container span {
+#current-container span.highlighted {
   /* background: linear-gradient(60deg, #3629a2, #00ceff); */
   background-color: var(--accent-color);
 }

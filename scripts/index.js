@@ -75,7 +75,7 @@ let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1, 1, 1), new TH
 cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
 cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
 
-let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(50, 50, 50), 0x839EFF, 2);
+let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(50, 50, 50), 0x839EFF, 20);
 
 let lastTime = 0;
 

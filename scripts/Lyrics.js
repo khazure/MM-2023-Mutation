@@ -61,6 +61,10 @@ import { Player } from "textalive-app-api";
     id("reset-btn").addEventListener("click", resetMusic);
     id("volume-level").addEventListener("input", changeVolume);
 
+    id("show-controls").addEventListener("click", () => {
+      id("control").classList.toggle("hidden");
+    });
+
     // set volume initially
     changeVolume();
 
@@ -120,15 +124,34 @@ import { Player } from "textalive-app-api";
         // if new phrase, create the new line for it
         currPhrase = unit.parent.parent;
 
-        // reassign the id
-        id("current-container").id = "";
+        // reassign the id and blinking container
+        let currContainer = id("current-container");
+        currContainer && (currContainer.id = "");
+        let blinking = qs(".blinking");
+        blinking && (blinking.textContent = "");
+        blinking && (blinking.classList.remove("blinking"));
+
+        //update datatype of prev
+        currContainer && (currContainer.dataset.text = currContainer.textContent);
 
         //move up container of lyrics
         movePreviousLyricsUp();
 
         let textContainer = document.createElement("h1");
         textContainer.id = "current-container";
-        textContainer.classList.add("lyric");
+        //textContainer.classList.add("lyric", "highlighted");
+        textContainer.classList.add("lyric", "glitch");
+
+        // add command prompt
+        let cmdPrompt = document.createElement("span");
+        cmdPrompt.textContent = "> ";
+        textContainer.append(cmdPrompt);
+
+        // add blinking typebox to textContainer
+        let blinkingTxtBox = document.createElement("span");
+        blinkingTxtBox.textContent = "▌";
+        blinkingTxtBox.classList.add("blinking");
+        textContainer.append(blinkingTxtBox);
 
         // clear miku's speech bubble
         id("speech-bubble").innerHTML = "";
@@ -148,10 +171,10 @@ import { Player } from "textalive-app-api";
 
             if (!encounteredParen) {
               // add words to  the main animated lyrics
-              let word = document.createElement("span");
-              word.textContent = child.text;
+              // let word = document.createElement("span");
+              // word.textContent = child.text;
 
-              textContainer.append(word);
+              // textContainer.append(word);
             } else {
               // add words to miku's speech bubble
               let word = document.createElement("span");
@@ -172,31 +195,16 @@ import { Player } from "textalive-app-api";
           id("speech-bubble").classList.replace("hidden", "shown");
         } else {
           id("speech-bubble").classList.replace("shown", "hidden");
+
+          // append char to main lyrics container
+          let word = document.createElement("span");
+          word.textContent = currWord.text;
+
+          id("current-container").insertBefore(word, qs(".blinking"));
+
+          // glitch effect
+          id("current-container").dataset.text = id("current-container").textContent;
         }
-
-        // if (currWord.text.includes("（")) {
-        //   inParen = true;
-        //   console.log("in paren");
-        // } else if (currWord.text.includes("）")) {
-        //   inParen = false;
-        //   console.log("exiting paren")
-        // }
-
-        // let word = document.createElement("span");
-        // word.textContent = currWord.text;
-
-        // let textContainer = qs(".lyric:last-child");
-
-        // textContainer.append(word);
-
-        // let activeWord = qs(".active-word")
-        // if (activeWord) {
-        //   activeWord.classList.remove("active-word");
-        // }
-        // let wordId = unit.text.replace(" ", "-");
-   
-
-        // id(wordId).classList.add("active-word"); 
       }
     }
   };
@@ -206,6 +214,7 @@ import { Player } from "textalive-app-api";
    */
   function movePreviousLyricsUp() {
     let prevLyrics = qsa(".lyric");
+
     for (let i = 0; i < prevLyrics.length; i++) {
       let lyric = prevLyrics[i];
 
@@ -267,6 +276,11 @@ import { Player } from "textalive-app-api";
 
   function resetMusic() {
     id("text-animation-main").innerHTML = "";
+
+    currPhrase = null;
+    currWord = null;
+    currBeat = null;
+    currChord = null;
     player.video && player.requestMediaSeek(0);
   }
 
@@ -311,12 +325,12 @@ import { Player } from "textalive-app-api";
     let beat = player.findBeat(position);
     if (beat && beat != currBeat) {
       currBeat = beat;
-      id("beat-reactor").style.scale = "1.5";
+      id("beat-reactor").style.backgroundColor = random_rgba();
       //setRandomColor();
       // somehow access the 3d objects here to change with beat
       
     } else {
-      id("beat-reactor").style.scale = "1";
+      //id("beat-reactor").style.scale = "1";
     }
 
     // animate if new chord encountered
@@ -324,6 +338,8 @@ import { Player } from "textalive-app-api";
     if (chord && chord != currChord) {
       currChord = chord;
       qs("nav").style.backgroundColor = random_rgba();
+
+      //changeWireframeColor(random_rgba());
     }
 
     if (player.findChorus(position)) {

@@ -12,4 +12,12 @@ export default class BasicWireframe {
     this.#line = new THREE.LineSegments(wireframeGeo, lineMaterial);
     parentScene.add(this.#line);
   }
+
+  /**
+   * Changes color of wireframe lines
+   * @param {number} newColor - color in HEX to change to
+   */
+  setColor(newColor) {
+    this.#line.material.color = newColor;
+  }
 }
