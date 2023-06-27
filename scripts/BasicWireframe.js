@@ -7,7 +7,7 @@ export default class BasicWireframe {
     const wireframeGeo = new THREE.WireframeGeometry(geometry);
     const lineMaterial = new THREE.LineBasicMaterial( {
         color: lineColor,
-        linewidth: lineWidth
+        linewidth: lineWidth // doesn't seem to effect anything (in pixels)
     });
     this.#line = new THREE.LineSegments(wireframeGeo, lineMaterial);
     parentScene.add(this.#line);

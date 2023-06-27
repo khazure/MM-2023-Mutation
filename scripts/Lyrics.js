@@ -45,6 +45,9 @@ import { Player } from "textalive-app-api";
       qsa(".window").forEach(element => {
         element.querySelector(".window-header").addEventListener("mousedown", dragMouseDown);
       });
+
+      // create 1st phrase container
+      id("text-animation-main").append(createNewPhraseContainer());
     }
 
   /**
@@ -124,40 +127,16 @@ import { Player } from "textalive-app-api";
         // if new phrase, create the new line for it
         currPhrase = unit.parent.parent;
 
-        // reassign the id and blinking container
-        let currContainer = id("current-container");
-        currContainer && (currContainer.id = "");
-        let blinking = qs(".blinking");
-        blinking && (blinking.textContent = "");
-        blinking && (blinking.classList.remove("blinking"));
-
-        //update datatype of prev
-        currContainer && (currContainer.dataset.text = currContainer.textContent);
+        prepareForNewPhrase();
 
         //move up container of lyrics
         movePreviousLyricsUp();
 
-        let textContainer = document.createElement("h1");
-        textContainer.id = "current-container";
-        //textContainer.classList.add("lyric", "highlighted");
-        textContainer.classList.add("lyric", "glitch");
-
-        // add command prompt
-        let cmdPrompt = document.createElement("span");
-        cmdPrompt.textContent = "> ";
-        textContainer.append(cmdPrompt);
-
-        // add blinking typebox to textContainer
-        let blinkingTxtBox = document.createElement("span");
-        blinkingTxtBox.textContent = "▌";
-        blinkingTxtBox.classList.add("blinking");
-        textContainer.append(blinkingTxtBox);
-
-        // clear miku's speech bubble
-        id("speech-bubble").innerHTML = "";
-        parenStart = null;
+        const textContainer = createNewPhraseContainer();
 
         let encounteredParen = false;
+
+        console.log(currPhrase.text);
 
         // loop through each word in the new phrase
         unit.parent.parent.children.forEach(word => {
@@ -169,13 +148,7 @@ import { Player } from "textalive-app-api";
               parenStart = child.startTime;
             }
 
-            if (!encounteredParen) {
-              // add words to  the main animated lyrics
-              // let word = document.createElement("span");
-              // word.textContent = child.text;
-
-              // textContainer.append(word);
-            } else {
+            if (encounteredParen) {
               // add words to miku's speech bubble
               let word = document.createElement("span");
               word.textContent = child.text.replace("（", "").replace("）", "");
@@ -210,6 +183,25 @@ import { Player } from "textalive-app-api";
   };
 
   /**
+   * DOM manipulation to prepare main text animation container for new phrase
+   */
+  function prepareForNewPhrase() {
+    // reassign the id and blinking container
+    let currContainer = id("current-container");
+    currContainer && (currContainer.id = "");
+    let blinking = qs(".blinking");
+    blinking && (blinking.textContent = "");
+    blinking && (blinking.classList.remove("blinking"));
+
+    //update datatype of prev
+    currContainer && (currContainer.dataset.text = currContainer.textContent);
+
+    // clear miku's speech bubble
+    id("speech-bubble").innerHTML = "";
+    parenStart = null;
+  }
+
+  /**
    * Translates lyrics upwards
    */
   function movePreviousLyricsUp() {
@@ -227,6 +219,26 @@ import { Player } from "textalive-app-api";
         lyric.style.transform = `translateY(-${(30 * (prevLyrics.length - i))}px)`;
       }
     }
+  }
+
+  function createNewPhraseContainer() {
+    let textContainer = document.createElement("h1");
+    textContainer.id = "current-container";
+    //textContainer.classList.add("lyric", "highlighted");
+    textContainer.classList.add("lyric", "glitch");
+
+    // add command prompt
+    let cmdPrompt = document.createElement("span");
+    cmdPrompt.textContent = "> ";
+    textContainer.append(cmdPrompt);
+
+    // add blinking typebox to textContainer
+    let blinkingTxtBox = document.createElement("span");
+    blinkingTxtBox.textContent = "▌";
+    blinkingTxtBox.classList.add("blinking");
+    textContainer.append(blinkingTxtBox);
+
+    return textContainer;
   }
 
   player.addListener({
