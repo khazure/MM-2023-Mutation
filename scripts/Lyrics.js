@@ -47,7 +47,9 @@ import { Player } from "textalive-app-api";
       });
 
       // create 1st phrase container
-      id("text-animation-main").append(createNewPhraseContainer());
+      let txtContainer = createNewPhraseContainer();
+      addBlinkingBox(txtContainer);
+      id("text-animation-main").append(txtContainer);
     }
 
   /**
@@ -151,9 +153,19 @@ import { Player } from "textalive-app-api";
               let word = document.createElement("span");
               word.textContent = child.text.replace("（", "").replace("）", "");
               id("speech-bubble").append(word);
+            } else {
+              // preadd lyrics to container
+              let word = document.createElement("span");
+              word.textContent = child.text;
+              word.classList.add("hidden");
+              word.id = child.startTime;
+
+              textContainer.insertBefore(word, qs(".blinking"));
             }
           });
         });
+
+        addBlinkingBox(textContainer);
         id("text-animation-main").appendChild(textContainer);
       }
 
@@ -161,21 +173,19 @@ import { Player } from "textalive-app-api";
       if (currWord === null || currWord !== unit) {
         currWord = unit;
 
-        // if the time for miku's speech happens, show it
-        if (parenStart && now >= parenStart) {
-          id("speech-bubble").classList.replace("hidden", "bounce-in");
-        } else {
-          id("speech-bubble").classList.replace("bounce-in", "hidden");
+        // if the time for miku's speech happens, show it (500ms before)
+        let bubbleClass = id("speech-bubble").classList;
+        (parenStart && now >= parenStart - 500) ? bubbleClass.replace("hidden", "bounce-in")
+                                                : bubbleClass.replace("bounce-in", "hidden");
 
-          // append char to main lyrics container
-          let word = document.createElement("span");
-          word.textContent = currWord.text;
+        // for each child with id in currentContainer, show if time is past
+        id("current-container").childNodes.forEach((word) => {
+          (word.id && now >= parseInt(word.id)) && (word.classList.remove("hidden"));
+        });
 
-          id("current-container").insertBefore(word, qs(".blinking"));
+        // for glitch effect to work
+        id("current-container").dataset.text = id("current-container").innerText;
 
-          // glitch effect
-          id("current-container").dataset.text = id("current-container").textContent;
-        }
       }
     }
   };
@@ -219,6 +229,10 @@ import { Player } from "textalive-app-api";
     }
   }
 
+  /**
+   * Creates a container for a new line of lyrics. Does not add any lyrics to the container.
+   * @returns {DOM Element} - text container
+   */
   function createNewPhraseContainer() {
     let textContainer = document.createElement("h1");
     textContainer.id = "current-container";
@@ -230,13 +244,19 @@ import { Player } from "textalive-app-api";
     cmdPrompt.textContent = "> ";
     textContainer.append(cmdPrompt);
 
+    return textContainer;
+  }
+
+  /**
+   * Adds blinking box to end of given text container. Looks like terminal blinking box
+   * @param {DOM Element} textContainer - text Container to append blinking box to.
+   */
+  function addBlinkingBox(textContainer) {
     // add blinking typebox to textContainer
     let blinkingTxtBox = document.createElement("span");
     blinkingTxtBox.textContent = "▌";
     blinkingTxtBox.classList.add("blinking");
     textContainer.append(blinkingTxtBox);
-
-    return textContainer;
   }
 
   player.addListener({
@@ -311,8 +331,8 @@ import { Player } from "textalive-app-api";
           chordId: 2405285,
           repetitiveSegmentId: 2475676,
           // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FWk83%2F20230203141007
-          lyricId: 56097,
-          lyricDiffId: 9640
+          lyricId: 56812,
+          lyricDiffId: 10668
         },
       });
     }

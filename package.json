@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "postprocessing": "^6.31.2",
     "sass": "^1.63.6",
     "textalive-app-api": "^0.3.2",
     "three": "^0.152.2",

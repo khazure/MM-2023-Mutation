@@ -157,7 +157,7 @@
   animation-duration: 1000ms; */
 }
 
-#current-container span.highlighted {
+#current-container.highlighted span {
   /* background: linear-gradient(60deg, #3629a2, #00ceff); */
   background-color: var(--accent-color);
 }
