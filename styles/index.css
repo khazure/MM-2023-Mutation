@@ -5,6 +5,7 @@
   --default-color: #2D2D2D;
   --default-white: #ececec;
   --accent-color: #3661ff;
+  --light-accent: #839EFF;
 }
 
 body {
@@ -12,7 +13,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
-  background-color: rgb(34, 34, 34);
+  background-color: rgb(22, 22, 22);
 }
 
 body, button {
@@ -122,7 +123,6 @@ footer button {
 
 .window, .window-body, .window button {
   border-radius: 5px;
-  overflow: hidden;
 }
 
 .window {
@@ -205,6 +205,7 @@ footer button {
   width: 20vw;
   bottom: 50px;
   right: 10px;
+  height: min-content;
 }
 
 #miku-profile img {

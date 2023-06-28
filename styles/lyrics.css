@@ -63,8 +63,6 @@
   
 }
 
-/* Glitch effect: https://codepen.io/longfurbyqueen/pen/YLdVjw*/
-
 @keyframes reveal-to-right {
   from {
     max-width: 0%;
@@ -86,6 +84,51 @@
   }
 }
 
+.bounce-in {
+  animation-name: bounce-in-up;
+  animation-duration: 300ms;
+}
+
+/* https://github.com/animate-css/animate.css/blob/main/animate.css */
+@keyframes bounce-in-up {
+  from,
+  60%,
+  75%,
+  90%,
+  to {
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 3000px, 0) scaleY(5);
+    transform: translate3d(0, 100px, 0) scaleY(5) translateX(-18vw);
+  }
+
+  60% {
+    opacity: 0.3;
+    -webkit-transform: translate3d(0, -20px, 0) scaleY(0.9);
+    transform: translate3d(0, -20px, 0) scaleY(0.9) translateX(-18vw);
+  }
+
+  75% {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 10px, 0) scaleY(0.95);
+    transform: translate3d(0, 10px, 0) scaleY(0.95) translateX(-18vw);
+  }
+
+  90% {
+    -webkit-transform: translate3d(0, -5px, 0) scaleY(0.985);
+    transform: translate3d(0, -5px, 0) scaleY(0.985) translateX(-18vw);
+  }
+
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) translateX(-18vw);
+  }
+}
+
 #text-animation-main {
   display: flex;
   flex-direction: column;
@@ -96,7 +139,7 @@
 }
 
 #loading-overlay {
-  background-color: gray;
+  background-color: rgba(20, 20, 20, 0.6);
   text-align: center;
   display: flex;
   justify-content: center;
@@ -110,8 +153,8 @@
 }
 
 #current-container {
-  animation-name: reveal-to-right;
-  animation-duration: 1000ms;
+  /* animation-name: reveal-to-right;
+  animation-duration: 1000ms; */
 }
 
 #current-container span.highlighted {
@@ -119,24 +162,33 @@
   background-color: var(--accent-color);
 }
 
-#miku-container {
-  position: absolute;
-  bottom: 14.7vh;
-  left: calc(11% - 30px);
-}
-
-#miku-container img {
-  width: 8vw;
-}
-
 #speech-bubble {
-  background-color: whitesmoke;
+  background-color: var(--light-accent);
   width: min-content;
-  border: black 2px solid;
   border-radius: 10px;
-  padding: 0 10px;
-  margin-left: 10vw;
+  padding: 10px 20px;
   white-space: nowrap;
+  position: absolute;
+  top: 10vw;
+  box-shadow: 5px 5px black;
+  font-size: 1.5vw;
+  transform-origin: right;
+  transform: translateX(-18vw);
+  right: 0;
+}
+
+#speech-bubble:after {
+  content: "";
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-right: 24px solid var(--light-accent);
+  border-left: 12px solid transparent;
+  border-top: 5px solid var(--light-accent);
+  border-bottom: 20px solid transparent;
+  right: 12px;
+  bottom: -24px;
+  box-shadow: 10px 0px 0px -2px black;
 }
 
 

@@ -7,6 +7,7 @@ import InstanceShapes from './InstanceShapes.js';
 import BasicShape from './BasicShape.js';
 import BasicWireframe from './BasicWireframe.js';
 import Experiment from './experiment.js';
+import Experiment2 from './Experiment2.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
@@ -14,19 +15,24 @@ import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPa
 //Select the canvas
 const backCanvas = document.querySelector('#c'); //Select the canvas
 
-const renderer = new THREE.WebGL1Renderer({ alpha: true, antialias: true,
+const renderer = new THREE.WebGL1Renderer({ antialias: true,
                                           backCanvas }); // alpha true = transparent bg
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 200); //(fov, aspect, minDis, maxDis);
 const camControls = new OrbitControls(camera, renderer.domElement);
 const scene = new THREE.Scene();
+scene.background = new THREE.Color( "rgb(22, 22, 22)" );
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 
 //composer.addPass(new EffectPass(camera, new PixelationEffect(5)));
 const axes = new THREE.AxesHelper(5); //Helper Visual
 
+const uniforms  = {
+  uTime: { value: 0.}
+};
+
 /***************************Bloom experiment***********************************/
-//bloomRender();
+
 // UnrealBloomPass breaks background transparency
 let bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight), // resolution?
@@ -93,16 +99,20 @@ onWindowResize(); //Calc aspect for first time.
 /***********EVENTS***********/
 window.addEventListener('resize', onWindowResize);
 
-let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial(0xFFFFFF), 1000);
-cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
-cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
+//let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial(0xFFFFFF), 1000);
+//cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
+//cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
 
 let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(15, 15, 15), 0x9DB2FF, 100);
-let experiment = new Experiment(scene, new THREE.SphereGeometry(15, 15, 15));
+//let experiment = new Experiment(scene, new THREE.SphereGeometry(15, 15, 15));
+let experiment2 = new Experiment2(scene, new THREE.SphereGeometry(15, 15, 15), uniforms);
+
 let lastTime = 0;
 
 function animate(time) {
-  lastTime = cubeMesh.rotateWave(5000, lastTime); //Higher value =  slower currently.
+  //lastTime = cubeMesh.rotateWave(5000, lastTime); //Higher value =  slower currently.
+  time *= 0.001;
+  uniforms.uTime.value = time;
 
   requestAnimationFrame(animate);//Request to brower to animate something
   camControls.update(); //Requires if(enableDamping || autoRotate)

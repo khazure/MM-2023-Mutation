@@ -136,8 +136,6 @@ import { Player } from "textalive-app-api";
 
         let encounteredParen = false;
 
-        console.log(currPhrase.text);
-
         // loop through each word in the new phrase
         unit.parent.parent.children.forEach(word => {
 
@@ -165,9 +163,9 @@ import { Player } from "textalive-app-api";
 
         // if the time for miku's speech happens, show it
         if (parenStart && now >= parenStart) {
-          id("speech-bubble").classList.replace("hidden", "shown");
+          id("speech-bubble").classList.replace("hidden", "bounce-in");
         } else {
-          id("speech-bubble").classList.replace("shown", "hidden");
+          id("speech-bubble").classList.replace("bounce-in", "hidden");
 
           // append char to main lyrics container
           let word = document.createElement("span");
@@ -340,6 +338,7 @@ import { Player } from "textalive-app-api";
       id("beat-reactor").style.backgroundColor = random_rgba();
       //setRandomColor();
       // somehow access the 3d objects here to change with beat
+      //console.log(wireSphere)
       
     } else {
       //id("beat-reactor").style.scale = "1";
