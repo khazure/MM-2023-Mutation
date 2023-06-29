@@ -104,12 +104,14 @@ onWindowResize(); //Calc aspect for first time.
 /***********EVENTS***********/
 window.addEventListener('resize', onWindowResize);
 
-//let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial(0xFFFFFF), 1000);
+let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial(0xFFFFFF), 1000);
 //cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
 //cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
+cubeMesh.arrangeToSphere(0, 0, 0, 1, 1, 1, 1, 5);
 
 let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(15, 15, 15), 0x9DB2FF, 100);
 //let experiment = new Experiment(scene, new THREE.SphereGeometry(15, 15, 15));
+console.log(new THREE.BoxGeometry(1, 2, 3).parameters);
 let experiment2 = new Experiment2(scene, new THREE.SphereGeometry(15, 15, 15), uniforms);
 
 let lastTime = 0;
