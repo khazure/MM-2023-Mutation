@@ -3,8 +3,10 @@ import * as THREE from 'three';
 //80 Line Limit: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaA
 export default class InstanceShapes {
   #mesh;
+  #geometry;
 
   constructor(parentScene, theGeometry, theMaterial, count) {
+    this.#geometry = theGeometry;
     this.#mesh = new THREE.InstancedMesh(theGeometry, theMaterial, count);
     parentScene.add(this.#mesh);
 
@@ -106,6 +108,60 @@ randomizeCubePos() {
     }
     this.#mesh.instanceMatrix.needsUpdate = true;
     this.#mesh.computeBoundingBox();
+  }
+  /**
+   * Arranges instances into a sphere formation according to diameter.
+   *    | 10 11.. | 1 = level 1 (n^0)
+   *    |  9 2 3  | 2 - 9 = level 2 (from 1^2 + 1 to 3^2)
+   *    |  8 1 4  | 10 - 25 = level 3 (from 3^2 + 1 to 5^2)
+   *    |  7 6 5  | 17 - 25
+   *     Full squares: 1, 9, 25, 49...
+   *     hollow: 1, 9 - 1, 25 - 9, 49 - 25
+   *     1, 4, 8, 12, 16, 20
+   * @param {number} diameter is the diameter of the sphere. 
+   */
+  arrangeToSphere(startX, startY, startZ, changeInX, changeInY, changeInZ, startRadius, endRadius) {
+    //setPosAt(0, startX, startY, startZ);
+    let newPos = new THREE.Matrix4();
+    newPos.setPosition(startX, startY + 20, startZ + 20);
+    this.arrangeToRing(1, 4, 12, newPos);
+    newPos.setPosition(0,  2, 2);
+    this.arrangeToRing(13, 3, 10, newPos);
+  }
+
+  arrangeToRing(startIndex, radius, vertices, centerPos) {
+
+    for(let i = startIndex; i <= startIndex + vertices; i++) {
+      let newPos = centerPos;
+      let angle = 2 * Math.PI * i/vertices; //Divide circumfrence of circle
+      newPos.makeTranslation(radius * Math.cos(angle), 0, radius * Math.sin(angle));
+
+      this.#mesh.setMatrixAt(i, newPos);
+    }
+  }
+
+
+
+  
+
+  /**
+   * NOTE:
+   *  needsUpdate must be set true after finishing all movements
+   *  computeBoundingBox(); as well.
+   * 
+   * @param {*} index 
+   * @param {*} x 
+   * @param {*} y 
+   * @param {*} z 
+   */
+  setPosAt(index, x, y, z) {
+    const posContainer =  new THREE.Object3D();
+    posContainer.position.x = x;
+    posContainer.position.y = y;
+    posContainer.position.z = z;
+    posContainer.updateMatrix();
+    this.#mesh.setMatrixAt(index, posContainer.matrix);
+
   }
 
   /**

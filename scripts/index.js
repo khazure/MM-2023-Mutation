@@ -101,10 +101,12 @@ let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1, 1, 1), new TH
 cubeMesh.randomizeSpherePos();
 //cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
 //cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
+cubeMesh.arrangeToSphere(0, 0, 0, 1, 1, 1, 1, 5);
 
 //let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(15, 15, 15), 0x9DB2FF, 100);
 //let experiment = new Experiment(scene, new THREE.SphereGeometry(15, 15, 15));
 //let experiment2 = new Experiment2(scene, new THREE.SphereGeometry(15, 15, 15), uniforms);
+console.log(new THREE.BoxGeometry(1, 2, 3).parameters);
 let hologramSphere = new holograpmShape(scene, new THREE.SphereGeometry(15, 15, 15), uniforms);
 
 
