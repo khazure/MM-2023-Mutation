@@ -15,20 +15,63 @@ export default class InstanceShapes {
     }
   }
 
+/*
+* Randomizes the cubes' position with a 80 to -20 range.
+* 
+* TODO? add parameters to set range of random x, y, z.
+*/
+randomizeCubePos() {
+  const currShape = new THREE.Object3D();
+  let width = 100;
+  for (let i = 0; i < this.#mesh.count; i++) {
+      currShape.position.x = Math.random() * width - (width / 2); // 50 to -50
+      currShape.position.y = Math.random() * width - (width / 2);
+      currShape.position.z = Math.random() * width - (width / 2);
+
+      // rotations
+      currShape.rotation.x = Math.random() * 360;
+      currShape.rotation.y = Math.random() * 360;
+      currShape.rotation.z = Math.random() * 360;
+      
+      currShape.updateMatrix(); //Update matrix's (x,y,z)
+      this.#mesh.setMatrixAt(i, currShape.matrix); //Change transformation matrix to new pos.
+  }
+}
+
   /*
-   * Randomizes the cubes' position with a 80 to -20 range.
+   * Randomizes instance mesh positions in bounds of sphere
    * 
-   * TODO? add parameters to set range of random x, y, z.
+   * TODO? add parameters to set radius
    */
-  randomizeCubePos() {
+  randomizeSpherePos() {
     const currShape = new THREE.Object3D();
+    let radius = 50;
     for (let i = 0; i < this.#mesh.count; i++) {
-        currShape.position.x = Math.random() * 100 - 20; //80 to -20
-        currShape.position.y = Math.random() * 100 - 20;
-        currShape.position.z = Math.random() * 100 - 20;
+        let point = this.#generateSpherePoint(radius);
+        currShape.position.x = point.x;
+        currShape.position.y = point.y;
+        currShape.position.z = point.z;
+
+        // rotations
+        currShape.rotation.x = Math.random() * 360;
+        currShape.rotation.y = Math.random() * 360;
+        currShape.rotation.z = Math.random() * 360;
         
         currShape.updateMatrix(); //Update matrix's (x,y,z)
         this.#mesh.setMatrixAt(i, currShape.matrix); //Change transformation matrix to new pos.
+    }
+  }
+
+  #generateSpherePoint(radius) {
+    let x =  (Math.random() * 2 - 1) * 2 * radius;
+    let y = (Math.random() * 2 - 1) * radius;
+    let z = (Math.random() * 2 - 1) * 2 * radius;
+    let point = new THREE.Vector3( x, y, z);
+
+    if (Math.pow(x, 2) + Math.pow(y , 2) + Math.pow(z, 2) <= Math.pow(radius, 2)) {
+      return point;
+    } else {
+      return this.#generateSpherePoint(radius);
     }
   }
 
