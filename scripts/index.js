@@ -7,15 +7,8 @@ import BasicShape from './BasicShape.js';
 import BasicWireframe from './BasicWireframe.js';
 import Experiment from './experiment.js';
 import Experiment2 from './Experiment2.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
-import { RGBShiftShader } from 'three/addons/shaders/RGBShiftShader.js';
-import { DotScreenShader } from 'three/addons/shaders/DotScreenShader.js';
-import { HalftonePass } from 'three/addons/postprocessing/HalftonePass.js';
-import { LuminosityShader } from 'three/addons/shaders/LuminosityShader.js';
-import { SobelOperatorShader } from 'three/addons/shaders/SobelOperatorShader.js';
+import holograpmShape from './hologramShape.js';
+import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 
 //Select the canvas
 const backCanvas = document.querySelector('#c'); //Select the canvas
@@ -25,7 +18,6 @@ const renderer = new THREE.WebGL1Renderer({ alpha: true, antialias: true,
 const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 200); //(fov, aspect, minDis, maxDis);
 const camControls = new OrbitControls(camera, renderer.domElement);
 const scene = new THREE.Scene();
-scene.background = new THREE.Color("gray");
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
@@ -43,11 +35,12 @@ const uniforms  = {
 //halfToneRender();
 
 //dotRender();
-rgbRender();
+
 //utlineRender();
 
-// UnrealBloomPass breaks background transparency
-//bloomRender();
+bloomRender(camera);
+
+rgbRender(camera);
 
 /**********HELPER VISUALS (DELETE BEFORE FINAL RELEASE)**********/
 //x, y, z axes, points in positive direction.
@@ -105,14 +98,17 @@ onWindowResize(); //Calc aspect for first time.
 window.addEventListener('resize', onWindowResize);
 
 let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial(0xFFFFFF), 1000);
+cubeMesh.randomizeSpherePos();
 //cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
 //cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
 cubeMesh.arrangeToSphere(0, 0, 0, 1, 1, 1, 1, 5);
 
-let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(15, 15, 15), 0x9DB2FF, 100);
+//let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(15, 15, 15), 0x9DB2FF, 100);
 //let experiment = new Experiment(scene, new THREE.SphereGeometry(15, 15, 15));
+//let experiment2 = new Experiment2(scene, new THREE.SphereGeometry(15, 15, 15), uniforms);
 console.log(new THREE.BoxGeometry(1, 2, 3).parameters);
-let experiment2 = new Experiment2(scene, new THREE.SphereGeometry(15, 15, 15), uniforms);
+let hologramSphere = new holograpmShape(scene, new THREE.SphereGeometry(15, 15, 15), uniforms);
+
 
 let lastTime = 0;
 
@@ -146,52 +142,56 @@ function onWindowResize() {
 }
 
 function bloomRender() {
-  scene.background = new THREE.Color( "rgb(22, 22, 22)" );
 
-  let bloomPass = new UnrealBloomPass(
-    new THREE.Vector2(window.innerWidth, window.innerHeight), // resolution?
-    0.5, //strength
-    0.4, // radius
-    0.1 //threshold
-  );
-  
+  // let bloomPass = new UnrealBloomPass(
+  //   new THREE.Vector2(window.innerWidth, window.innerHeight), // resolution?
+  //   0.5, //strength
+  //   0.4, // radius
+  //   0.1 //threshold
+  // );
+  let effect = new BloomEffect({
+    intensity: 0.5,
+    radius: 0.4,
+  });
+  let bloomPass = new EffectPass( camera, effect );
   composer.addPass(bloomPass);
 }
 
 function rgbRender() {
-  const rgbPass = new ShaderPass( RGBShiftShader );
-  rgbPass.uniforms[ 'amount' ].value = 0.002;
+  let effect = new ChromaticAberrationEffect();
+  const rgbPass = new EffectPass( camera, new ChromaticAberrationEffect() );
+  
   composer.addPass( rgbPass );
 }
 
-function dotRender() {
-  const dotPass = new ShaderPass( DotScreenShader );
-  dotPass.uniforms[ 'scale' ].value = 4;
-  composer.addPass( dotPass );
-}
+// function dotRender() {
+//   const dotPass = new ShaderPass( DotScreenShader );
+//   dotPass.uniforms[ 'scale' ].value = 4;
+//   composer.addPass( dotPass );
+// }
 
-function halfToneRender() {
-  const params = {
-    shape: 1,
-    radius: 4,
-    rotateR: Math.PI / 12,
-    rotateB: Math.PI / 12 * 2,
-    rotateG: Math.PI / 12 * 3,
-    scatter: 0,
-    blending: 1,
-    blendingMode: 1,
-    greyscale: false,
-    disable: false
-  };
-  const halftonePass = new HalftonePass( window.innerWidth, window.innerHeight, params );
-  composer.addPass( halftonePass );
-}
+// function halfToneRender() {
+//   const params = {
+//     shape: 1,
+//     radius: 4,
+//     rotateR: Math.PI / 12,
+//     rotateB: Math.PI / 12 * 2,
+//     rotateG: Math.PI / 12 * 3,
+//     scatter: 0,
+//     blending: 1,
+//     blendingMode: 1,
+//     greyscale: false,
+//     disable: false
+//   };
+//   const halftonePass = new HalftonePass( window.innerWidth, window.innerHeight, params );
+//   composer.addPass( halftonePass );
+// }
 
-function outlineRender() {
-  let effectSobel = new ShaderPass( SobelOperatorShader );
-  effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
-  effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
-  composer.addPass( effectSobel );
-  }
+// function outlineRender() {
+//   let effectSobel = new ShaderPass( SobelOperatorShader );
+//   effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
+//   effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
+//   composer.addPass( effectSobel );
+//   }
 
 //}());

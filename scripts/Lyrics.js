@@ -185,10 +185,9 @@ import { Player } from "textalive-app-api";
 
         // for glitch effect to work
         id("current-container").dataset.text = id("current-container").innerText;
-
       }
     }
-  };
+  }
 
   /**
    * DOM manipulation to prepare main text animation container for new phrase
@@ -430,7 +429,6 @@ import { Player } from "textalive-app-api";
 function random_rgba() {
   var o = Math.round, r = Math.random, s = 255;
   return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ', 1)';
-  //return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
 }
 
 }());
