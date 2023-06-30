@@ -6,7 +6,7 @@ export default class hologramShape {
   #line;
   #mesh;
 
-  constructor(parentScene, geometry, uniforms) {
+  constructor(parentScene, geometry, uniforms, layer) {
 
     // make wireframe
     const wireframeGeo = new THREE.WireframeGeometry(geometry);
@@ -14,6 +14,7 @@ export default class hologramShape {
         color: 0x9DB2FF,
     });
     this.#line = new THREE.LineSegments(wireframeGeo, lineMaterial);
+    this.#line.layers.set(layer);
     parentScene.add(this.#line);
 
 
@@ -28,6 +29,7 @@ export default class hologramShape {
     });
 
     this.#mesh = new THREE.Mesh(geometry, material);
+    this.#mesh.layers.set(layer);
     parentScene.add(this.#mesh);
   }
 }

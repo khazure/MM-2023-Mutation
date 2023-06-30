@@ -5,9 +5,10 @@ export default class InstanceShapes {
   #mesh;
   #geometry;
 
-  constructor(parentScene, theGeometry, theMaterial, count) {
+  constructor(parentScene, theGeometry, theMaterial, count, layer) {
     this.#geometry = theGeometry;
     this.#mesh = new THREE.InstancedMesh(theGeometry, theMaterial, count);
+    this.#mesh.layers.set(layer);
     parentScene.add(this.#mesh);
 
     //Probably should move this to seperate setColorAt()
