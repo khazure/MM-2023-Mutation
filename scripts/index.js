@@ -7,8 +7,10 @@ import BasicShape from './BasicShape.js';
 import BasicWireframe from './BasicWireframe.js';
 import Experiment from './experiment.js';
 import Experiment2 from './Experiment2.js';
-import holograpmShape from './hologramShape.js';
+import hologramShape from './hologramShape.js';
 import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
+
+import {getBeatRatio} from './Lyrics.js';
 
 //Select the canvas
 const backCanvas = document.querySelector('#c'); //Select the canvas
@@ -28,6 +30,12 @@ const axes = new THREE.AxesHelper(5); //Helper Visual
 // Data associated with materials that is passed to fragment shaders
 const uniforms  = {
   uTime: { value: 0.0}
+};
+
+// keeps track of current beat of textAlive app
+// Is a value from [0, 1] representing the completion of the beat
+const textAliveData = {
+  currBeat: { value: 0.0}
 };
 
 /**********HELPER VISUALS (DELETE BEFORE FINAL RELEASE)**********/
@@ -106,10 +114,10 @@ cubeMesh.randomizeSpherePos();
 //let experiment = new Experiment(scene, new THREE.SphereGeometry(15, 15, 15));
 //let experiment2 = new Experiment2(scene, new THREE.SphereGeometry(15, 15, 15), uniforms);
 console.log(new THREE.BoxGeometry(1, 2, 3).parameters);
-let hologramSphere = new holograpmShape(scene, new THREE.SphereGeometry(15, 15, 15), uniforms, 1);
+let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(15, 15, 15), uniforms, 1);
 
 // use to toggle off and on layers
-//camera.layers.toggle(0);
+camera.layers.toggle(0);
 
 let lastTime = 0;
 
@@ -130,6 +138,11 @@ function animate(time) {
   //lastTime = cubeMesh.rotateWave(5000, lastTime); //Higher value =  slower currently.
   time *= 0.001;
   uniforms.uTime.value = time;
+  //console.log(uniforms.uTime.value);
+  //hologramSphere.setRotate(time / 6);
+
+  textAliveData.currBeat.value = getBeatRatio();
+  hologramSphere.incrementRotate(textAliveData.currBeat.value / 20);
 
   requestAnimationFrame(animate);//Request to brower to animate something
   camControls.update(); //Requires if(enableDamping || autoRotate)

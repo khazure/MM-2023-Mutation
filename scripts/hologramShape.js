@@ -32,4 +32,12 @@ export default class hologramShape {
     this.#mesh.layers.set(layer);
     parentScene.add(this.#mesh);
   }
+
+  setRotate(amount) {
+    this.#line.rotation.y = amount;
+  }
+
+  incrementRotate(amount) {
+    this.#line.rotation.y += amount;
+  }
 }
