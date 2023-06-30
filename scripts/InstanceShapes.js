@@ -64,6 +64,7 @@ export default class InstanceShapes {
         }
     }
     this.#mesh.instanceMatrix.needsUpdate = true;
+    this.#mesh.updateMatrixWorld();
     this.#mesh.computeBoundingBox();
   }
   /**
@@ -78,23 +79,24 @@ export default class InstanceShapes {
    * @param {number} diameter is the diameter of the sphere. 
    */
   arrangeToSphere(startX, startY, startZ, changeInX, changeInY, changeInZ, startRadius, endRadius) {
-    //setPosAt(0, startX, startY, startZ);
-    let newPos = new THREE.Matrix4();
-    newPos.setPosition(startX, startY + 20, startZ + 20);
-    this.arrangeToRing(1, 4, 12, newPos);
-    newPos.setPosition(0,  2, 2);
-    this.arrangeToRing(13, 3, 10, newPos);
+    this.arrangeToRing(1, 4, 12, startX, startY, startZ);
+    this.arrangeToRing(13, 3, 10, startX, startY + 1.5, startZ);
+    this.arrangeToRing(24, 2, 8, startX, startY + 3, startZ);
+    this.arrangeToRing(33, 3, 10, startX, startY - 1.5, startZ);
+    this.arrangeToRing(44, 2, 8, startX, startY - 3, startZ);
   }
 
-  arrangeToRing(startIndex, radius, vertices, centerPos) {
+  arrangeToRing(startIndex, radius, vertices, centerX, centerY, centerZ) {
 
     for(let i = startIndex; i <= startIndex + vertices; i++) {
-      let newPos = centerPos;
+      let newPos = new THREE.Matrix4();
       let angle = 2 * Math.PI * i/vertices; //Divide circumfrence of circle
-      newPos.makeTranslation(radius * Math.cos(angle), 0, radius * Math.sin(angle));
+      newPos.setPosition(radius * Math.cos(angle) + centerX, centerY, radius * Math.sin(angle) + centerZ);
 
       this.#mesh.setMatrixAt(i, newPos);
     }
+    this.#mesh.instanceMatrix.needsUpdate = true;
+    this.#mesh.computeBoundingBox();
   }
 
 

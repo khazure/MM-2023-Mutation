@@ -83,7 +83,7 @@ onWindowResize(); //Calc aspect for first time.
 /***********LIGHTING***********/
 {
   const color = 0xFFFFFF;
-  const intensity = 1;
+  const intensity = 0.0;
   const light = new THREE.DirectionalLight(color, intensity);
   //light.position.set(-1, 2, 4);
   light.position.set(-1, 5, 3);
@@ -92,8 +92,8 @@ onWindowResize(); //Calc aspect for first time.
 
 
   //HELPER VISUAL 
-  const lightHelper = new THREE.DirectionalLightHelper(light, 5, 0xC52AB1);
-  //scene.add(lightHelper);
+  const lightHelper = new THREE.DirectionalLightHelper(light, 10, 0xC52AB1);
+  scene.add(lightHelper);
 
   let ambient = new THREE.AmbientLight(color);
   ambient.position.set(-1, 5, 3);
