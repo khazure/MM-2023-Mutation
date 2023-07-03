@@ -120,7 +120,7 @@
       </div>
     </article>
   </main>
-  <nav id="control" class="window">
+  <!-- <nav id="control" class="window">
     <div class="window-header">
       <p>controls</p>
       <button>
@@ -163,17 +163,17 @@
       </label>
       <input id="volume-level" type="range" min="0" max="100" value="50">
     </div>
-  </nav>
+  </nav> -->
   <footer>
-    <button id="show-controls">
+    <!-- <button id="show-controls">
       <span class="material-symbols-outlined">
         tune
       </span>
       <span>Controls</span>
     </button>
     <div id="media"></div>
-  </footer>
-  <!-- <footer>
+  </footer> -->
+  <footer>
     <button id="play-btn" class="play-btn hidden" >
       <span class="material-symbols-outlined">
         play_circle
@@ -183,13 +183,7 @@
       <span class="material-symbols-outlined">
         pause_circle
       </span>
-    </button>  
-    <button id="jump-btn" >
-      Lyrics start
-    </button>
-    <button id="chorus-btn" >
-      Chorus
-    </button>
+    </button> 
     <button id="reset-btn" >
       <span class="material-symbols-outlined">
         stop_circle
@@ -201,7 +195,15 @@
       </span>
     </label>
     <input id="volume-level" type="range" min="0" max="100" value="50">
-  </footer> -->
+
+    <!-- Below are temporary -->
+    <button id="jump-btn" >
+      <span>Lyrics start</span>
+    </button>
+    <button id="chorus-btn" >
+      <span>Chorus</span>
+    </button>      
+  </footer>
 </body>
 <!-- Must be after html so it can access the media div -->
 <script type="module" src="/scripts/Lyrics.js"></script>

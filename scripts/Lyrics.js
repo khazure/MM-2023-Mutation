@@ -34,6 +34,8 @@ import { Player } from "textalive-app-api";
   // keeps track of current chord
   let currChord = null;
 
+  let currChordRatio = null;
+
   // keeps track of starting time for miku's speech in parenthesises
   let parenStart = null;
 
@@ -68,9 +70,9 @@ function init() {
   id("reset-btn").addEventListener("click", resetMusic);
   id("volume-level").addEventListener("input", changeVolume);
 
-  id("show-controls").addEventListener("click", () => {
-    id("control").classList.toggle("hidden");
-  });
+  // id("show-controls").addEventListener("click", () => {
+  //   id("control").classList.toggle("hidden");
+  // });
 
   // set volume initially
   changeVolume();
@@ -81,6 +83,9 @@ function init() {
 
   // show finished loading pop up
   id('finished-loading-pop-up').classList.remove("hidden");
+  
+  // remove loading pop up
+  qs('.window').classList.add("hidden");
 }
 
 // for draggable windows
@@ -307,7 +312,7 @@ function jumpChorus() {
 
 function resetMusic() {
   id("text-animation-main").innerHTML = "";
-
+  id("speech-bubble").innerHTML = "";
   currPhrase = null;
   currWord = null;
   currBeat = null;
@@ -355,28 +360,20 @@ function onThrottledTimeUpdate(position) {
   let beat = player.findBeat(position);
 
   // number from 0 to 1 representing percentage of completion of beat
-  currBeatRatio = beat ? ((beat.endTime - position) / beat.duration) : null;
+  currBeatRatio = beat ? 1 - ((beat.endTime - position) / beat.duration) : null;
 
   // animate if new beat is encountered
-  if (beat && beat != currBeat) {
-    currBeat = beat;
-
-    id("beat-reactor").style.backgroundColor = random_rgba();
-    //setRandomColor();
-    // somehow access the 3d objects here to change with beat
-    //console.log(wireSphere)
-    
-  } else {
-    //id("beat-reactor").style.scale = "1";
-  }
+  // if (beat && beat != currBeat) {
+  //   currBeat = beat;
+  // } 
 
   // animate if new chord encountered
   let chord = player.findChord(position);
+
+  currChordRatio = chord ? 1 - ((chord.endTime - position) / chord.duration) : null;
   if (chord && chord != currChord) {
     currChord = chord;
-    qs("nav").style.backgroundColor = random_rgba();
-
-    //changeWireframeColor(random_rgba());
+    id("beat-reactor").style.backgroundColor = random_rgba();
   }
 
   if (player.findChorus(position)) {
@@ -438,7 +435,22 @@ function random_rgba() {
   return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ', 1)';
 }
 
+/**
+ * Getter functino for the current beat ratio, a number from 0 to 1
+ * representing the completion of the current beat
+ * Can be null if no beat
+ * @returns {number} - current beat ratio
+ */
 export function getBeatRatio() {
   return currBeatRatio;
 }
 
+/**
+ * Getter function for the current chord ratio, a number from 0 to 1
+ * representing the completion of the current chord duration
+ * Can be null if no chord
+ * @returns {number} - current chord ratio
+ */
+export function getChordRatio() {
+  return currChordRatio;
+}
