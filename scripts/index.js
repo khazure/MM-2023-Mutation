@@ -11,7 +11,7 @@ import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
 import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 
-import {getBeatRatio} from './Lyrics.js';
+import {getBeatRatio, getChordRatio} from './Lyrics.js';
 
 //Select the canvas
 const backCanvas = document.querySelector('#c'); //Select the canvas
@@ -30,13 +30,15 @@ const axes = new THREE.AxesHelper(5); //Helper Visual
 
 // Data associated with materials that is passed to fragment shaders
 const uniforms  = {
-  uTime: { value: 0.0}
+  uTime: { value: 0.0 }
 };
 
 // keeps track of current beat of textAlive app
 // Is a value from [0, 1] representing the completion of the beat
 const textAliveData = {
-  currBeat: { value: 0.0}
+  beat: { currValue: 1.0, prevValue: 1.0 },
+  chord: { currValue: 1.0, prevValue: 1.0},
+  inChorus: { value: false }
 };
 
 /**********HELPER VISUALS (DELETE BEFORE FINAL RELEASE)**********/
@@ -148,11 +150,19 @@ function animate(time) {
   //lastTime = cubeMesh.rotateWave(5000, lastTime); //Higher value =  slower currently.
   time *= 0.001;
   uniforms.uTime.value = time;
-  //console.log(uniforms.uTime.value);
-  //hologramSphere.setRotate(time / 6);
 
-  textAliveData.currBeat.value = getBeatRatio();
-  hologramSphere.incrementRotate(textAliveData.currBeat.value / 20);
+  // update previous
+  textAliveData.beat.prevValue = textAliveData.beat.currValue;
+  textAliveData.chord.prevValue = textAliveData.chord.currValue;
+
+  textAliveData.beat.currValue = getBeatRatio();
+  textAliveData.chord.currValue = getChordRatio();
+
+  hologramSphere.incrementRotate(linearToTwoLinears(1 - textAliveData.beat.currValue) / 20);
+
+  if (Math.abs(textAliveData.chord.currValue - textAliveData.chord.prevValue) > 0.5) {
+    camera.layers.toggle(0);
+  }
 
   requestAnimationFrame(animate);//Request to brower to animate something
   camControls.update(); //Requires if(enableDamping || autoRotate)
@@ -232,3 +242,35 @@ function rgbRender() {
 //   }
 
 //}());
+
+/**
+ * Splits the given value into two piecewise functions
+ * Ex. instead of x = y, returns:
+ * y = 2x if 0 < x <= 0.5
+ * y = 2x + 1 if 0.5 < x <= 1
+ * Where x = linearValue and the returned output is the y
+ * @param {number} linearValue - value from scale of 0 to 1
+ * @returns 
+ */
+function linearToTwoLinears(linearValue) {
+  if (linearValue <= 0.5) {
+    return 2 * linearValue;
+  } else {
+    return (2 * linearValue) - 1
+  }
+}
+
+/**
+ * 
+ * @param {number} linearValue 
+ * @returns 
+ */
+function linearToGaussian(linearValue) {
+  let a = 0.4;
+  let b = 0.5;
+  let c = 2.4;
+  let coefficient = 1 / (a * Math.sqrt(2 * Math.PI));
+  let exp = -c * Math.pow((linearValue - b) / a, 2);
+  let product = coefficient * Math.pow(Math.E, exp);
+  return product;
+}
