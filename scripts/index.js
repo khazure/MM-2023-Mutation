@@ -7,6 +7,7 @@ import BasicShape from './BasicShape.js';
 import BasicWireframe from './BasicWireframe.js';
 import Experiment from './experiment.js';
 import Experiment2 from './Experiment2.js';
+import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
 import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 
@@ -66,7 +67,7 @@ camControls.screenSpacePanning = false;
 //Min and Max distance we can zoom on camera
 camControls.minDistance = 0; //Neg does nothing?
 camControls.maxDistance = 100;
-camControls.maxPolarAngle = Math.PI / 2; //90 degrees
+camControls.maxPolarAngle = 2 * Math.PI; //360 degrees
 
 camControls.enableZoom = true;
 onWindowResize(); //Calc aspect for first time.
@@ -93,6 +94,7 @@ onWindowResize(); //Calc aspect for first time.
   light.layers.enable(0);
   light.layers.enable(1);
   light.layers.enable(2);
+  light.layers.enable(3); //InstanceSphere layer.
 }
 
 /****************************** layers code *********************************** */
@@ -100,17 +102,25 @@ onWindowResize(); //Calc aspect for first time.
 camera.layers.enable(0); // enabled by default
 camera.layers.enable(1);
 camera.layers.enable(2);
+camera.layers.enable(3); //InstanceSphere layer.
 
 
 /***********EVENTS***********/
 window.addEventListener('resize', onWindowResize);
 
-let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial(0xFFFFFF), 1000, 0);
-cubeMesh.randomizeSpherePos();
+//let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial(0xFFFFFF), 1000, 0);
+//cubeMesh.randomizeSpherePos();
 //cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
 //cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
 //cubeMesh.arrangeToSphere(0, 0, 0, 1, 1, 1, 1, 5);
 //cubeMesh.layers.set(0);
+
+//
+//constructor(parentScene, theGeometry, theMaterial, radius, maxVert, minVert, layer)
+let testMaterial = new THREE.MeshPhongMaterial();
+testMaterial.color.set(0x33ccff);
+let sphere = new InstanceSphere(scene, new THREE.BoxGeometry(1, 1, 1), testMaterial, 15, 25, 5, 3); 
+
 
 //let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(15, 15, 15), 0x9DB2FF, 100);
 //let experiment2 = new Experiment2(scene, new THREE.SphereGeometry(15, 15, 15), uniforms);
@@ -120,7 +130,7 @@ let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(15, 15, 1
 let experiment = new Experiment(scene, new THREE.SphereGeometry(50, 50, 50), uniforms, 2);
 
 // use to toggle off and on layers
-// camera.layers.toggle(0);
+//camera.layers.toggle(0);
 
 let lastTime = 0;
 

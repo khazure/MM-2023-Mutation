@@ -67,7 +67,7 @@ randomizeCubePos() {
 
   #generateSpherePoint(radius) {
     let x =  (Math.random() * 2 - 1) * 2 * radius;
-    let y = (Math.random() * 2 - 1) * radius;
+    let y = (Math.random() * 2 - 1) *  2 * radius;
     let z = (Math.random() * 2 - 1) * 2 * radius;
     let point = new THREE.Vector3( x, y, z);
 
