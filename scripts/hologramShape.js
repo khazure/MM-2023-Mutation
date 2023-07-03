@@ -35,9 +35,11 @@ export default class hologramShape {
 
   setRotate(amount) {
     this.#line.rotation.y = amount;
+    this.#mesh.rotation.y = amount;
   }
 
   incrementRotate(amount) {
     this.#line.rotation.y += amount;
+    this.#mesh.rotation.y += amount;
   }
 }

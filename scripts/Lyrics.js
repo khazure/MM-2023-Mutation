@@ -11,7 +11,8 @@ import { Player } from "textalive-app-api";
   { 
     app: {token: "8oZeCHYcDmC9Olyu"},
     mediaElement: document.querySelector("#media"),
-    mediaBannerPosition: "bottom right"
+    mediaBannerPosition: "bottom right",
+    valenceArousalEnabled: true
   });
 
   const FIRST_CHORUS_START = 54754.3;
@@ -350,6 +351,7 @@ function onAppReady(app) {
  * @param {number} position - https://developer.textalive.jp/packages/textalive-app-api/interfaces/playereventlistener.html#onthrottledtimeupdate
  */
 function onThrottledTimeUpdate(position) {
+
   // 再生位置を表示する
   // Update current position
   qs("#position strong").textContent = String(Math.floor(position));
@@ -371,10 +373,10 @@ function onThrottledTimeUpdate(position) {
   let chord = player.findChord(position);
 
   currChordRatio = chord ? 1 - ((chord.endTime - position) / chord.duration) : null;
-  if (chord && chord != currChord) {
-    currChord = chord;
-    id("beat-reactor").style.backgroundColor = random_rgba();
-  }
+  // if (chord && chord != currChord) {
+  //   currChord = chord;
+  //   id("beat-reactor").style.backgroundColor = random_rgba();
+  // }
 
   if (player.findChorus(position)) {
     qs(".grid").classList.replace("non-chorus", "chorus");

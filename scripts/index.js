@@ -113,10 +113,11 @@ cubeMesh.randomizeSpherePos();
 //cubeMesh.layers.set(0);
 
 //let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(15, 15, 15), 0x9DB2FF, 100);
-//let experiment = new Experiment(scene, new THREE.SphereGeometry(15, 15, 15));
 //let experiment2 = new Experiment2(scene, new THREE.SphereGeometry(15, 15, 15), uniforms);
 console.log(new THREE.BoxGeometry(1, 2, 3).parameters);
 let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(15, 15, 15), uniforms, 1);
+
+let experiment = new Experiment(scene, new THREE.SphereGeometry(50, 50, 50), uniforms, 2);
 
 // use to toggle off and on layers
 // camera.layers.toggle(0);
