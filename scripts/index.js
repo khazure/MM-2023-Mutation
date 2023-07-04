@@ -9,6 +9,7 @@ import Experiment from './experiment.js';
 import Experiment2 from './Experiment2.js';
 import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
+import infiniteTubes from './infiniteTubes.js';
 import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 
 import {getBeatRatio, getChordRatio} from './Lyrics.js';
@@ -95,6 +96,7 @@ onWindowResize(); //Calc aspect for first time.
   light.layers.enable(1);
   light.layers.enable(2);
   light.layers.enable(3); //InstanceSphere layer.
+  light.layers.enable(4);
 }
 
 /****************************** layers code *********************************** */
@@ -103,13 +105,20 @@ camera.layers.enable(0); // enabled by default
 camera.layers.enable(1);
 camera.layers.enable(2);
 camera.layers.enable(3); //InstanceSphere layer.
+camera.layers.enable(4); // inifinite tubes
 
+// temp
+// camera.layers.disable(0)
+// camera.layers.disable(1);
+// //camera.layers.disable(2);
+// camera.layers.disable(3);
+// camera.layers.disable(4);
 
 /***********EVENTS***********/
 window.addEventListener('resize', onWindowResize);
 
-//let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial(0xFFFFFF), 1000, 0);
-//cubeMesh.randomizeSpherePos();
+let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(3, 3, 3), new THREE.MeshPhongMaterial(0xFFFFFF), 100, 0);
+cubeMesh.randomizeSpherePos();
 //cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
 //cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
 //cubeMesh.arrangeToSphere(0, 0, 0, 1, 1, 1, 1, 5);
@@ -128,6 +137,8 @@ console.log(new THREE.BoxGeometry(1, 2, 3).parameters);
 let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(15, 15, 15), uniforms, 1);
 
 let experiment = new Experiment(scene, new THREE.SphereGeometry(50, 50, 50), uniforms, 2);
+
+let tubes = new infiniteTubes(scene, uniforms, 4)
 
 // use to toggle off and on layers
 //camera.layers.toggle(0);
@@ -161,8 +172,8 @@ function animate(time) {
 
   hologramSphere.incrementRotate(linearToTwoLinears(1 - textAliveData.beat.currValue) / 20);
 
-  if (Math.abs(textAliveData.chord.currValue - textAliveData.chord.prevValue) > 0.5) {
-    camera.layers.toggle(0);
+  if (Math.abs(textAliveData.beat.currValue - textAliveData.beat.prevValue) > 0.5) {
+    //camera.layers.toggle(0);
   }
 
   requestAnimationFrame(animate);//Request to brower to animate something
