@@ -113,7 +113,7 @@ camera.layers.enable(5); // plane experiment
 
 // temp
 //camera.layers.disable(0);
-//camera.layers.disable(1);
+camera.layers.disable(1);
 camera.layers.disable(2);
 camera.layers.disable(3);
 camera.layers.disable(4);
@@ -158,7 +158,7 @@ let lastTime = 0;
 
 //utlineRender();
 
-bloomRender(camera);
+//bloomRender(camera);
 
 rgbRender(camera);
 
