@@ -25,28 +25,6 @@
       }
     }
   </script>
-  <script type="x-shader/x-vertex" id="vertexshader">
-
-    varying vec2 vUv;
-
-    void main() {
-
-      vUv = uv;
-
-      gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-
-    }
-  </script>
-  <script type="x-shader/x-fragment" id="fragmentshader">
-    uniform sampler2D baseTexture;
-    uniform sampler2D bloomTexture;
-
-    varying vec2 vUv;
-
-    void main() {
-      gl_FragColor = ( texture2D( baseTexture, vUv ) + vec4( 1.0 ) * texture2D( bloomTexture, vUv ) );
-    }
-  </script>
   <script type = "module" src="./scripts/index.js"></script>
 </head>
 <body>
@@ -85,7 +63,6 @@
       </article>
     </section>
     <section class="full-screen grid non-chorus" >
-      <div id="beat-reactor"></div>
       <div class="vertical-bar"></div>
       <div id="text-animation-main">
         <!-- generated lyrics appear here -->
@@ -98,7 +75,6 @@
         </div>
         <img src="/images/miku.png">
       </div> -->
-      <!-- <canvas id="c" color="turquoise"></canvas> -->
       <div class="vertical-bar bottom-level col3">
         <p>
           <span id="position"><strong>-</strong> [ms]</span>
@@ -120,59 +96,6 @@
       </div>
     </article>
   </main>
-  <!-- <nav id="control" class="window">
-    <div class="window-header">
-      <p>controls</p>
-      <button>
-        <span class="material-symbols-outlined">
-          minimize
-        </span>
-      </button>
-      <button disabled>
-        <span class="material-symbols-outlined">
-          close
-        </span>  
-      </button>
-    </div>
-    <div class="window-body">
-      <button id="play-btn" class="play-btn hidden" >
-        <span class="material-symbols-outlined">
-          play_circle
-        </span>
-      </button>
-      <button id="pause-btn" >
-        <span class="material-symbols-outlined">
-          pause_circle
-        </span>
-      </button>
-      <button id="jump-btn" >
-        Lyrics start
-      </button>
-      <button id="chorus-btn" >
-        Chorus
-      </button>
-      <button id="reset-btn" >
-        <span class="material-symbols-outlined">
-          stop_circle
-        </span>
-      </button>
-      <label for="volume-level">
-        <span class="material-symbols-outlined">
-          volume_up
-        </span>
-      </label>
-      <input id="volume-level" type="range" min="0" max="100" value="50">
-    </div>
-  </nav> -->
-  <footer>
-    <!-- <button id="show-controls">
-      <span class="material-symbols-outlined">
-        tune
-      </span>
-      <span>Controls</span>
-    </button>
-    <div id="media"></div>
-  </footer> -->
   <footer>
     <button id="play-btn" class="play-btn hidden" >
       <span class="material-symbols-outlined">
@@ -202,7 +125,10 @@
     </button>
     <button id="chorus-btn" >
       <span>Chorus</span>
-    </button>      
+    </button>
+    <button id="2nd-chorus-btn" >
+      <span>2nd Chorus</span>
+    </button>
   </footer>
 </body>
 <!-- Must be after html so it can access the media div -->

@@ -148,7 +148,6 @@ let sprite = new MikuSprite(scene, uniforms, 5);
 
 let lastTime = 0;
 
-
 /*************************** composer filters ***********************************/
 
 //bloomRender(camera);
@@ -169,7 +168,7 @@ function animate(time) {
 
   hologramSphere.incrementRotate(linearToTwoLinears(1 - textAliveData.beat.currValue) / 20);
 
-  if (Math.abs(textAliveData.beat.currValue - textAliveData.beat.prevValue) > 0.5) {
+  if (Math.abs(linearToTwoLinears(textAliveData.beat.currValue) - linearToTwoLinears(textAliveData.beat.prevValue)) > 0.5) {
     //camera.layers.toggle(0);
     sprite.nextFrame();
   }

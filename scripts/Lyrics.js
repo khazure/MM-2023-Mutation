@@ -21,6 +21,8 @@ import { Player } from "textalive-app-api";
   const SECOND_CHORUS_START = 110764.6;
   const SECOND_CHORUS_END = 136369.4;
 
+  const END_TIME = 165015;
+
   // Keeps track of the current lyric unit at phrase level
   let currPhrase = null;
 
@@ -71,16 +73,13 @@ function init() {
   id("reset-btn").addEventListener("click", resetMusic);
   id("volume-level").addEventListener("input", changeVolume);
 
-  // id("show-controls").addEventListener("click", () => {
-  //   id("control").classList.toggle("hidden");
-  // });
-
   // set volume initially
   changeVolume();
 
   //temp:
   id("chorus-btn").addEventListener("click", jumpChorus);
   id("jump-btn").addEventListener("click", jumpMusic);
+  id("2nd-chorus-btn").addEventListener("click", jumpSecondChorus);
 
   // show finished loading pop up
   id('finished-loading-pop-up').classList.remove("hidden");
@@ -157,11 +156,13 @@ const animateChar = function (now, unit) {
           }
 
           if (encounteredParen) {
+
             // add words to miku's speech bubble
             let word = document.createElement("span");
             word.textContent = child.text.replace("（", "").replace("）", "");
             id("speech-bubble").append(word);
           } else {
+
             // preadd lyrics to container
             let word = document.createElement("span");
             word.textContent = child.text;
@@ -309,6 +310,11 @@ function jumpMusic() {
 function jumpChorus() {
   player.video &&
   player.requestMediaSeek(FIRST_CHORUS_START);
+}
+
+function jumpSecondChorus() {
+  player.video &&
+  player.requestMediaSeek(SECOND_CHORUS_START);
 }
 
 function resetMusic() {

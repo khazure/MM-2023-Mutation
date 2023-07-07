@@ -221,14 +221,6 @@ footer button {
   color: var(--default-color);
 }
 
-#beat-reactor {
-  background-color: var(--accent-color);
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  border-radius: 100px;
-}
-
 #miku-profile {
   width: 20vw;
   bottom: 50px;
