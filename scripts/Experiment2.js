@@ -5,10 +5,19 @@ import fragmentShader from './shaders/fragment.glsl?raw';
 export default class Experiment2 {
   #mesh;
 
-  constructor(parentScene, theGeometry, uniforms) {
+  constructor(parentScene, theGeometry, layer) {
+    const loader = new THREE.TextureLoader();
+
+    const texture = loader.load("../images/profile_2.png");
+    const alphaMap = loader.load("../images/alphaMap.png");
 
     let color = new THREE.Color(0x3762ff);
-    //let material = new THREE.MeshBasicMaterial({ color: color})
+    let material = new THREE.MeshBasicMaterial({ 
+      color: color,
+      transparent: true,
+      map: texture,
+      alphaMap: alphaMap
+    });
 
     // let material = new THREE.MeshPhongMaterial({
     //     color: color,
@@ -19,19 +28,8 @@ export default class Experiment2 {
     //     emissiveIntensity: 0.5
     // });
 
-    let material = new THREE.ShaderMaterial( {
-      // uniforms: {
-      //   uTime: { value: 1.0 },
-      //   //resolution: { value: new THREE.Vector2() }
-      // },
-      blending: THREE.AdditiveBlending,
-      opacity: 0.3,
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      uniforms
-    });
-
     this.#mesh = new THREE.Mesh(theGeometry, material);
     parentScene.add(this.#mesh);
+    this.#mesh.layers.enable(layer);
   }
 }

@@ -22,7 +22,8 @@ export default class hologramShape {
 
     let material = new THREE.ShaderMaterial( {
       blending: THREE.AdditiveBlending,
-      opacity: 0.3,
+      transparent: true,
+      opacity: 0.9,
       vertexShader: vertexShader,
       fragmentShader: fragmentShader,
       uniforms

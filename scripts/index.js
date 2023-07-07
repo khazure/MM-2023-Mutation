@@ -14,14 +14,18 @@ import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, Ren
 
 import {getBeatRatio, getChordRatio} from './Lyrics.js';
 
+// Number of layers
+const numLayers = 5;
+
 //Select the canvas
 const backCanvas = document.querySelector('#c'); //Select the canvas
 
 const renderer = new THREE.WebGL1Renderer({ alpha: true, antialias: true,
                                           backCanvas }); // alpha true = transparent bg
-const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 200); //(fov, aspect, minDis, maxDis);
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 1000); //(fov, aspect, minDis, maxDis);
 const camControls = new OrbitControls(camera, renderer.domElement);
 const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xFF0000, 40, 80);
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
@@ -31,7 +35,7 @@ const axes = new THREE.AxesHelper(5); //Helper Visual
 
 // Data associated with materials that is passed to fragment shaders
 const uniforms  = {
-  uTime: { value: 0.0 }
+  uTime: { value: 0.0 },
 };
 
 // keeps track of current beat of textAlive app
@@ -55,7 +59,7 @@ document.body.appendChild(renderer.domElement);
 /***********CAMERA AND ITS CONTROLS***********/
 //By default, the camera will be looking down -Z with, positioned at (0, 0, 0)
 //camera.position.set(numOfCubes[0] * 3, numOfCubes[1] * 3, numOfCubes[2] * 3); //x, y, z
-camera.position.set(30, 0, 30); 
+camera.position.set(0, 0, 50); 
 camControls.update(); //Must update everytime position changes.
 camControls.listenToKeyEvents(window);
 
@@ -88,31 +92,32 @@ onWindowResize(); //Calc aspect for first time.
   const lightHelper = new THREE.DirectionalLightHelper(light, 10, 0xC52AB1);
   scene.add(lightHelper);
 
-  let ambient = new THREE.AmbientLight(color);
+  const ambient = new THREE.AmbientLight(color);
   ambient.position.set(-1, 5, 3);
   scene.add(ambient);
 
-  light.layers.enable(0);
-  light.layers.enable(1);
-  light.layers.enable(2);
-  light.layers.enable(3); //InstanceSphere layer.
-  light.layers.enable(4);
+  for(let i = 0; i <= numLayers; i++) {
+    light.layers.enable(i);
+    ambient.layers.enable(i);
+  }
 }
 
 /****************************** layers code *********************************** */
 
-camera.layers.enable(0); // enabled by default
-camera.layers.enable(1);
-camera.layers.enable(2);
-camera.layers.enable(3); //InstanceSphere layer.
-camera.layers.enable(4); // inifinite tubes
+camera.layers.enable(0); // enabled by default, instanced cubes
+camera.layers.enable(1); // hologram shape
+camera.layers.enable(2); // experiment
+camera.layers.enable(3); // InstanceSphere layer.
+camera.layers.enable(4); // infinite tubes
+camera.layers.enable(5); // plane experiment
 
 // temp
-// camera.layers.disable(0)
-// camera.layers.disable(1);
-// //camera.layers.disable(2);
-// camera.layers.disable(3);
-// camera.layers.disable(4);
+//camera.layers.disable(0);
+//camera.layers.disable(1);
+camera.layers.disable(2);
+camera.layers.disable(3);
+camera.layers.disable(4);
+//camera.layers.disable(5);
 
 /***********EVENTS***********/
 window.addEventListener('resize', onWindowResize);
@@ -122,19 +127,18 @@ cubeMesh.randomizeSpherePos();
 //cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
 //cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
 //cubeMesh.arrangeToSphere(0, 0, 0, 1, 1, 1, 1, 5);
-//cubeMesh.layers.set(0);
 
 //
 //constructor(parentScene, theGeometry, theMaterial, radius, maxVert, minVert, layer)
-let testMaterial = new THREE.MeshPhongMaterial();
-testMaterial.color.set(0x33ccff);
-let sphere = new InstanceSphere(scene, new THREE.BoxGeometry(1, 1, 1), testMaterial, 15, 25, 5, 3); 
+// let testMaterial = new THREE.MeshPhongMaterial();
+// testMaterial.color.set(0x33ccff);
+// let sphere = new InstanceSphere(scene, new THREE.BoxGeometry(1, 1, 1), testMaterial, 15, 25, 5, 3); 
 
 
 //let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(15, 15, 15), 0x9DB2FF, 100);
-//let experiment2 = new Experiment2(scene, new THREE.SphereGeometry(15, 15, 15), uniforms);
+let experiment2 = new Experiment2(scene, new THREE.PlaneGeometry(15, 15), 5);
 console.log(new THREE.BoxGeometry(1, 2, 3).parameters);
-let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(15, 15, 15), uniforms, 1);
+let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(10), uniforms, 1);
 
 let experiment = new Experiment(scene, new THREE.SphereGeometry(50, 50, 50), uniforms, 2);
 
@@ -175,6 +179,8 @@ function animate(time) {
   if (Math.abs(textAliveData.beat.currValue - textAliveData.beat.prevValue) > 0.5) {
     //camera.layers.toggle(0);
   }
+
+  tubes.updateMaterialOffset();
 
   requestAnimationFrame(animate);//Request to brower to animate something
   camControls.update(); //Requires if(enableDamping || autoRotate)
