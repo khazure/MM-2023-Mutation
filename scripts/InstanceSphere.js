@@ -6,6 +6,7 @@ import * as THREE from 'three';
     Fix the instance(s) appearing at the center of circle when it should be at top or bottom of sphere,
     Fix the 'curvature difference' of the circles on seperate layers, 
       I.e there is one straight vertical line of instances but another looks like a wave.
+    Color visability is tied to layer 0 toggle, fix it.
 */
 export default class InstanceSphere {
   
