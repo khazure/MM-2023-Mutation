@@ -10,9 +10,11 @@ import Experiment2 from './Experiment2.js';
 import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
 import infiniteTubes from './infiniteTubes.js';
+import MikuSprite from './mikuSprite.js';
 import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 
 import {getBeatRatio, getChordRatio} from './Lyrics.js';
+import { Sprite } from 'three';
 
 // Number of layers
 const numLayers = 5;
@@ -109,7 +111,7 @@ camera.layers.enable(1); // hologram shape
 camera.layers.enable(2); // experiment
 camera.layers.enable(3); // InstanceSphere layer.
 camera.layers.enable(4); // infinite tubes
-camera.layers.enable(5); // plane experiment
+camera.layers.enable(5); // miku sprite
 
 // temp
 //camera.layers.disable(0);
@@ -134,29 +136,20 @@ cubeMesh.randomizeSpherePos();
 // testMaterial.color.set(0x33ccff);
 // let sphere = new InstanceSphere(scene, new THREE.BoxGeometry(1, 1, 1), testMaterial, 15, 25, 5, 3); 
 
+//let experiment2 = new Experiment2(scene, new THREE.PlaneGeometry(15, 15), 5);
 
-//let wireSphere = new BasicWireframe(scene, new THREE.SphereGeometry(15, 15, 15), 0x9DB2FF, 100);
-let experiment2 = new Experiment2(scene, new THREE.PlaneGeometry(15, 15), 5);
-console.log(new THREE.BoxGeometry(1, 2, 3).parameters);
 let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(10), uniforms, 1);
 
-let experiment = new Experiment(scene, new THREE.SphereGeometry(50, 50, 50), uniforms, 2);
+// let experiment = new Experiment(scene, new THREE.SphereGeometry(50, 50, 50), uniforms, 2);
 
 let tubes = new infiniteTubes(scene, uniforms, 4)
 
-// use to toggle off and on layers
-//camera.layers.toggle(0);
+let sprite = new MikuSprite(scene, uniforms, 5);
 
 let lastTime = 0;
 
 
 /*************************** composer filters ***********************************/
-
-//halfToneRender();
-
-//dotRender();
-
-//utlineRender();
 
 //bloomRender(camera);
 
@@ -178,6 +171,7 @@ function animate(time) {
 
   if (Math.abs(textAliveData.beat.currValue - textAliveData.beat.prevValue) > 0.5) {
     //camera.layers.toggle(0);
+    sprite.nextFrame();
   }
 
   tubes.updateMaterialOffset();
@@ -228,38 +222,6 @@ function rgbRender() {
   
   composer.addPass( rgbPass );
 }
-
-// function dotRender() {
-//   const dotPass = new ShaderPass( DotScreenShader );
-//   dotPass.uniforms[ 'scale' ].value = 4;
-//   composer.addPass( dotPass );
-// }
-
-// function halfToneRender() {
-//   const params = {
-//     shape: 1,
-//     radius: 4,
-//     rotateR: Math.PI / 12,
-//     rotateB: Math.PI / 12 * 2,
-//     rotateG: Math.PI / 12 * 3,
-//     scatter: 0,
-//     blending: 1,
-//     blendingMode: 1,
-//     greyscale: false,
-//     disable: false
-//   };
-//   const halftonePass = new HalftonePass( window.innerWidth, window.innerHeight, params );
-//   composer.addPass( halftonePass );
-// }
-
-// function outlineRender() {
-//   let effectSobel = new ShaderPass( SobelOperatorShader );
-//   effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
-//   effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
-//   composer.addPass( effectSobel );
-//   }
-
-//}());
 
 /**
  * Splits the given value into two piecewise functions

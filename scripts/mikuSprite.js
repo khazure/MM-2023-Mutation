@@ -1,46 +1,31 @@
 import * as THREE from 'three';
-import vertexShader from './shaders/vertex.glsl?raw'; // vite needs the ?raw query to import as string
-import fragmentShader from './shaders/fragment.glsl?raw';
 
-export default class Experiment2 {
+export default class MikuSprite {
   #mesh;
 
-  constructor(parentScene, theGeometry, layer) {
-    const loader = new THREE.TextureLoader();
-
+  constructor(parentScene, uniforms, layer) {
     const texture = this.spriteSheetTexture("../images/test_sheet.png", 2, 1, 5);
-    //const texture = this.makeTexture("../images/test_sheet")
-    // let color = new THREE.Color(0x3762ff);
-    // let material = new THREE.MeshBasicMaterial({ 
-    //   color: color,
-    //   transparent: true,
-    //   map: texture,
-    //   alphaMap: alphaMap
-    // });
-
-    // this.#mesh = new THREE.Mesh(theGeometry, material);
-    // parentScene.add(this.#mesh);
-    // this.#mesh.layers.enable(layer);
-
     const material = new THREE.SpriteMaterial({
       map: texture,
     });
 
     this.#mesh = new THREE.Sprite(material);
-    this.#mesh.scale.set(5, 5, 0)
+    this.#mesh.scale.set(5, 5, 0);
+    this.#mesh.layers.enable(layer);
     parentScene.add(this.#mesh);
   }
 
   /**
    * Function from Motionharvest: https://stackoverflow.com/questions/16029103/three-js-using-2d-texture-sprite-for-animation-planegeometry 
    * Creates a texture from a sprite sheet that animates the sprite by
-   * going from frame to frame in the sprite sheet grid.
+   * going from frame to frame in the sprite sheet grid. Used by the material
+   * of the sprite.
    * @param {*} imageURL - url of sprite sheet
    * @param {*} framesX - number of frames on the x-axis
    * @param {*} framesY - Number of frames on the y-axis
    * @param {*} frameDelay - delay between frames
    * @param {*} _endFrame - optional, denotes ending frame if entire row isn't used
-   * @returns texture for use by Sprite
+   * @returns texture for use by Sprite's material
    */
   spriteSheetTexture(imageURL, framesX, framesY, frameDelay, _endFrame) {
 
@@ -55,11 +40,11 @@ export default class Experiment2 {
     img.onload = function(){
         canvas.width = frameWidth = img.width / framesX;
         canvas.height = frameHeight = img.height / framesY;
-        timer = setInterval(nextFrame, frameDelay);
+        //timer = setInterval(nextFrame, frameDelay);
     }
     img.src = imageURL;
 
-    function nextFrame() {
+    canvasTexture.animate = function nextFrame() {
         count++;
 
         if(count >= endFrame ) {
@@ -76,5 +61,12 @@ export default class Experiment2 {
     }
 
     return canvasTexture;
+  }
+
+  /**
+   * Public function for animating to the next frame of sprite
+   */
+  nextFrame() {
+    this.#mesh.material.map.animate();
   }
 }
