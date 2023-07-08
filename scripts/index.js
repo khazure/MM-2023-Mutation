@@ -15,6 +15,7 @@ import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, Ren
 
 import {getBeatRatio, getChordRatio} from './Lyrics.js';
 import { Sprite } from 'three';
+import FloatShapes from './FloatShapes.js';
 
 // Number of layers
 const numLayers = 5;
@@ -33,7 +34,7 @@ const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 
 //composer.addPass(new EffectPass(camera, new PixelationEffect(5)));
-const axes = new THREE.AxesHelper(5); //Helper Visual
+//const axes = new THREE.AxesHelper(5); //Helper Visual
 
 // Data associated with materials that is passed to fragment shaders
 const uniforms  = {
@@ -50,8 +51,8 @@ const textAliveData = {
 
 /**********HELPER VISUALS (DELETE BEFORE FINAL RELEASE)**********/
 //x, y, z axes, points in positive direction.
-axes.setColors('red', 'blue', 'green'); //x = r, y = b, z = g.
-scene.add(axes);
+//axes.setColors('red', 'blue', 'green'); //x = r, y = b, z = g.
+//scene.add(axes);
 
 //Append our composer and renderer.
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -91,8 +92,8 @@ onWindowResize(); //Calc aspect for first time.
 
 
   //HELPER VISUAL 
-  const lightHelper = new THREE.DirectionalLightHelper(light, 10, 0xC52AB1);
-  scene.add(lightHelper);
+  //const lightHelper = new THREE.DirectionalLightHelper(light, 10, 0xC52AB1);
+  //cene.add(lightHelper);
 
   const ambient = new THREE.AmbientLight(color);
   ambient.position.set(-1, 5, 3);
@@ -112,7 +113,7 @@ camera.layers.enable(2); // experiment
 camera.layers.enable(3); // InstanceSphere layer.
 camera.layers.enable(4); // infinite tubes
 camera.layers.enable(5); // miku sprite
-
+camera.layers.enable(6);
 // temp
 //camera.layers.disable(0);
 camera.layers.disable(1);
@@ -153,6 +154,15 @@ let lastTime = 0;
 //bloomRender(camera);
 
 rgbRender(camera);
+
+/*************************** MeshShapes***********************************/
+const floatingShapes =  new FloatShapes(scene, new THREE.BoxGeometry(1, 1, 1), 
+                                      new THREE.MeshPhongMaterial(0xFFFFFF), 100, 6)
+
+//ChangeGeometry passes.
+floatingShapes.changeGeometryAt(2, new THREE.SphereGeometry(1));
+floatingShapes.setPosAt(2, 10, 10, 10);
+
 
 function animate(time) {
   //lastTime = cubeMesh.rotateWave(5000, lastTime); //Higher value =  slower currently.
@@ -195,7 +205,7 @@ if (WebGL.isWebGLAvailable()) {
  */
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix(); //
+  camera.updateProjectionMatrix(); 
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
