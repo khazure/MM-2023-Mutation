@@ -17,6 +17,8 @@ import {getBeatRatio, getChordRatio} from './Lyrics.js';
 import { Sprite } from 'three';
 import FloatShapes from './FloatShapes.js';
 
+import * as TWEEN from '@tweenjs/tween.js';
+
 // Number of layers
 const numLayers = 5;
 
@@ -153,14 +155,22 @@ rgbRender(camera);
 
 /*************************** MeshShapes***********************************/
 const floatingShapes =  new FloatShapes(scene, new THREE.BoxGeometry(1, 1, 1), 
-                                      new THREE.MeshPhongMaterial(0xFFFFFF), 100, 6)
+                                      new THREE.MeshPhongMaterial(0xFFFFFF), 1000, 6)
 
 //ChangeGeometry passes.
 floatingShapes.changeGeometryAt(2, new THREE.SphereGeometry(1));
-floatingShapes.setPosAt(2, 10, 10, 10);
-
+//floatingShapes.setPosAt(2, 10, 10, 10);
+//const testTween = floatingShapes.moveInstanceTo(10, 10, 10, 2, 2000);
+for(let i = 0; i < floatingShapes.getTotal(); i++) {
+  let angle = 2 * Math.PI * i/floatingShapes.getTotal();
+  floatingShapes.moveInstanceTo(20 * Math.cos(angle), 0, 20 * Math.sin(angle), i, 5000);
+}
+//let mixer = floatingShapes.getAnimationMixerAt(2);
+//console.log(mixer);
+//floatingShapes.setPosAt(2, 10, 10, 10);
 
 function animate(time) {
+
   //lastTime = cubeMesh.rotateWave(5000, lastTime); //Higher value =  slower currently.
   time *= 0.001;
   uniforms.uTime.value = time;
@@ -186,6 +196,10 @@ function animate(time) {
   tubes.updateMaterialOffset();
 
   requestAnimationFrame(animate);//Request to brower to animate something
+  TWEEN.update(); //No need to specify time.
+  // if ( mixer ) {
+  //   mixer.update( delta );
+  // }
   camControls.update(); //Requires if(enableDamping || autoRotate)
 
   composer.render();
