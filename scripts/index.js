@@ -28,7 +28,7 @@ const renderer = new THREE.WebGL1Renderer({ alpha: true, antialias: true,
 const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 1000); //(fov, aspect, minDis, maxDis);
 const camControls = new OrbitControls(camera, renderer.domElement);
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0xFF0000, 40, 80);
+scene.fog = new THREE.Fog(0xFF0000, 10, 40);
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
@@ -62,7 +62,7 @@ document.body.appendChild(renderer.domElement);
 /***********CAMERA AND ITS CONTROLS***********/
 //By default, the camera will be looking down -Z with, positioned at (0, 0, 0)
 //camera.position.set(numOfCubes[0] * 3, numOfCubes[1] * 3, numOfCubes[2] * 3); //x, y, z
-camera.position.set(0, 0, 50); 
+camera.position.set(0, 0, 25); 
 camControls.update(); //Must update everytime position changes.
 camControls.listenToKeyEvents(window);
 
@@ -117,7 +117,7 @@ camera.layers.enable(6);
 // temp
 //camera.layers.disable(0);
 camera.layers.disable(1);
-camera.layers.disable(2);
+// camera.layers.disable(2);
 camera.layers.disable(3);
 camera.layers.disable(4);
 //camera.layers.disable(5);
@@ -125,29 +125,25 @@ camera.layers.disable(4);
 /***********EVENTS***********/
 window.addEventListener('resize', onWindowResize);
 
-let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(3, 3, 3), new THREE.MeshPhongMaterial(0xFFFFFF), 100, 0);
-cubeMesh.randomizeSpherePos();
+let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1.5, 1.5, 1.5), new THREE.MeshPhongMaterial(0xFFFFFF), 150, 0);
+cubeMesh.randomizeSpherePos(30);
 //cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
 //cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
 //cubeMesh.arrangeToSphere(0, 0, 0, 1, 1, 1, 1, 5);
 
-//
 //constructor(parentScene, theGeometry, theMaterial, radius, maxVert, minVert, layer)
 // let testMaterial = new THREE.MeshPhongMaterial();
 // testMaterial.color.set(0x33ccff);
 // let sphere = new InstanceSphere(scene, new THREE.BoxGeometry(1, 1, 1), testMaterial, 15, 25, 5, 3); 
 
 //let experiment2 = new Experiment2(scene, new THREE.PlaneGeometry(15, 15), 5);
+let environment = new Experiment(scene, new THREE.SphereGeometry(20, 20, 20), uniforms, 2);
 
-let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(10), uniforms, 1);
-
-// let experiment = new Experiment(scene, new THREE.SphereGeometry(50, 50, 50), uniforms, 2);
+let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(5), uniforms, 1);
 
 let tubes = new infiniteTubes(scene, uniforms, 4)
 
 let sprite = new MikuSprite(scene, uniforms, 5);
-
-let lastTime = 0;
 
 /*************************** composer filters ***********************************/
 
@@ -169,20 +165,24 @@ function animate(time) {
   time *= 0.001;
   uniforms.uTime.value = time;
 
-  // update previous
+  // update previous textAliveData
   textAliveData.beat.prevValue = textAliveData.beat.currValue;
   textAliveData.chord.prevValue = textAliveData.chord.currValue;
 
+  // update stored textAliveData
   textAliveData.beat.currValue = getBeatRatio();
   textAliveData.chord.currValue = getChordRatio();
 
+  // rotate hologram sphere twice for every beat
   hologramSphere.incrementRotate(linearToTwoLinears(1 - textAliveData.beat.currValue) / 20);
 
+  // Animate when beat changes
   if (Math.abs(linearToTwoLinears(textAliveData.beat.currValue) - linearToTwoLinears(textAliveData.beat.prevValue)) > 0.5) {
     //camera.layers.toggle(0);
     sprite.nextFrame();
   }
 
+  // animates tube sucking movement
   tubes.updateMaterialOffset();
 
   requestAnimationFrame(animate);//Request to brower to animate something

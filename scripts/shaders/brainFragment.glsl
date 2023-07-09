@@ -69,7 +69,7 @@ void main() {
   // vec2 rand = randomVector(uvScaled);
   //gl_FragColor = vec4(rand, 0, 0.5);
 
-  vec2 res = voronoi(pos*.08, uTime*0.3);
+  vec2 res = voronoi(pos*.23, uTime*0.3);
 
   // darken by pow
   vec3 mycolor = vec3(pow(res.x, 1.5));

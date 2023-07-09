@@ -8,7 +8,7 @@ export default class infiniteTubes {
   #speed;
 
   constructor(parentScene, uniforms, layer) {
-    this.#speed = 0.07;
+    this.#speed = 0.04;
 
     // Create an empty array to stores the points
     var points = [];

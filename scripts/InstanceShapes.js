@@ -18,14 +18,13 @@ export default class InstanceShapes {
     }
   }
 
-/*
+/** 
 * Randomizes the cubes' position with a 80 to -20 range.
-* 
-* TODO? add parameters to set range of random x, y, z.
+* @param {number} width - width/height/depth of cube boundary
+*
 */
-randomizeCubePos() {
+randomizeCubePos(width) {
   const currShape = new THREE.Object3D();
-  let width = 100;
   for (let i = 0; i < this.#mesh.count; i++) {
       currShape.position.x = Math.random() * width - (width / 2); // 50 to -50
       currShape.position.y = Math.random() * width - (width / 2);
@@ -41,14 +40,13 @@ randomizeCubePos() {
   }
 }
 
-  /*
+  /**
    * Randomizes instance mesh positions in bounds of sphere
-   * 
-   * TODO? add parameters to set radius
+   * @param {number} radius - radius of sphere boundary
+   *
    */
-  randomizeSpherePos() {
+  randomizeSpherePos(radius) {
     const currShape = new THREE.Object3D();
-    let radius = 50;
     for (let i = 0; i < this.#mesh.count; i++) {
         let point = this.#generateSpherePoint(radius);
         currShape.position.x = point.x;
@@ -141,11 +139,7 @@ randomizeCubePos() {
     }
     this.#mesh.instanceMatrix.needsUpdate = true;
     this.#mesh.computeBoundingBox();
-  }
-
-
-
-  
+  } 
 
   /**
    * NOTE:
