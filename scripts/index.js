@@ -17,6 +17,7 @@ import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, Ren
 import {getBeatRatio, getChordRatio} from './Lyrics.js';
 import { Sprite } from 'three';
 import FloatShapes from './FloatShapes.js';
+import ElemScene from './ElemScene.js';
 
 import * as TWEEN from '@tweenjs/tween.js';
 
@@ -174,11 +175,28 @@ for(let i = 0; i < floatingShapes.getTotal(); i++) {
 //console.log(mixer);
 //floatingShapes.setPosAt(2, 10, 10, 10);
 
+/*************************** Element Scenes ***********************************/
+// const mikuScene = new ElemScene(document.querySelector("#miku-scene"));
+// console.log(document.querySelector("#miku-scene"));
+// const waveScene = new ElemScene(document.querySelector("#wave-scene"));
+// const test = new InstanceShapes(mikuScene.getScene(), new THREE.BoxGeometry(1.5, 1.5, 1.5),
+//                                  new THREE.MeshPhongMaterial(0xFFFFFF), 150, 0);
+
 function animate(time) {
+
 
   //lastTime = cubeMesh.rotateWave(5000, lastTime); //Higher value =  slower currently.
   time *= 0.001;
   uniforms.uTime.value = time;
+
+  // mikuScene.resizeRendererToDisplaySize(renderer);
+
+  // renderer.setScissorTest(false);
+  // renderer.clear(true, true);
+  // renderer.setScissorTest(true);
+
+  // mikuScene.renderScene(renderer);
+  // waveScene.renderScene(renderer);  
 
   // update previous textAliveData
   textAliveData.beat.prevValue = textAliveData.beat.currValue;
@@ -207,6 +225,7 @@ function animate(time) {
   // }
   camControls.update(); //Requires if(enableDamping || autoRotate)
 
+  //requestAnimationFrame(animate);
   composer.render();
   //requestAnimationFrame passes time since the page loaded to our function.
 }
