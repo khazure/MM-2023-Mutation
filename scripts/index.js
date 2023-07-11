@@ -11,6 +11,7 @@ import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
 import infiniteTubes from './infiniteTubes.js';
 import MikuSprite from './mikuSprite.js';
+import PanelMap from './PanelMap.js';
 import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 
 import {getBeatRatio, getChordRatio} from './Lyrics.js';
@@ -115,14 +116,16 @@ camera.layers.enable(2); // experiment
 camera.layers.enable(3); // InstanceSphere layer.
 camera.layers.enable(4); // infinite tubes
 camera.layers.enable(5); // miku sprite
-camera.layers.enable(6);
+camera.layers.enable(6); // masking experiment
+
 // temp
-//camera.layers.disable(0);
+// camera.layers.disable(0);
 camera.layers.disable(1);
-// camera.layers.disable(2);
+camera.layers.disable(2);
 camera.layers.disable(3);
 camera.layers.disable(4);
-//camera.layers.disable(5);
+// camera.layers.disable(5);
+camera.layers.disable(6);
 
 /***********EVENTS***********/
 window.addEventListener('resize', onWindowResize);
@@ -143,9 +146,11 @@ let environment = new Experiment(scene, new THREE.SphereGeometry(20, 20, 20), un
 
 let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(5), uniforms, 1);
 
-let tubes = new infiniteTubes(scene, uniforms, 4)
+let tubes = new infiniteTubes(scene, uniforms, makePanelMask(), 4)
 
 let sprite = new MikuSprite(scene, uniforms, 5);
+
+let panel = new PanelMap(scene, uniforms, 6);
 
 /*************************** composer filters ***********************************/
 
@@ -276,4 +281,33 @@ function linearToGaussian(linearValue) {
   let exp = -c * Math.pow((linearValue - b) / a, 2);
   let product = coefficient * Math.pow(Math.E, exp);
   return product;
+}
+
+/**
+ * Creates an alpha map for 3D meshes to enable masking
+ */
+function makePanelMask() {
+  let canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  ctx.canvas.width = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
+
+  // make canvas entirely black
+  ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+  // draw panel
+  ctx.fillStyle = "#FFF";
+  ctx.fillRect(20, 20, 200, 200);
+
+  let canvasTexture = new THREE.CanvasTexture(canvas);
+  canvasTexture.magFilter = THREE.NearestFilter;
+  //return canvasTexture;
+
+  // test
+  const loader = new THREE.TextureLoader();
+  let alphaMap = loader.load("../images/alphaMap.png");
+  alphaMap.magFilter = THREE.NearestFilter;
+
+  return alphaMap;
+
 }

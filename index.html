@@ -62,6 +62,45 @@
         </div>
       </article>
     </section>
+    <section id="graphic-grid" class="full-screen grid">
+      <div id="miku-scene" class="graphic-box"></div>
+      <div id="wave-scene" class="graphic-box"></div>
+      <div id="text-box" class="graphic-box"></div>
+      <nav>
+        <button id="play-btn" class="play-btn hidden" >
+          <span class="material-symbols-outlined">
+            play_circle
+          </span>
+        </button>
+        <button id="pause-btn" >
+          <span class="material-symbols-outlined">
+            pause_circle
+          </span>
+        </button> 
+        <button id="reset-btn" >
+          <span class="material-symbols-outlined">
+            stop_circle
+          </span>
+        </button>
+        <label for="volume-level">
+          <span class="material-symbols-outlined">
+            volume_up
+          </span>
+        </label>
+        <input id="volume-level" type="range" min="0" max="100" value="50">
+    
+        <!-- Below are temporary -->
+        <button id="jump-btn" >
+          <span>Lyrics start</span>
+        </button>
+        <button id="chorus-btn" >
+          <span>Chorus</span>
+        </button>
+        <button id="2nd-chorus-btn" >
+          <span>2nd Chorus</span>
+        </button>
+      </nav>
+    </section>
     <section class="full-screen grid non-chorus" >
       <div class="vertical-bar"></div>
       <div id="text-animation-main">
@@ -96,40 +135,6 @@
       </div>
     </article>
   </main>
-  <footer>
-    <button id="play-btn" class="play-btn hidden" >
-      <span class="material-symbols-outlined">
-        play_circle
-      </span>
-    </button>
-    <button id="pause-btn" >
-      <span class="material-symbols-outlined">
-        pause_circle
-      </span>
-    </button> 
-    <button id="reset-btn" >
-      <span class="material-symbols-outlined">
-        stop_circle
-      </span>
-    </button>
-    <label for="volume-level">
-      <span class="material-symbols-outlined">
-        volume_up
-      </span>
-    </label>
-    <input id="volume-level" type="range" min="0" max="100" value="50">
-
-    <!-- Below are temporary -->
-    <button id="jump-btn" >
-      <span>Lyrics start</span>
-    </button>
-    <button id="chorus-btn" >
-      <span>Chorus</span>
-    </button>
-    <button id="2nd-chorus-btn" >
-      <span>2nd Chorus</span>
-    </button>
-  </footer>
 </body>
 <!-- Must be after html so it can access the media div -->
 <script type="module" src="/scripts/Lyrics.js"></script>

@@ -7,8 +7,8 @@ export default class infiniteTubes {
   #tubeMaterial;
   #speed;
 
-  constructor(parentScene, uniforms, layer) {
-    this.#speed = 0.04;
+  constructor(parentScene, uniforms, mask, layer) {
+    this.#speed = 0.04;   
 
     // Create an empty array to stores the points
     var points = [];
@@ -36,11 +36,15 @@ export default class infiniteTubes {
     const loader = new THREE.TextureLoader();
     let rockPattern = loader.load('../images/miku.png');
 
+        // temp test for alpha map 
+    let maskExp = loader.load("../images/alphaMap.png");
+
     // let tubeMaterial = new THREE.MeshPhongMaterial(0xFFFFFF);
     // Define a material for the tube with a jpg as texture instead of plain color
     var tubeMaterial = new THREE.MeshStandardMaterial({
         side: THREE.BackSide, // Since the camera will be inside the tube we need to reverse the faces
         color: 0xFFFFFF,
+        alphaMap: maskExp,
         map: rockPattern // rockPattern is a texture previously loaded
     });
     // Repeat the pattern to prevent the texture being stretched
