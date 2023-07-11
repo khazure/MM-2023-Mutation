@@ -8,6 +8,7 @@ export default class ElemScene {
 
     constructor(elem) {
         this.#scene = new THREE.Scene();
+        this.#scene.background = new THREE.Color("green");
         this.#element = elem;
 
         const aspectRatio = elem.offsetWidth / elem.offsetHeight;
@@ -37,23 +38,25 @@ export default class ElemScene {
     }
 
     renderScene(renderer) {
-        const {left, right, top, bot, w, h} = this.#element.getBoundingClientRect();
-        const isVisable = bot >= 0 && top <= renderer.domElement.clientHeight &&
+        //console.log(this.#element.getBoundingClientRect())
+        const {left, right, top, bottom, width, height} = this.#element.getBoundingClientRect();
+        const isVisible = bottom >= 0 && top <= renderer.domElement.clientHeight &&
                         right  >= 0 && left <= renderer.domElement.clientWidth;
         // const isVisable =  bot < 0 ||
         //     top > renderer.domElement.clientHeight ||
         //     right < 0 ||
         //     left > renderer.domElement.clientWidth;
-        if(isVisable) {
-            //console.log(isVisable);
-            this.#camera.aspect = w/h;
+        //console.log(isVisable);
+
+        if(isVisible) {
+            this.#camera.aspect = width/height;
             this.#camera.updateProjectionMatrix();
             
             //setScissor and setViewport set bottom differently
-            const posBot = renderer.domElement.clientHeight - bot;
+            const posBot = renderer.domElement.clientHeight - bottom;
 
-            renderer.setScissor(left, posBot, w, h);
-            renderer.setViewport(left, posBot, w, h);
+            renderer.setScissor(left, posBot, width, height);
+            renderer.setViewport(left, posBot, width, height);
 
             renderer.render(this.#scene, this.#camera);
         }

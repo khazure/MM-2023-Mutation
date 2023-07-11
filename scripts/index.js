@@ -125,7 +125,7 @@ camera.layers.disable(1);
 camera.layers.disable(2);
 camera.layers.disable(3);
 camera.layers.disable(4);
-// camera.layers.disable(5);
+camera.layers.disable(5);
 camera.layers.disable(6);
 
 /***********EVENTS***********/
@@ -147,11 +147,9 @@ let environment = new Experiment(scene, new THREE.SphereGeometry(20, 20, 20), un
 
 let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(5), uniforms, 1);
 
-let tubes = new infiniteTubes(scene, uniforms, makePanelMask(), 4)
+let tubes = new infiniteTubes(scene, uniforms, 4)
 
 let sprite = new MikuSprite(scene, uniforms, 5);
-
-let panel = new PanelMap(scene, uniforms, 6);
 
 /*************************** composer filters ***********************************/
 
@@ -176,11 +174,10 @@ for(let i = 0; i < floatingShapes.getTotal(); i++) {
 //floatingShapes.setPosAt(2, 10, 10, 10);
 
 /*************************** Element Scenes ***********************************/
-// const mikuScene = new ElemScene(document.querySelector("#miku-scene"));
-// console.log(document.querySelector("#miku-scene"));
-// const waveScene = new ElemScene(document.querySelector("#wave-scene"));
-// const test = new InstanceShapes(mikuScene.getScene(), new THREE.BoxGeometry(1.5, 1.5, 1.5),
-//                                  new THREE.MeshPhongMaterial(0xFFFFFF), 150, 0);
+const mikuScene = new ElemScene(document.querySelector("#miku-scene"));
+const waveScene = new ElemScene(document.querySelector("#wave-scene"));
+const test = new InstanceShapes(mikuScene.getScene(), new THREE.BoxGeometry(1.5, 1.5, 1.5),
+                                 new THREE.MeshPhongMaterial(0xFFFFFF), 150, 0);
 
 function animate(time) {
 
@@ -189,14 +186,14 @@ function animate(time) {
   time *= 0.001;
   uniforms.uTime.value = time;
 
-  // mikuScene.resizeRendererToDisplaySize(renderer);
+  mikuScene.resizeRendererToDisplaySize(renderer);
 
-  // renderer.setScissorTest(false);
-  // renderer.clear(true, true);
-  // renderer.setScissorTest(true);
+  renderer.setScissorTest(false);
+  renderer.clear(true, true);
+  renderer.setScissorTest(true);
 
-  // mikuScene.renderScene(renderer);
-  // waveScene.renderScene(renderer);  
+  mikuScene.renderScene(renderer);
+  waveScene.renderScene(renderer);  
 
   // update previous textAliveData
   textAliveData.beat.prevValue = textAliveData.beat.currValue;
@@ -300,33 +297,4 @@ function linearToGaussian(linearValue) {
   let exp = -c * Math.pow((linearValue - b) / a, 2);
   let product = coefficient * Math.pow(Math.E, exp);
   return product;
-}
-
-/**
- * Creates an alpha map for 3D meshes to enable masking
- */
-function makePanelMask() {
-  let canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  ctx.canvas.width = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
-
-  // make canvas entirely black
-  ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-
-  // draw panel
-  ctx.fillStyle = "#FFF";
-  ctx.fillRect(20, 20, 200, 200);
-
-  let canvasTexture = new THREE.CanvasTexture(canvas);
-  canvasTexture.magFilter = THREE.NearestFilter;
-  //return canvasTexture;
-
-  // test
-  const loader = new THREE.TextureLoader();
-  let alphaMap = loader.load("../images/alphaMap.png");
-  alphaMap.magFilter = THREE.NearestFilter;
-
-  return alphaMap;
-
 }
