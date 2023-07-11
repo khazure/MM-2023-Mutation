@@ -217,5 +217,16 @@ button:active {
 }
 
 #graphic-bottom-right {
-  
+  grid-column: 10 / span 3;
+  grid-row: 9 / span 1;
+  color: var(--default-white);
+  text-align: right;
+}
+
+#graphic-bottom-right p {
+  margin: 0;
+}
+
+#bg-texture {
+  background-color: violet;
 }
