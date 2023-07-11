@@ -63,9 +63,18 @@
       </article>
     </section>
     <section id="graphic-grid" class="full-screen grid">
-      <div id="miku-scene" class="graphic-box"></div>
       <div id="wave-scene" class="graphic-box"></div>
-      <div id="text-box" class="graphic-box"></div>
+      <div id="text-box" class="graphic-box">
+        <div id="text-animation-main">
+          <!-- generated lyrics appear here -->
+          <!-- <h1 class="lyric glitch" data-text="Test">
+            <span>Test</span>
+          </h1> -->
+        </div>
+      </div>
+      <div id="miku-scene" class="graphic-box">
+        <div id="speech-bubble" class="hidden"></div>
+      </div>
       <nav>
         <button id="play-btn" class="play-btn hidden" >
           <span class="material-symbols-outlined">
@@ -90,37 +99,33 @@
         <input id="volume-level" type="range" min="0" max="100" value="50">
     
         <!-- Below are temporary -->
-        <button id="jump-btn" >
-          <span>Lyrics start</span>
+        <button id="jump-btn">
+          <span style="font-size: 1em;">Lyrics start</span>
         </button>
         <button id="chorus-btn" >
-          <span>Chorus</span>
+          <span style="font-size: 1em;">Chorus</span>
         </button>
         <button id="2nd-chorus-btn" >
-          <span>2nd Chorus</span>
+          <span style="font-size: 1em;">2nd Chorus</span>
         </button>
       </nav>
+      <div id="graphic-bottom-right">
+        <p>
+          <span id="position"><strong>-</strong> [ms]</span>
+        </p>  
+      </div>
     </section>
     <section class="full-screen grid non-chorus" >
       <div class="vertical-bar"></div>
-      <div id="text-animation-main">
-        <!-- generated lyrics appear here -->
-        <!-- <h1 class="lyric glitch" data-text="Test">
-          <span>Test</span>
-        </h1> -->
-      </div>
       <!-- <div id="miku-container">
         <div id="speech-bubble" class="hidden">
         </div>
         <img src="/images/miku.png">
       </div> -->
-      <div class="vertical-bar bottom-level col3">
-        <p>
-          <span id="position"><strong>-</strong> [ms]</span>
-        </p>    
+      <div class="vertical-bar bottom-level col3">  
       </div>
     </section> 
-    <article id="miku-profile" class="window">
+    <!-- <article id="miku-profile" class="window">
       <div class="window-header">
         <p>Miku</p>
         <button disabled>
@@ -131,9 +136,8 @@
       </div>
       <div class="window-body">
         <img src="./images/profile_1.png">
-        <div id="speech-bubble" class="hidden"></div>
       </div>
-    </article>
+    </article> -->
   </main>
 </body>
 <!-- Must be after html so it can access the media div -->
