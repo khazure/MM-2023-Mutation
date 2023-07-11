@@ -29,16 +29,6 @@ const backCanvas = document.querySelector('#c'); //Select the canvas
 
 const renderer = new THREE.WebGL1Renderer({ alpha: true, antialias: true,
                                           backCanvas }); // alpha true = transparent bg
-const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 1000); //(fov, aspect, minDis, maxDis);
-const camControls = new OrbitControls(camera, renderer.domElement);
-const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0xFF0000, 10, 40);
-
-const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
-
-//composer.addPass(new EffectPass(camera, new PixelationEffect(5)));
-//const axes = new THREE.AxesHelper(5); //Helper Visual
 
 // Data associated with materials that is passed to fragment shaders
 const uniforms  = {
@@ -58,131 +48,27 @@ const textAliveData = {
 //axes.setColors('red', 'blue', 'green'); //x = r, y = b, z = g.
 //scene.add(axes);
 
-//Append our composer and renderer.
-renderer.setSize(window.innerWidth, window.innerHeight);
-composer.setSize(window.innerWidth, window.innerHeight);
+//Append global renderer.
+// renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-/***********CAMERA AND ITS CONTROLS***********/
-//By default, the camera will be looking down -Z with, positioned at (0, 0, 0)
-//camera.position.set(numOfCubes[0] * 3, numOfCubes[1] * 3, numOfCubes[2] * 3); //x, y, z
-camera.position.set(0, 0, 25); 
-camControls.update(); //Must update everytime position changes.
-camControls.listenToKeyEvents(window);
-
-//Damping slows down camera speed
-camControls.enableDamping = true;
-camControls.dampingFactor = 0.025;
-
-camControls.screenSpacePanning = false;
-
-//Min and Max distance we can zoom on camera
-camControls.minDistance = 0; //Neg does nothing?
-camControls.maxDistance = 100;
-camControls.maxPolarAngle = 2 * Math.PI; //360 degrees
-
-camControls.enableZoom = true;
 onWindowResize(); //Calc aspect for first time.
-
-/***********LIGHTING***********/
-{
-  const color = 0xFFFFFF;
-  const intensity = 0.0;
-  const light = new THREE.DirectionalLight(color, intensity);
-  //light.position.set(-1, 2, 4);
-  light.position.set(-1, 5, 3);
-  //By default the light will look at (0, 0, 0), change with light.target()
-  //scene.add(light);
-
-
-  //HELPER VISUAL 
-  //const lightHelper = new THREE.DirectionalLightHelper(light, 10, 0xC52AB1);
-  //cene.add(lightHelper);
-
-  const ambient = new THREE.AmbientLight(color);
-  ambient.position.set(-1, 5, 3);
-  scene.add(ambient);
-
-  for(let i = 0; i <= numLayers; i++) {
-    light.layers.enable(i);
-    ambient.layers.enable(i);
-  }
-}
-
-/****************************** layers code *********************************** */
-
-camera.layers.enable(0); // enabled by default, instanced cubes
-camera.layers.enable(1); // hologram shape
-camera.layers.enable(2); // experiment
-camera.layers.enable(3); // InstanceSphere layer.
-camera.layers.enable(4); // infinite tubes
-camera.layers.enable(5); // miku sprite
-camera.layers.enable(6); // masking experiment
-
-// temp
-// camera.layers.disable(0);
-camera.layers.disable(1);
-camera.layers.disable(2);
-camera.layers.disable(3);
-camera.layers.disable(4);
-camera.layers.disable(5);
-camera.layers.disable(6);
 
 /***********EVENTS***********/
 window.addEventListener('resize', onWindowResize);
 
-let cubeMesh =  new InstanceShapes(scene, new THREE.BoxGeometry(1.5, 1.5, 1.5), new THREE.MeshPhongMaterial(0xFFFFFF), 150, 0);
-cubeMesh.randomizeSpherePos(30);
-//cubeMesh.arrangeToCube(5, 5, 5, 2.5, 2.5, 2.5, 0, 0, 0);
-//cubeMesh.setColorAt(1, 'skyblue'); //INDEX 0 DOES NOT WORK.
-//cubeMesh.arrangeToSphere(0, 0, 0, 1, 1, 1, 1, 5);
-
-//constructor(parentScene, theGeometry, theMaterial, radius, maxVert, minVert, layer)
-// let testMaterial = new THREE.MeshPhongMaterial();
-// testMaterial.color.set(0x33ccff);
-// let sphere = new InstanceSphere(scene, new THREE.BoxGeometry(1, 1, 1), testMaterial, 15, 25, 5, 3); 
-
-//let experiment2 = new Experiment2(scene, new THREE.PlaneGeometry(15, 15), 5);
-let environment = new Experiment(scene, new THREE.SphereGeometry(20, 20, 20), uniforms, 2);
-
-let hologramSphere = new hologramShape(scene, new THREE.SphereGeometry(5), uniforms, 1);
-
-let tubes = new infiniteTubes(scene, uniforms, 4)
-
-let sprite = new MikuSprite(scene, uniforms, 5);
-
-/*************************** composer filters ***********************************/
-
-//bloomRender(camera);
-
-rgbRender(camera);
-
-/*************************** MeshShapes***********************************/
-const floatingShapes =  new FloatShapes(scene, new THREE.BoxGeometry(1, 1, 1), 
-                                      new THREE.MeshPhongMaterial(0xFFFFFF), 1000, 6)
-
-//ChangeGeometry passes.
-floatingShapes.changeGeometryAt(2, new THREE.SphereGeometry(1));
-//floatingShapes.setPosAt(2, 10, 10, 10);
-//const testTween = floatingShapes.moveInstanceTo(10, 10, 10, 2, 2000);
-for(let i = 0; i < floatingShapes.getTotal(); i++) {
-  let angle = 2 * Math.PI * i/floatingShapes.getTotal();
-  floatingShapes.moveInstanceTo(20 * Math.cos(angle), 0, 20 * Math.sin(angle), i, 5000);
-}
-//let mixer = floatingShapes.getAnimationMixerAt(2);
-//console.log(mixer);
-//floatingShapes.setPosAt(2, 10, 10, 10);
-
 /*************************** Element Scenes ***********************************/
-const mikuScene = new ElemScene(document.querySelector("#miku-scene"));
-const waveScene = new ElemScene(document.querySelector("#wave-scene"));
+const mikuScene = new ElemScene(document.querySelector("#miku-scene"), renderer);
+const waveScene = new ElemScene(document.querySelector("#wave-scene"), renderer);
+
 const test = new InstanceShapes(mikuScene.getScene(), new THREE.BoxGeometry(1.5, 1.5, 1.5),
                                  new THREE.MeshPhongMaterial(0xFFFFFF), 150, 0);
+test.randomizeSpherePos(30);
+
+const sprite = new MikuSprite(mikuScene.getScene(), uniforms, 0);
+const hologram = new Experiment(waveScene.getScene(), new THREE.SphereGeometry(20, 20, 20), uniforms, 0)
 
 function animate(time) {
-
-
-  //lastTime = cubeMesh.rotateWave(5000, lastTime); //Higher value =  slower currently.
   time *= 0.001;
   uniforms.uTime.value = time;
 
@@ -203,28 +89,9 @@ function animate(time) {
   textAliveData.beat.currValue = getBeatRatio();
   textAliveData.chord.currValue = getChordRatio();
 
-  // rotate hologram sphere twice for every beat
-  hologramSphere.incrementRotate(linearToTwoLinears(1 - textAliveData.beat.currValue) / 20);
-
-  // Animate when beat changes
-  if (Math.abs(linearToTwoLinears(textAliveData.beat.currValue) - linearToTwoLinears(textAliveData.beat.prevValue)) > 0.5) {
-    //camera.layers.toggle(0);
-    sprite.nextFrame();
-  }
-
-  // animates tube sucking movement
-  tubes.updateMaterialOffset();
 
   requestAnimationFrame(animate);//Request to brower to animate something
   TWEEN.update(); //No need to specify time.
-  // if ( mixer ) {
-  //   mixer.update( delta );
-  // }
-  camControls.update(); //Requires if(enableDamping || autoRotate)
-
-  //requestAnimationFrame(animate);
-  composer.render();
-  //requestAnimationFrame passes time since the page loaded to our function.
 }
 
 if (WebGL.isWebGLAvailable()) {
@@ -239,32 +106,7 @@ if (WebGL.isWebGLAvailable()) {
  * Resizes window when browser resizes.
  */
 function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix(); 
   renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-function bloomRender() {
-
-  // let bloomPass = new UnrealBloomPass(
-  //   new THREE.Vector2(window.innerWidth, window.innerHeight), // resolution?
-  //   0.5, //strength
-  //   0.4, // radius
-  //   0.1 //threshold
-  // );
-  let effect = new BloomEffect({
-    intensity: 0.5,
-    radius: 0.4,
-  });
-  let bloomPass = new EffectPass( camera, effect );
-  composer.addPass(bloomPass);
-}
-
-function rgbRender() {
-  let effect = new ChromaticAberrationEffect();
-  const rgbPass = new EffectPass( camera, new ChromaticAberrationEffect() );
-  
-  composer.addPass( rgbPass );
 }
 
 /**

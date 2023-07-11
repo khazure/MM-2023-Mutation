@@ -10,7 +10,7 @@ export default class MikuSprite {
     });
 
     this.#mesh = new THREE.Sprite(material);
-    this.#mesh.scale.set(5, 5, 0);
+    this.#mesh.scale.set(100, 100, 0);
     this.#mesh.layers.enable(layer);
     parentScene.add(this.#mesh);
   }
