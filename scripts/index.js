@@ -73,6 +73,8 @@ const test = new InstanceShapes(mikuScene.getScene(), new THREE.BoxGeometry(1.5,
 test.randomizeSpherePos(30);
 
 const sprite = new MikuSprite(mikuScene.getScene(), uniforms, 0);
+//const sprite = new MikuPlane(mikuScene.getScene(), uniforms, 0);
+
 const hologram = new hologramShape(waveScene.getScene(), new THREE.SphereGeometry(15), uniforms, 0);
 
 const fullScreen = new InstanceShapes(fullScreenScene.getScene(), new THREE.BoxGeometry(1.5, 1.5, 1.5),
