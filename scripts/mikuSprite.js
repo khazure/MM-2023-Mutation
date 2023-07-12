@@ -5,12 +5,12 @@ export default class MikuSprite {
 
   constructor(parentScene, uniforms, layer) {
     const texture = this.spriteSheetTexture("../images/test_sheet.png", 2, 1, 5);
-    const material = new THREE.SpriteMaterial({
+    const material = new THREE.MeshBasicMaterial({
       map: texture,
     });
 
-    this.#mesh = new THREE.Sprite(material);
-    this.#mesh.scale.set(5, 5, 0);
+    this.#mesh = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material);
+    //this.#mesh.scale.set(5, 5, 0);
     this.#mesh.layers.enable(layer);
     parentScene.add(this.#mesh);
   }
