@@ -43,6 +43,12 @@ const textAliveData = {
   inChorus: { value: false }
 };
 
+/****************** to enable transparent scenes***************** */
+
+// Works only when rendered by renderer, not composer
+renderer.autoClear = false;
+renderer.clearDepth();
+
 /**********HELPER VISUALS (DELETE BEFORE FINAL RELEASE)**********/
 //x, y, z axes, points in positive direction.
 //axes.setColors('red', 'blue', 'green'); //x = r, y = b, z = g.
@@ -60,13 +66,18 @@ window.addEventListener('resize', onWindowResize);
 /*************************** Element Scenes ***********************************/
 const mikuScene = new ElemScene(document.querySelector("#miku-scene"), renderer);
 const waveScene = new ElemScene(document.querySelector("#wave-scene"), renderer);
+const fullScreenScene = new ElemScene(document.getElementById("graphic-grid"), renderer);
 
 const test = new InstanceShapes(mikuScene.getScene(), new THREE.BoxGeometry(1.5, 1.5, 1.5),
                                  new THREE.MeshPhongMaterial(0xFFFFFF), 150, 0);
 test.randomizeSpherePos(30);
 
 const sprite = new MikuSprite(mikuScene.getScene(), uniforms, 0);
-const hologram = new Experiment(waveScene.getScene(), new THREE.SphereGeometry(20, 20, 20), uniforms, 0)
+const hologram = new hologramShape(waveScene.getScene(), new THREE.SphereGeometry(15), uniforms, 0);
+
+const fullScreen = new InstanceShapes(fullScreenScene.getScene(), new THREE.BoxGeometry(1.5, 1.5, 1.5),
+                                 new THREE.MeshPhongMaterial(0xFFFFFF), 500, 0);
+fullScreen.randomizeSpherePos(30);
 
 function animate(time) {
   time *= 0.001;
@@ -78,8 +89,10 @@ function animate(time) {
   renderer.clear(true, true);
   renderer.setScissorTest(true);
 
+  fullScreenScene.renderScene(renderer);
   mikuScene.renderScene(renderer);
-  waveScene.renderScene(renderer);  
+  waveScene.renderScene(renderer);
+
 
   // update previous textAliveData
   textAliveData.beat.prevValue = textAliveData.beat.currValue;
@@ -89,6 +102,10 @@ function animate(time) {
   textAliveData.beat.currValue = getBeatRatio();
   textAliveData.chord.currValue = getChordRatio();
 
+    // Animate when beat changes
+    if (Math.abs(linearToTwoLinears(textAliveData.beat.currValue) - linearToTwoLinears(textAliveData.beat.prevValue)) > 0.5) {
+      sprite.nextFrame();
+    }
 
   requestAnimationFrame(animate);//Request to brower to animate something
   TWEEN.update(); //No need to specify time.

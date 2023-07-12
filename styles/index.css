@@ -13,7 +13,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
-  background-color: rgb(22, 22, 22);
+  /* background-color: rgb(22, 22, 22); */
 }
 
 body, button {
@@ -219,7 +219,6 @@ button:active {
 #graphic-bottom-right {
   grid-column: 10 / span 3;
   grid-row: 9 / span 1;
-  color: var(--default-white);
   text-align: right;
 }
 
@@ -228,5 +227,9 @@ button:active {
 }
 
 #bg-texture {
-  background-color: violet;
+  /* filter: contrast(200%) brightness(150%); */
+  background: radial-gradient(farthest-corner circle at 70% 80%, #FF00FF 5%, transparent 50%, transparent),
+  radial-gradient(farthest-corner circle at 0px 0px, #00FFFF 10%, transparent 46%, transparent),
+  radial-gradient(farthest-corner circle at 30% 100%, #FFFF00 10%, transparent 80%, transparent),
+  radial-gradient(farthest-corner circle at 100% 0px, #28FFFF 10%, transparent 50%, transparent);
 }

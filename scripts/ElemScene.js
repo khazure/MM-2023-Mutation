@@ -15,7 +15,7 @@ export default class ElemScene {
     const aspectRatio = elem.offsetWidth / elem.offsetHeight;
     //fov, aspect, near, far
     this.#camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 1000);
-    this.#camera.position.set(0, 1, 25);
+    this.#camera.position.set(0, 1, 10);
     this.#camera.lookAt(0, 0, 0);
 
     //Setting up lighting
@@ -27,9 +27,11 @@ export default class ElemScene {
     }
 
     // set up composer
-    this.#composer = new EffectComposer(renderer);
-
-    this.#composer.addPass(new RenderPass(this.#scene, this.#camera));
+    let renderTarget = new THREE.WebGLRenderTarget(elem.offsetWidth, elem.offsetHeight);
+    const params = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, stencilBuffer: false };
+    this.#composer = new EffectComposer(renderer, renderTarget, params);
+    let renderPass = new RenderPass(this.#scene, this.#camera);
+    this.#composer.addPass(renderPass);
     this.#bloomRender()
     this.#rgbRender();
 
