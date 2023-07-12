@@ -72,6 +72,7 @@ function init() {
   id("pause-btn").addEventListener("click", pauseMusic);
   id("reset-btn").addEventListener("click", resetMusic);
   id("volume-level").addEventListener("input", changeVolume);
+  qs("body").addEventListener("mousemove", moveGradient);
 
   // set volume initially
   changeVolume();
@@ -328,6 +329,21 @@ function resetMusic() {
 }
 
 /**
+ * Moves the gradient background according to mouse
+ * from: https://codepen.io/toomuchome/pen/VVpOOB
+ * @param {*} event - mouse move event
+ */
+function moveGradient(event) {
+  const x = event.clientX;
+  const y = event.clientY;
+  const width = document.documentElement.clientWidth;
+  const height = document.documentElement.clientHeight;
+  const percentageX = x / width * 100;
+  const percentageY = y / height * 100;
+  id("bg-texture").style.backgroundPosition = percentageX + "%" + percentageY + "%";
+}
+
+/**
  * When app is ready, load the song and initialize some features
  * @param {*} app 
  */
@@ -435,12 +451,6 @@ function isInViewport(element) {
       rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
       rect.right <= (window.innerWidth || document.documentElement.clientWidth)
   );
-}
-
-// https://stackoverflow.com/questions/23095637/how-do-you-get-random-rgb-in-javascript
-function random_rgba() {
-  var o = Math.round, r = Math.random, s = 255;
-  return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ', 1)';
 }
 
 /**
