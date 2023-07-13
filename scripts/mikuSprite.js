@@ -5,8 +5,11 @@ export default class MikuSprite {
 
   constructor(parentScene, uniforms, layer) {
     const texture = this.spriteSheetTexture("../images/test_sheet.png", 2, 1, 5);
+    const alphaTexture = this.spriteSheetTexture("../images/test_sheet_alpha_map.png", 2, 1, 5);
     const material = new THREE.MeshBasicMaterial({
+      transparent: true,
       map: texture,
+      alphaMap: alphaTexture
     });
 
     this.#mesh = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material);
@@ -68,5 +71,6 @@ export default class MikuSprite {
    */
   nextFrame() {
     this.#mesh.material.map.animate();
+    this.#mesh.material.alphaMap.animate();
   }
 }
