@@ -65,15 +65,8 @@
       </article>
     </section>
     <section id="graphic-grid" class="full-screen grid">
-      <div id="wave-scene" class="graphic-box"></div>
-      <div id="text-box" class="graphic-box">
-        <div id="text-animation-main">
-          <!-- generated lyrics appear here -->
-          <!-- <h1 class="lyric glitch" data-text="Test">
-            <span>Test</span>
-          </h1> -->
-        </div>
-      </div>
+      <div id="scene-1" class="graphic-box"></div>
+      <div id="scene-2" class="graphic-box"></div>
       <div id="miku-scene" class="graphic-box">
         <div id="speech-bubble" class="hidden"></div>
       </div>
@@ -93,13 +86,14 @@
             stop_circle
           </span>
         </button>
+        <div id="slider-wrapper">
+          <input id="volume-level" type="range" min="0" max="100" value="50">
+        </div>
         <label for="volume-level">
           <span class="material-symbols-outlined">
             volume_up
           </span>
         </label>
-        <input id="volume-level" type="range" min="0" max="100" value="50">
-    
         <!-- Below are temporary -->
         <button id="jump-btn">
           <span style="font-size: 1em;">Lyrics start</span>
@@ -116,10 +110,11 @@
           <span id="position"><strong>-</strong> [ms]</span>
         </p>  
       </div>
-      <h1 id="y2k-text" class="y2k-text-style">
-        <span>
-          音へと溶ける
-        </span>
+      <h1 id="top-text" class="y2k-text-style current-container">
+        <span class="hidden-visibility">placeholder</span>
+      </h1>
+      <h1 id="bottom-text" class="y2k-text-style">
+        <span class="hidden-visibility">placeholder</span>
       </h1>
     </section>
     <div id="bg-texture" class="full-screen bottom-level">

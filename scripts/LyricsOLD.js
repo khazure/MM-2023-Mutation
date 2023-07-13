@@ -53,6 +53,11 @@ import { Player } from "textalive-app-api";
     qsa(".window").forEach(element => {
       element.querySelector(".window-header").addEventListener("mousedown", dragMouseDown);
     });
+
+    // create 1st phrase container
+    let txtContainer = createNewPhraseContainer();
+    addBlinkingBox(txtContainer);
+    id("text-animation-main").append(txtContainer);
   }
 
 /**
@@ -134,10 +139,10 @@ const animateChar = function (now, unit) {
 
       prepareForNewPhrase();
 
-      const textContainer = qs(".current-container");
-      
-      // clear for now
-      textContainer.innerHTML = "";
+      //move up container of lyrics
+      movePreviousLyricsUp();
+
+      const textContainer = createNewPhraseContainer();
 
       let encounteredParen = false;
 
@@ -162,17 +167,16 @@ const animateChar = function (now, unit) {
             // preadd lyrics to container
             let word = document.createElement("span");
             word.textContent = child.text;
-            word.classList.add("hidden-visibility");
+            word.classList.add("hidden");
             word.id = child.startTime;
 
-            textContainer.appendChild(word);
-
-            // add whitespace
-            let whiteSpace = document.createTextNode("\u00A0");
-            textContainer.appendChild(whiteSpace);
+            textContainer.insertBefore(word, qs(".blinking"));
           }
         });
       });
+
+      addBlinkingBox(textContainer);
+      id("text-animation-main").appendChild(textContainer);
     }
 
     // if char is new
@@ -185,9 +189,12 @@ const animateChar = function (now, unit) {
                                               : bubbleClass.replace("bounce-in", "hidden");
 
       // for each child with id in currentContainer, show if time is past
-      qs(".current-container").childNodes.forEach((word) => {
-        (word.id && (now + 300) >= parseInt(word.id)) && (word.classList.remove("hidden-visibility"));
+      id("current-container").childNodes.forEach((word) => {
+        (word.id && now >= parseInt(word.id)) && (word.classList.remove("hidden"));
       });
+
+      // for glitch effect to work
+      id("current-container").dataset.text = id("current-container").innerText;
     }
   }
 }
@@ -196,9 +203,15 @@ const animateChar = function (now, unit) {
  * DOM manipulation to prepare main text animation container for new phrase
  */
 function prepareForNewPhrase() {
-  // reassign the current container
-  id("top-text").classList.toggle("current-container");
-  id("bottom-text").classList.toggle("current-container");
+  // reassign the id and blinking container
+  let currContainer = id("current-container");
+  currContainer && (currContainer.id = "");
+  let blinking = qs(".blinking");
+  blinking && (blinking.textContent = "");
+  blinking && (blinking.classList.remove("blinking"));
+
+  //update datatype of prev
+  currContainer && (currContainer.dataset.text = currContainer.textContent);
 
   // clear miku's speech bubble
   id("speech-bubble").innerHTML = "";
