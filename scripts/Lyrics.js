@@ -139,6 +139,8 @@ const animateChar = function (now, unit) {
       // clear for now
       textContainer.innerHTML = "";
 
+      const phraseContainer = document.createElement("span");
+
       let encounteredParen = false;
 
       // loop through each word in the new phrase
@@ -160,19 +162,22 @@ const animateChar = function (now, unit) {
           } else {
 
             // preadd lyrics to container
-            let word = document.createElement("span");
-            word.textContent = child.text;
-            word.classList.add("hidden-visibility");
-            word.id = child.startTime;
+            // let word = document.createElement("span");
+            // word.textContent = child.text;
+            // word.classList.add("hidden-visibility");
+            // word.id = child.startTime;
 
-            textContainer.appendChild(word);
+            // textContainer.appendChild(word);
+            phraseContainer.textContent = phraseContainer.textContent + child.text;
 
             // add whitespace
-            let whiteSpace = document.createTextNode("\u00A0");
-            textContainer.appendChild(whiteSpace);
+            // let whiteSpace = document.createTextNode("\u00A0");
+            // textContainer.appendChild(whiteSpace);
           }
         });
       });
+
+      textContainer.appendChild(phraseContainer);
     }
 
     // if char is new
@@ -185,9 +190,9 @@ const animateChar = function (now, unit) {
                                               : bubbleClass.replace("bounce-in", "hidden");
 
       // for each child with id in currentContainer, show if time is past
-      qs(".current-container").childNodes.forEach((word) => {
-        (word.id && (now + 300) >= parseInt(word.id)) && (word.classList.remove("hidden-visibility"));
-      });
+      // qs(".current-container").childNodes.forEach((word) => {
+      //   (word.id && now >= parseInt(word.id)) && (word.classList.remove("hidden-visibility"));
+      // });
     }
   }
 }

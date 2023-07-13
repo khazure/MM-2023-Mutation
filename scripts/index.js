@@ -78,7 +78,7 @@ const sprite = new MikuSprite(mikuScene.getScene(), uniforms, 0);
 
 const hologram = new hologramShape(scene1.getScene(), new THREE.SphereGeometry(15), uniforms, 0);
 
-const voronoi = new Experiment(scene2.getScene(), new THREE.SphereGeometry(6), uniforms, 0);
+const voronoi = new Experiment(scene2.getScene(), new THREE.SphereGeometry(15), uniforms, 0);
 
 const fullScreen = new InstanceShapes(fullScreenScene.getScene(), new THREE.BoxGeometry(1.5, 1.5, 1.5),
                                  new THREE.MeshPhongMaterial(0xFFFFFF), 500, 0);
@@ -97,6 +97,7 @@ function animate(time) {
   fullScreenScene.renderScene(renderer);
   mikuScene.renderScene(renderer);
   scene1.renderScene(renderer);
+  scene2.renderScene(renderer);
 
 
   // update previous textAliveData

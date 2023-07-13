@@ -7,62 +7,6 @@
   overflow: hidden;
 }
 
-.active-word {
-  background-color: var(--accent-color);
-}
-
-.lyric {
-  color: var(--default-white);
-  line-height: 0.8em;
-  white-space: nowrap;
-  font-size: 1.7vw;
-  transition: 300ms;
-  margin: 0;
-}
-
-/* highlighted text styling from: https://codepen.io/matthiasott/pen/aQxBOB */
-.highlighted {
-  position: relative;
-  background-color: #fff;
-  text-align: center;
-  overflow: hidden;
-}
-
-.highlighted span {
-  color: #fff;
-  background-color: var(--default-color);
-
-  padding: 0.225rem 0;
-
-  /* Needs prefixing */
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-}
-
-.highlighted span:first-child {
-  padding: 0.225rem 0 0.225rem 0.5rem;
-}
-
-.highlighted span:last-child {
-  padding: 0.225rem 0.5rem 0.225rem 0;
-}
-
-@supports(mix-blend-mode: lighten) {
-  
-  .highlighted::after {
-    position: absolute;
-    content: '';
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    pointer-events: none;
-
-    mix-blend-mode: lighten;
-  }
-  
-}
-
 @keyframes reveal-to-right {
   from {
     max-width: 0%;
@@ -71,11 +15,6 @@
   to {
     max-width: 100%;
   }
-}
-
-.blinking {
-  animation: blink-animation 1.5s steps(7, start) infinite;
-
 }
 
 @keyframes blink-animation {
@@ -129,16 +68,6 @@
   }
 }
 
-#text-animation-main {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  /* bottom: 40vh;
-  align-items: start;
-  left: calc(11% - 30px); */
-  bottom: 1em;
-}
-
 #loading-overlay {
   background-color: rgba(20, 20, 20, 0.6);
   text-align: center;
@@ -156,11 +85,6 @@
 #current-container {
   /* animation-name: reveal-to-right;
   animation-duration: 1000ms; */
-}
-
-#current-container.highlighted span {
-  /* background: linear-gradient(60deg, #3629a2, #00ceff); */
-  background-color: var(--accent-color);
 }
 
 #speech-bubble {
@@ -193,6 +117,57 @@
   bottom: -24px;
   box-shadow: 10px 0px 0px -2px black;
 }
+
+.y2k-text-style {
+  font-family: 'Dela Gothic One', cursive;
+  font-size: max(2.7vw, 40px);
+  margin: 0px;
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+.y2k-text-style span {
+  animation-name: reveal-to-right;
+  animation-duration: 2000ms;
+  animation-timing-function: ease-in-out;
+  display: inline-block;
+  background: linear-gradient(24deg, rgb(71, 145, 255), #ff5eff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  color: transparent;
+  transform: skew(-27deg);
+  filter: 
+  contrast(200%)
+  brightness(200%)
+  drop-shadow(-2px 0 var(--accent-color))
+  drop-shadow(0px -2px 0 var(--accent-color))
+  drop-shadow(0px 1px 0 var(--light-accent))
+  drop-shadow(0px 2px 0 var(--light-accent))
+  drop-shadow(1px 0px 0 var(--light-accent))
+  drop-shadow(2px 0px 0 var(--light-accent))
+  drop-shadow(-1px 0px 0 var(--light-accent))
+  drop-shadow(-1px -1px 0 var(--light-accent))
+  drop-shadow(-2px -2px 0 var(--light-accent))
+  drop-shadow(-1px 1px 0 var(--light-accent))
+  drop-shadow(-2px 2px 0 var(--light-accent))
+  drop-shadow(1px -1px 0 var(--light-accent))
+  drop-shadow(2px -2px 0 var(--light-accent))
+  drop-shadow(1px 1px 0 var(--light-accent))
+  drop-shadow(2px 2px 0 var(--light-accent))
+  drop-shadow(4px 4px 0 var(--accent-color))
+  drop-shadow(5px 5px 0 var(--accent-color))
+  drop-shadow(6px 6px 0 var(--accent-color))
+  drop-shadow(7px 7px 0 var(--accent-color))
+  
+  drop-shadow(0px 1px 1px rgba(225,0,0,.4))
+  drop-shadow(0px 2px 2px rgba(225,0,0,.3))
+  drop-shadow(-1px 3px 3px rgba(0,225,0,.2))
+  drop-shadow(-1px 5px 5px rgba(0,225,0,.1))
+  drop-shadow(-2px 8px 8px rgba(0,225,225,.1))
+  drop-shadow(-2px 13px 13px rgba(0,225,225,.1));
+}
+
 
 
 
