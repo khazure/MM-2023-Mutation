@@ -99,7 +99,7 @@ button:active {
   'opsz' 48
 }
 
-.hidden {
+.hidden-visibility {
   visibility: hidden;
 }
 
@@ -111,7 +111,6 @@ button:active {
   border: var(--accent-color) 3px solid;
   box-shadow: var(--accent-color) 1px 1px 5px;
   border-radius: 10px;
-  overflow: hidden;
 }
 
 .window, .window-body, .window button {
@@ -187,8 +186,12 @@ button:active {
 }
 
 #graphic-grid > nav {
-  grid-column: 4 / span 7;
-  grid-row: 2 / span 1;
+  grid-column: 3 / span 1;
+  grid-row: 3 / span 6;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: start;
 }
 
 #graphic-grid > nav > button {
@@ -199,6 +202,24 @@ button:active {
 
 #graphic-grid > nav span {
   font-size: 2.1em;
+  color: var(--accent-color);
+}
+
+#graphic-grid > nav input {
+  transform: rotate(-90deg);
+  transform-origin: left;
+  width: 130px;
+  position: absolute;
+  left: 40%;
+  bottom: 0;
+}
+
+#graphic-grid > nav #slider-wrapper {
+  display: inline-block;
+  width: 20px;
+  height: 150px;
+  position: relative;
+  margin: 0 0.2em;
 }
 
 #miku-scene {
@@ -207,12 +228,12 @@ button:active {
   position: relative;
 }
 
-#wave-scene {
+#scene-1 {
   grid-column: 4 / span 4;
   grid-row: 3 / span 2;
 }
 
-#text-box {
+#scene-2 {
   grid-column: 4 / span 4;
   grid-row: 5 / span 4;
   position: relative;
@@ -228,16 +249,26 @@ button:active {
   margin: 0;
 }
 
-#y2k-text {
-  grid-column: 4 / span 5;
+#top-text {
+  grid-column: 4 / span 9;
+  grid-row: 2 / span 1;
+  transform: translateY(35px);
+  text-align: center;
+}
+
+#bottom-text {
+  grid-column: 4 / span 9;
   grid-row: 9 / span 1;
-  margin: 0;
   transform: translateY(-50px);
+  text-align: center;
 }
 
 .y2k-text-style {
   font-family: 'Dela Gothic One', cursive;
-  font-size: 2.9vw;
+  font-size: max(2.7vw, 40px);
+  margin: 0px;
+  white-space: nowrap;
+  text-overflow: clip;
 }
 
 .y2k-text-style span {

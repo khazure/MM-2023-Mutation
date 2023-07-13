@@ -172,7 +172,7 @@
   position: absolute;
   /* top: 10vw; */
   box-shadow: 5px 5px black;
-  font-size: 1.5em;
+  font-size: max(1vw, 15px);
   /* transform-origin: right;
   transform: translateX(-18vw);
   left: 35%; */

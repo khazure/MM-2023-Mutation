@@ -65,7 +65,8 @@ window.addEventListener('resize', onWindowResize);
 
 /*************************** Element Scenes ***********************************/
 const mikuScene = new ElemScene(document.querySelector("#miku-scene"), renderer);
-const waveScene = new ElemScene(document.querySelector("#wave-scene"), renderer);
+const scene1 = new ElemScene(document.querySelector("#scene-1"), renderer);
+const scene2 = new ElemScene(document.querySelector("#scene-2"), renderer);
 const fullScreenScene = new ElemScene(document.getElementById("graphic-grid"), renderer);
 
 const test = new InstanceShapes(mikuScene.getScene(), new THREE.BoxGeometry(1.5, 1.5, 1.5),
@@ -75,7 +76,9 @@ test.randomizeSpherePos(30);
 const sprite = new MikuSprite(mikuScene.getScene(), uniforms, 0);
 //const sprite = new MikuPlane(mikuScene.getScene(), uniforms, 0);
 
-const hologram = new hologramShape(waveScene.getScene(), new THREE.SphereGeometry(15), uniforms, 0);
+const hologram = new hologramShape(scene1.getScene(), new THREE.SphereGeometry(15), uniforms, 0);
+
+const voronoi = new Experiment(scene2.getScene(), new THREE.SphereGeometry(6), uniforms, 0);
 
 const fullScreen = new InstanceShapes(fullScreenScene.getScene(), new THREE.BoxGeometry(1.5, 1.5, 1.5),
                                  new THREE.MeshPhongMaterial(0xFFFFFF), 500, 0);
@@ -93,7 +96,7 @@ function animate(time) {
 
   fullScreenScene.renderScene(renderer);
   mikuScene.renderScene(renderer);
-  waveScene.renderScene(renderer);
+  scene1.renderScene(renderer);
 
 
   // update previous textAliveData
