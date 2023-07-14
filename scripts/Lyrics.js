@@ -23,6 +23,12 @@ import { Player } from "textalive-app-api";
 
   const END_TIME = 165015;
 
+  // intro animation duration (ms)
+  const INTRO_DURATION = 500;
+
+  // outro animation duration (ms)
+  const OUTRO_DURATION = 200;
+
   // Keeps track of the current lyric unit at phrase level
   let currPhrase = null;
 
@@ -127,7 +133,7 @@ function closeDragElement() {
 const animateChar = function (now, unit) {
   // unit is at character level
   // select phrases 300ms in advance
-  if (unit.contains(now + 500)) {
+  if (unit.contains(now + INTRO_DURATION)) {
 
     if (currPhrase === null || currPhrase !== unit.parent.parent) {
 
@@ -155,15 +161,20 @@ const animateChar = function (now, unit) {
           if (child.text.includes("（")) {
             encounteredParen = true;
             parenStart = child.startTime;
-            id("speech-bubble").innerHTML = "";
+            setTimeout(() => {
+              id("speech-bubble").innerHTML = "";
+            }, OUTRO_DURATION);
           }
 
           if (encounteredParen) {
 
             // add words to miku's speech bubble
-            let word = document.createElement("span");
-            word.textContent = child.text.replace("（", "").replace("）", "");
-            id("speech-bubble").append(word);
+            // on timeout to prevent bugs
+            setTimeout(() => {
+              let word = document.createElement("span");
+              word.textContent = child.text.replace("（", "").replace("）", "");
+              id("speech-bubble").append(word);
+            }, OUTRO_DURATION);
           } else {
 
             // preadd lyrics to container
@@ -187,29 +198,29 @@ const animateChar = function (now, unit) {
         });
       });
 
-      wrapper.classList.add("lyric-intro-animation");
+      phraseContainer.classList.add("lyric-intro-animation");
       textContainer.appendChild(wrapper);
     } else {
       // same phrase as current one
 
       // outro animation if bottom text is ending
       // now + intro-animation-duration + outro-animation-duration
-      if(qs("#bottom-text.current-container") && (now + 800) > currPhrase.endTime) {
-        qs("#top-text h1").classList.replace("lyric-intro-animation", "lyric-outro-animation");
-        qs("#bottom-text h1").classList.replace("lyric-intro-animation", "lyric-outro-animation");
+      if(qs("#bottom-text.current-container") &&
+        (now + INTRO_DURATION + OUTRO_DURATION) > currPhrase.endTime) {
+        qs("#top-text h1 span").classList.replace("lyric-intro-animation", "lyric-outro-animation");
+        qs("#bottom-text h1 span").classList.replace("lyric-intro-animation", "lyric-outro-animation");
         id("speech-bubble").classList.replace("bounce-in", "lyric-outro-animation");
       }
-
     }
 
     // if char is new
     if (currWord === null || currWord !== unit) {
       currWord = unit;
 
-      // if the time for miku's speech happens, show it (500ms before)
+      // if the time for miku's speech happens, show it (300ms before)
       let bubbleClass = id("speech-bubble").classList;
-      (parenStart && now >= parenStart - 500) ? bubbleClass.replace("lyric-outro-animation", "bounce-in")
-                                              : null;
+      (parenStart && now >= parenStart - (INTRO_DURATION + OUTRO_DURATION)) 
+        ? bubbleClass.replace("lyric-outro-animation", "bounce-in") : null;
 
       // for each child with id in currentContainer, show if time is past
       // qs(".current-container").childNodes.forEach((word) => {

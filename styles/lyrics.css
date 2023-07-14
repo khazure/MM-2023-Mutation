@@ -126,7 +126,7 @@ h1 {
   position: absolute;
   border-right: 18px solid var(--default-white);
   border-left: 8px solid transparent;
-  border-top: 9px solid var(--default-white);
+  border-top: 5px solid var(--default-white);
   border-bottom: 20px solid transparent;
   right: 12px;
   bottom: -15px;
@@ -152,7 +152,7 @@ h1 {
 }
 
 .lyric-outro-animation {
-  animation: text-outro 0.3s ease-in;
+  animation: text-outro 0.2s ease-in;
   opacity: 0;
 }
 
