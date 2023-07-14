@@ -115,7 +115,10 @@ export default class ElemScene {
    * @param {EffectComposer} composer 
    */
   #rgbRender() {
-    const rgbPass = new EffectPass( this.#camera, new ChromaticAberrationEffect() );
+    const effect = new ChromaticAberrationEffect();
+    effect.offset = new THREE.Vector2(0.004);
+    effect.radialModulation = true;
+    const rgbPass = new EffectPass( this.#camera, effect );
     
     this.#composer.addPass( rgbPass );
   }
