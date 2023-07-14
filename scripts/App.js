@@ -18,6 +18,7 @@ import { Sprite } from 'three';
 import FloatShapes from './FloatShapes.js';
 import ElemScene from './ElemScene.js';
 import * as TWEEN from '@tweenjs/tween.js';
+import Slot from './Slot.js';
 
 
 class App {
@@ -66,7 +67,7 @@ class App {
 
     // Scene Creation
     this._createMikuScene();
-    this._createWaveScene();
+    this._createScene1();
     this._createScene2();
     this._createFullScreenScene();
 
@@ -135,11 +136,20 @@ class App {
    * Creates the scene for the small box in upper-left corner.
    * Currently contains an hologram sphere.
    */
-  _createWaveScene() {
+  _createScene1() {
     const geo = new THREE.SphereGeometry(this.config.sphereSize);
 
-    this.waveScene = new ElemScene(document.querySelector("#scene-1"), this.renderer);
-    this.hologram = new hologramShape(this.waveScene.getScene(), geo, this.uniforms, 0);
+    const testGeo = new THREE.BoxGeometry(1, 1, 1);
+    const testMat = new THREE.MeshBasicMaterial();
+    const testShape =  new THREE.Mesh(testGeo, testMat);
+
+    const testSphere = new THREE.Mesh(new THREE.SphereGeometry(1), testMat);
+
+    this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer);
+    this.ShapeSlot = new Slot(this.scene1.getScene(), this.scene1.getCam(), 6, testShape);
+    this.ShapeSlot.push(testSphere);
+    this.ShapeSlot.next(5000);
+    this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
   }
 
   _createScene2() {
@@ -190,6 +200,7 @@ class App {
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
       this.mikuSprite.nextFrame();
     }
+    TWEEN.update(); //If tweening.
   }
 
   /**
@@ -202,9 +213,9 @@ class App {
     this.renderer.setScissorTest(true);  
     this.fullScrScene.renderScene(this.renderer);
     this.mikuScene.renderScene(this.renderer);
-    this.waveScene.renderScene(this.renderer);
+    this.scene1.renderScene(this.renderer);
     this.scene2.renderScene(this.renderer);
-    //TWEEN.update(); //If tweening.
+
   }
 
   /**
