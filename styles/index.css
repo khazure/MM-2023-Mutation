@@ -263,55 +263,7 @@ button:active {
   text-align: center;
 }
 
-.y2k-text-style {
-  font-family: 'Dela Gothic One', cursive;
-  font-size: max(2.7vw, 40px);
-  margin: 0px;
-  white-space: nowrap;
-  text-overflow: clip;
-}
-
-.y2k-text-style span {
-  display: inline-block;
-  background: linear-gradient(24deg, rgb(71, 145, 255), #ff5eff);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  color: transparent;
-  transform: skew(-27deg);
-  filter: 
-  contrast(200%)
-  brightness(200%)
-  drop-shadow(-2px 0 var(--accent-color))
-  drop-shadow(0px -2px 0 var(--accent-color))
-  drop-shadow(0px 1px 0 var(--light-accent))
-  drop-shadow(0px 2px 0 var(--light-accent))
-  drop-shadow(1px 0px 0 var(--light-accent))
-  drop-shadow(2px 0px 0 var(--light-accent))
-  drop-shadow(-1px 0px 0 var(--light-accent))
-  drop-shadow(-1px -1px 0 var(--light-accent))
-  drop-shadow(-2px -2px 0 var(--light-accent))
-  drop-shadow(-1px 1px 0 var(--light-accent))
-  drop-shadow(-2px 2px 0 var(--light-accent))
-  drop-shadow(1px -1px 0 var(--light-accent))
-  drop-shadow(2px -2px 0 var(--light-accent))
-  drop-shadow(1px 1px 0 var(--light-accent))
-  drop-shadow(2px 2px 0 var(--light-accent))
-  drop-shadow(4px 4px 0 var(--accent-color))
-  drop-shadow(5px 5px 0 var(--accent-color))
-  drop-shadow(6px 6px 0 var(--accent-color))
-  drop-shadow(7px 7px 0 var(--accent-color))
-  
-  drop-shadow(0px 1px 1px rgba(225,0,0,.4))
-  drop-shadow(0px 2px 2px rgba(225,0,0,.3))
-  drop-shadow(-1px 3px 3px rgba(0,225,0,.2))
-  drop-shadow(-1px 5px 5px rgba(0,225,0,.1))
-  drop-shadow(-2px 8px 8px rgba(0,225,225,.1))
-  drop-shadow(-2px 13px 13px rgba(0,225,225,.1));
-}
-
 #bg-texture {
-  /* filter: contrast(200%) brightness(150%); */
   background: radial-gradient(farthest-corner circle at 70% 80%, #ff44ff 5%, transparent 50%, transparent),
   radial-gradient(farthest-corner circle at 0px 0px, #00FFFF 10%, transparent 46%, transparent),
   radial-gradient(farthest-corner circle at 30% 100%, #FFFF00 10%, transparent 80%, transparent),

@@ -126,7 +126,9 @@ function closeDragElement() {
  */
 const animateChar = function (now, unit) {
   // unit is at character level
-  if (unit.contains(now)) {
+  // select phrases 300ms in advance
+  if (unit.contains(now + 500)) {
+
     if (currPhrase === null || currPhrase !== unit.parent.parent) {
 
       // if new phrase, create the new line for it
@@ -139,7 +141,9 @@ const animateChar = function (now, unit) {
       // clear for now
       textContainer.innerHTML = "";
 
+      const wrapper = document.createElement("h1");
       const phraseContainer = document.createElement("span");
+      wrapper.appendChild(phraseContainer);
 
       let encounteredParen = false;
 
@@ -147,10 +151,11 @@ const animateChar = function (now, unit) {
       unit.parent.parent.children.forEach(word => {
 
         // loop through each character in the word
-        word.children.forEach(child => { // child = character
+        word.children.forEach((child) => { // child = character
           if (child.text.includes("（")) {
             encounteredParen = true;
             parenStart = child.startTime;
+            id("speech-bubble").innerHTML = "";
           }
 
           if (encounteredParen) {
@@ -164,20 +169,37 @@ const animateChar = function (now, unit) {
             // preadd lyrics to container
             // let word = document.createElement("span");
             // word.textContent = child.text;
-            // word.classList.add("hidden-visibility");
+            // //word.classList.add("hidden-visibility");
             // word.id = child.startTime;
 
+            // word.style.animationDelay = "0." + index + "s";
+
             // textContainer.appendChild(word);
-            phraseContainer.textContent = phraseContainer.textContent + child.text;
 
             // add whitespace
             // let whiteSpace = document.createTextNode("\u00A0");
             // textContainer.appendChild(whiteSpace);
+      
+            // phrase only
+            phraseContainer.textContent = phraseContainer.textContent + child.text;
+
           }
         });
       });
 
-      textContainer.appendChild(phraseContainer);
+      wrapper.classList.add("lyric-intro-animation");
+      textContainer.appendChild(wrapper);
+    } else {
+      // same phrase as current one
+
+      // outro animation if bottom text is ending
+      // now + intro-animation-duration + outro-animation-duration
+      if(qs("#bottom-text.current-container") && (now + 800) > currPhrase.endTime) {
+        qs("#top-text h1").classList.replace("lyric-intro-animation", "lyric-outro-animation");
+        qs("#bottom-text h1").classList.replace("lyric-intro-animation", "lyric-outro-animation");
+        id("speech-bubble").classList.replace("bounce-in", "lyric-outro-animation");
+      }
+
     }
 
     // if char is new
@@ -186,8 +208,8 @@ const animateChar = function (now, unit) {
 
       // if the time for miku's speech happens, show it (500ms before)
       let bubbleClass = id("speech-bubble").classList;
-      (parenStart && now >= parenStart - 500) ? bubbleClass.replace("hidden", "bounce-in")
-                                              : bubbleClass.replace("bounce-in", "hidden");
+      (parenStart && now >= parenStart - 500) ? bubbleClass.replace("lyric-outro-animation", "bounce-in")
+                                              : null;
 
       // for each child with id in currentContainer, show if time is past
       // qs(".current-container").childNodes.forEach((word) => {
@@ -205,8 +227,8 @@ function prepareForNewPhrase() {
   id("top-text").classList.toggle("current-container");
   id("bottom-text").classList.toggle("current-container");
 
-  // clear miku's speech bubble
-  id("speech-bubble").innerHTML = "";
+  // hide miku's speech bubble
+  id("speech-bubble").classList.replace("bounce-in", "lyric-outro-animation");
   parenStart = null;
 }
 
@@ -235,15 +257,10 @@ function movePreviousLyricsUp() {
  * @returns {DOM Element} - text container
  */
 function createNewPhraseContainer() {
-  let textContainer = document.createElement("h1");
-  textContainer.id = "current-container";
-  //textContainer.classList.add("lyric", "highlighted");
-  textContainer.classList.add("lyric", "glitch");
+  let parent = document.createElement("h1");
+  let textContainer = documen.createElement("span");
 
-  // add command prompt
-  let cmdPrompt = document.createElement("span");
-  cmdPrompt.textContent = "> ";
-  textContainer.append(cmdPrompt);
+  parent.appendChild(textContainer);
 
   return textContainer;
 }

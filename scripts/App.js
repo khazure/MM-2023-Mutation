@@ -57,19 +57,20 @@ class App {
    */
   init() {
 
-    //Setup
+    // Setup
     this._createTextAliveTracker();
     this._createRenderer();
     this._createClock();
-    this._onResize(); //Calc aspect for first time.
+    this._onResize(); // Calc aspect for first time.
     this._addListeners();
 
-    //Scene Creation
+    // Scene Creation
     this._createMikuScene();
     this._createWaveScene();
+    this._createScene2();
     this._createFullScreenScene();
 
-    //Animate
+    // Animate
     this._setAnimationLoop();
     console.log(this);
   }
@@ -84,7 +85,7 @@ class App {
       this.renderer.setAnimationLoop(() => {
         this._update();
         this._render();
-      })
+      });
     } else {
       const warning = WebGL.getWebGLErrorMessage();
       document.getElementById('container').appendChild(warning);
@@ -92,7 +93,10 @@ class App {
   }
 
   /**
-   * I have no idea what this does, you should put a description here lol.
+   * keeps track of timing data from the textAlive app
+   * beat: value from [0, 1] representing the completion of the beat
+   * chord: value from [0, 1] representing completion of chord
+   * inChorus: boolean, true if in chorus, false if not
    */
   _createTextAliveTracker() {
     this.textAliveData = {
@@ -134,8 +138,15 @@ class App {
   _createWaveScene() {
     const geo = new THREE.SphereGeometry(this.config.sphereSize);
 
-    this.waveScene = new ElemScene(document.querySelector("#wave-scene"), this.renderer);
+    this.waveScene = new ElemScene(document.querySelector("#scene-1"), this.renderer);
     this.hologram = new hologramShape(this.waveScene.getScene(), geo, this.uniforms, 0);
+  }
+
+  _createScene2() {
+    const geo = new THREE.SphereGeometry(this.config.sphereSize);
+
+    this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer);
+    this.hologram = new hologramShape(this.scene2.getScene(), geo, this.uniforms, 0);
   }
 
   /**
@@ -192,6 +203,7 @@ class App {
     this.fullScrScene.renderScene(this.renderer);
     this.mikuScene.renderScene(this.renderer);
     this.waveScene.renderScene(this.renderer);
+    this.scene2.renderScene(this.renderer);
     //TWEEN.update(); //If tweening.
   }
 
