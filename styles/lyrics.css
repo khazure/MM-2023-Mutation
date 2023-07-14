@@ -12,22 +12,6 @@ h1 {
   overflow: hidden;
 }
 
-@keyframes reveal-to-right {
-  from {
-    max-width: 0%;
-  }
-
-  to {
-    max-width: 100%;
-  }
-}
-
-@keyframes blink-animation {
-  to {
-    visibility: hidden;
-  }
-}
-
 .bounce-in {
   animation-name: bounce-in-up;
   animation-duration: 300ms;
@@ -148,7 +132,7 @@ h1 {
 }
 
 .lyric-intro-animation {
-  animation: rotate-text-intro 0.5s ease-out, text-shadow-intro 0.5s ease-out;
+  animation: rotate-text-intro 0.5s ease-in-out, text-shadow-intro 0.5s ease-in-out;
 }
 
 .lyric-outro-animation {

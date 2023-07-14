@@ -73,7 +73,7 @@
       <nav>
         <button id="play-btn" class="play-btn hidden" >
           <span class="material-symbols-outlined">
-            play_circle
+            sound_sampler
           </span>
         </button>
         <button id="pause-btn" >
@@ -86,14 +86,19 @@
             stop_circle
           </span>
         </button>
-        <div id="slider-wrapper">
-          <input id="volume-level" type="range" min="0" max="100" value="50">
-        </div>
-        <label for="volume-level">
+        <button id="vol-up-btn">
           <span class="material-symbols-outlined">
             volume_up
           </span>
-        </label>
+        </button>
+        <div id="slider-wrapper">
+          <input id="volume-level" type="range" min="0" max="100" value="50">
+        </div>
+        <button id="vol-down-btn">
+          <span class="material-symbols-outlined">
+            volume_down_alt
+          </span>
+        </button>
         <!-- Below are temporary -->
         <button id="jump-btn">
           <span style="font-size: 1em;">Lyrics start</span>

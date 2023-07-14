@@ -73,6 +73,12 @@ function init() {
   id("pause-btn").addEventListener("click", pauseMusic);
   id("reset-btn").addEventListener("click", resetMusic);
   id("volume-level").addEventListener("input", changeVolume);
+  id("vol-up-btn").addEventListener("click", () => {
+    incrementVolume(10);
+  });
+  id("vol-down-btn").addEventListener("click", () => {
+    incrementVolume(-10);
+  });
   qs("body").addEventListener("mousemove", moveGradient);
 
   // set volume initially
@@ -198,7 +204,7 @@ const animateChar = function (now, unit) {
         });
       });
 
-      phraseContainer.classList.add("lyric-intro-animation");
+      wrapper.classList.add("lyric-intro-animation");
       textContainer.appendChild(wrapper);
     } else {
       // same phrase as current one
@@ -207,8 +213,8 @@ const animateChar = function (now, unit) {
       // now + intro-animation-duration + outro-animation-duration
       if(qs("#bottom-text.current-container") &&
         (now + INTRO_DURATION + OUTRO_DURATION) > currPhrase.endTime) {
-        qs("#top-text h1 span").classList.replace("lyric-intro-animation", "lyric-outro-animation");
-        qs("#bottom-text h1 span").classList.replace("lyric-intro-animation", "lyric-outro-animation");
+        qs("#top-text h1").classList.replace("lyric-intro-animation", "lyric-outro-animation");
+        qs("#bottom-text h1").classList.replace("lyric-intro-animation", "lyric-outro-animation");
         id("speech-bubble").classList.replace("bounce-in", "lyric-outro-animation");
       }
     }
@@ -323,6 +329,16 @@ function changeVolume() {
   player.volume = volumeLvl;
 }
 
+function incrementVolume(value) {
+  const slider = id("volume-level");
+  let vol = parseInt(slider.value) + parseInt(value);
+  (vol > slider.max) && ( vol = slider.max);
+  (vol < slider.min) && (vol = slider.min);
+  console.log(vol);
+  id("volume-level").value = vol;
+  player.volume = vol;
+}
+
 function jumpMusic() {
   player.video &&
   player.requestMediaSeek(player.video.firstChar.startTime);
@@ -339,7 +355,15 @@ function jumpSecondChorus() {
 }
 
 function resetMusic() {
-  id("text-animation-main").innerHTML = "";
+  id("top-text").classList.remove("current-container");
+  id("bottom-text").classList.add("current-container");
+
+  // clear buffered text
+  setTimeout(() => {
+    qs("#top-text h1").classList.add("lyric-outro-animation");
+    qs("#bottom-text h1").classList.add("lyric-outro-animation");  
+  }, 100);
+
   id("speech-bubble").innerHTML = "";
   currPhrase = null;
   currWord = null;
