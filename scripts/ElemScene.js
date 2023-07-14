@@ -87,7 +87,11 @@ export default class ElemScene {
   }
 
   getScene() {
-      return this.#scene;
+    return this.#scene;
+  }
+
+  getCam() {
+    return this.#camera;
   }
 
   #bloomRender() {
