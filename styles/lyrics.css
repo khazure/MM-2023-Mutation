@@ -138,6 +138,13 @@ h1 {
   margin: 0px;
   white-space: nowrap;
   text-overflow: clip;
+  filter:   
+  drop-shadow(0px 1px 1px rgba(225,0,0,.4))
+  drop-shadow(0px 2px 2px rgba(225,0,0,.3))
+  drop-shadow(-1px 3px 3px rgba(0,225,0,.2))
+  drop-shadow(-1px 5px 5px rgba(0,225,0,.1))
+  drop-shadow(-2px 8px 8px rgba(0,225,225,.1))
+  drop-shadow(-2px 13px 13px rgba(0,225,225,.1));
 }
 
 .lyric-intro-animation {
@@ -175,17 +182,8 @@ h1 {
   drop-shadow(2px -2px 0 var(--light-accent))
   drop-shadow(1px 1px 0 var(--light-accent))
   drop-shadow(2px 2px 0 var(--light-accent))
-  /* drop-shadow(4px 4px 0 var(--accent-color))
-  drop-shadow(5px 5px 0 var(--accent-color)) */
   drop-shadow(0 4px 0 var(--accent-color))
-  drop-shadow(0 5px 0 var(--accent-color))
-
-  /* drop-shadow(0px 1px 1px rgba(225,0,0,.4))
-  drop-shadow(0px 2px 2px rgba(225,0,0,.3))
-  drop-shadow(-1px 3px 3px rgba(0,225,0,.2))
-  drop-shadow(-1px 5px 5px rgba(0,225,0,.1))
-  drop-shadow(-2px 8px 8px rgba(0,225,225,.1))
-  drop-shadow(-2px 13px 13px rgba(0,225,225,.1)); */
+  drop-shadow(0 5px 0 var(--accent-color));
 }
 
 @keyframes text-shadow-intro {
@@ -210,14 +208,7 @@ h1 {
     drop-shadow(1px -1px 0 var(--light-accent))
     drop-shadow(2px -2px 0 var(--light-accent))
     drop-shadow(1px 1px 0 var(--light-accent))
-    drop-shadow(2px 2px 0 var(--light-accent))
-    
-    drop-shadow(0px 1px 1px rgba(225,0,0,.4))
-    drop-shadow(0px 2px 2px rgba(225,0,0,.3))
-    drop-shadow(-1px 3px 3px rgba(0,225,0,.2))
-    drop-shadow(-1px 5px 5px rgba(0,225,0,.1))
-    drop-shadow(-2px 8px 8px rgba(0,225,225,.1))
-    drop-shadow(-2px 13px 13px rgba(0,225,225,.1));
+    drop-shadow(2px 2px 0 var(--light-accent));
   }
   50% {
     opacity: 100%;
@@ -243,105 +234,9 @@ h1 {
     drop-shadow(2px 2px 0 var(--light-accent))
     drop-shadow(-1px 4px 0 var(--accent-color))
     drop-shadow(-2.5px 10px 0 var(--accent-color))
-    drop-shadow(-3.75px 15px 0 var(--accent-color))
-    
-    drop-shadow(0px 1px 1px rgba(225,0,0,.4))
-    drop-shadow(0px 2px 2px rgba(225,0,0,.3))
-    drop-shadow(-1px 3px 3px rgba(0,225,0,.2))
-    drop-shadow(-1px 5px 5px rgba(0,225,0,.1))
-    drop-shadow(-2px 8px 8px rgba(0,225,225,.1))
-    drop-shadow(-2px 13px 13px rgba(0,225,225,.1));
+    drop-shadow(-3.75px 15px 0 var(--accent-color));
   }
 }
-
-/* @keyframes rotate-text {
-  0% {
-    filter: 
-    drop-shadow(2px 0 var(--accent-color))
-    drop-shadow(0px -2px 0 var(--accent-color))
-
-    drop-shadow(0px 1px 0 var(--light-accent))
-    drop-shadow(0px 2px 0 var(--light-accent))
-    drop-shadow(1px 0px 0 var(--light-accent))
-    drop-shadow(2px 0px 0 var(--light-accent))
-    drop-shadow(-1px 0px 0 var(--light-accent))
-    drop-shadow(-1px -1px 0 var(--light-accent))
-    drop-shadow(-2px -2px 0 var(--light-accent))
-    drop-shadow(-1px 1px 0 var(--light-accent))
-    drop-shadow(-2px 2px 0 var(--light-accent))
-    drop-shadow(1px -1px 0 var(--light-accent))
-    drop-shadow(2px -2px 0 var(--light-accent))
-    drop-shadow(1px 1px 0 var(--light-accent))
-    drop-shadow(2px 2px 0 var(--light-accent))
-    drop-shadow(-1px 4px 0 var(--accent-color))
-    drop-shadow(-2.5px 10px 0 var(--accent-color))
-    drop-shadow(-3.75px 15px 0 var(--accent-color))
-    
-    drop-shadow(0px 1px 1px rgba(225,0,0,.4))
-    drop-shadow(0px 2px 2px rgba(225,0,0,.3))
-    drop-shadow(-1px 3px 3px rgba(0,225,0,.2))
-    drop-shadow(-1px 5px 5px rgba(0,225,0,.1))
-    drop-shadow(-2px 8px 8px rgba(0,225,225,.1))
-    drop-shadow(-2px 13px 13px rgba(0,225,225,.1));
-  }
-  33% {
-  filter: 
-  drop-shadow(-2px 0 var(--accent-color))
-  drop-shadow(0px -2px 0 var(--accent-color))
-  drop-shadow(0px 1px 0 var(--light-accent))
-  drop-shadow(0px 2px 0 var(--light-accent))
-  drop-shadow(1px 0px 0 var(--light-accent))
-  drop-shadow(2px 0px 0 var(--light-accent))
-  drop-shadow(-1px 0px 0 var(--light-accent))
-  drop-shadow(-1px -1px 0 var(--light-accent))
-  drop-shadow(-2px -2px 0 var(--light-accent))
-  drop-shadow(-1px 1px 0 var(--light-accent))
-  drop-shadow(-2px 2px 0 var(--light-accent))
-  drop-shadow(1px -1px 0 var(--light-accent))
-  drop-shadow(2px -2px 0 var(--light-accent))
-  drop-shadow(1px 1px 0 var(--light-accent))
-  drop-shadow(2px 2px 0 var(--light-accent))
-  drop-shadow(0 4px 0 var(--accent-color))
-  drop-shadow(0 5px 0 var(--accent-color))
-
-  drop-shadow(0px 1px 1px rgba(225,0,0,.4))
-  drop-shadow(0px 2px 2px rgba(225,0,0,.3))
-  drop-shadow(-1px 3px 3px rgba(0,225,0,.2))
-  drop-shadow(-1px 5px 5px rgba(0,225,0,.1))
-  drop-shadow(-2px 8px 8px rgba(0,225,225,.1))
-  drop-shadow(-2px 13px 13px rgba(0,225,225,.1));
-  }
-  66% {
-    filter: 
-    drop-shadow(2px 0 var(--accent-color))
-    drop-shadow(0px -2px 0 var(--accent-color))
-
-    drop-shadow(0px 1px 0 var(--light-accent))
-    drop-shadow(0px 2px 0 var(--light-accent))
-    drop-shadow(1px 0px 0 var(--light-accent))
-    drop-shadow(2px 0px 0 var(--light-accent))
-    drop-shadow(-1px 0px 0 var(--light-accent))
-    drop-shadow(-1px -1px 0 var(--light-accent))
-    drop-shadow(-2px -2px 0 var(--light-accent))
-    drop-shadow(-1px 1px 0 var(--light-accent))
-    drop-shadow(-2px 2px 0 var(--light-accent))
-    drop-shadow(1px -1px 0 var(--light-accent))
-    drop-shadow(2px -2px 0 var(--light-accent))
-    drop-shadow(1px 1px 0 var(--light-accent))
-    drop-shadow(2px 2px 0 var(--light-accent))
-    drop-shadow(1.5px 4px 0 var(--accent-color))
-    drop-shadow(3.75px 10px 0 var(--accent-color))
-    drop-shadow(5.625px 15px 0 var(--accent-color))
-    
-    drop-shadow(0px 1px 1px rgba(225,0,0,.4))
-    drop-shadow(0px 2px 2px rgba(225,0,0,.3))
-    drop-shadow(-1px 3px 3px rgba(0,225,0,.2))
-    drop-shadow(-1px 5px 5px rgba(0,225,0,.1))
-    drop-shadow(-2px 8px 8px rgba(0,225,225,.1))
-    drop-shadow(-2px 13px 13px rgba(0,225,225,.1));
-  }
-
-} */
 
 @keyframes rotate-text-intro {
   0% {
@@ -349,14 +244,14 @@ h1 {
     transform: rotateZ(15deg) rotateX(60deg) rotate(-18deg);
     filter: 
     contrast(200%)
-    brightness(300%)
+    brightness(300%);
   }
   50% {
     opacity: 100%;
     transform: rotateZ(15deg) rotateX(60deg) rotate(-18deg);
     filter: 
     contrast(200%)
-    brightness(300%)
+    brightness(300%);
   }
 }
 
@@ -368,28 +263,3 @@ h1 {
     opacity: 0;
   }
 }
-
-@keyframes rotate-text {
-  0% {
-    opacity: 100%;
-    transform: rotateZ(15deg) rotateX(60deg) rotate(-18deg);
-    filter: 
-    contrast(200%)
-    brightness(300%)
-  }
-  33% {
-    transform: skew(0deg);
-  filter: 
-  contrast(200%)
-  brightness(200%)
-  }
-  66% {
-    opacity: 100%;
-    transform: rotateZ(-15deg) rotateX(-60deg) rotate(18deg);
-    filter: 
-    contrast(200%)
-    brightness(300%)
-  }
-}
-
-
