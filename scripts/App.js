@@ -15,7 +15,7 @@ import {getBeatRatio, getChordRatio, getParenRatio} from './Lyrics.js';
 import FloatShapes from './FloatShapes.js';
 import ElemScene from './ElemScene.js';
 import * as TWEEN from '@tweenjs/tween.js';
-import Slot from './Slot.js';
+import MeshSlide from './MeshSlide.js';
 
 
 class App {
@@ -152,26 +152,51 @@ class App {
   _createScene1() {
     const geo = new THREE.SphereGeometry(this.config.sphereSize);
 
-    const testGeo = new THREE.BoxGeometry(1, 1, 1);
-    const testMat = new THREE.MeshBasicMaterial();
-    const testShape =  new THREE.Mesh(testGeo, testMat);
+    let meshes = [
+      new THREE.Mesh(new THREE.OctahedronGeometry(), new THREE.MeshPhongMaterial({color: 0x33ccff})),
+      new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshPhongMaterial({color: 0xff5050})),
+      new THREE.Mesh(new THREE.IcosahedronGeometry(1), new THREE.MeshPhongMaterial({color: 0x00cc99})),
+      new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xffcc00}))
+    ];
 
-    const testSphere = new THREE.Mesh(new THREE.SphereGeometry(1), testMat);
-    const testIco =  new THREE.Mesh(new THREE.IcosahedronGeometry(1), testMat);
 
     this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer);
-    this.ShapeSlot = new Slot(this.scene1.getScene(), this.scene1.getCam(), 6, testShape);
-    this.ShapeSlot.push(testSphere);
-    this.ShapeSlot.push(testIco);
-    this.ShapeSlot.changeGeometryAt(0, new THREE.OctahedronGeometry());
-    this.ShapeSlot.changeMaterialAt(0, new THREE.MeshPhongMaterial({color: 0x33ccff}));
+    this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), 6, meshes);
+    //this.MeshSlide1.push(testSphere);
+    //this.MeshSlide1.push(testIco);
+    //this.MeshSlide1.setGeometryAt(0, new THREE.OctahedronGeometry());
+    //this.MeshSlide1.setMaterialAt(0, new THREE.MeshPhongMaterial({color: 0xffffff}));
     this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
   }
 
   _createScene2() {
     const geo = new THREE.SphereGeometry(this.config.sphereSize);
-
+    let meshes = [ //Temporary shapes, feel free to change.
+      new THREE.Mesh(new THREE.OctahedronGeometry(), new THREE.MeshPhongMaterial({color: 0x33ccff})),
+      new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshPhongMaterial({color: 0xff5050})),
+      new THREE.Mesh(new THREE.IcosahedronGeometry(1), new THREE.MeshPhongMaterial({color: 0x00cc99})),
+      new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xffcc00}))
+    ]; //The option to change mid animation still there with .push or .change
+    
     this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer);
+    this.Slides = [];
+    for(let count = 0; count < 3; count++) {
+      this.Slides.push(new MeshSlide(this.scene2.getScene(), this.scene2.getCam(), 6, meshes));
+    }
+    this.Slides[0].setView(new THREE.Vector3(0, 3, -4));
+    this.Slides[1].setView(new THREE.Vector3(0, 0, -4));
+    this.Slides[2].setView(new THREE.Vector3(0, -3, -4)); //Race condition again with .setView
+
+    this.Slides[0].setExit(new THREE.Vector3(4, 3, -4));
+    this.Slides[0].setView(new THREE.Vector3(0, 3, -4));
+    this.Slides[0].setStart(new THREE.Vector3(-4, 3, -4));
+
+    this.Slides[1].setStart(new THREE.Vector3(4, 0, -4));
+    this.Slides[1].setView(new THREE.Vector3(0, 0, -4));
+    this.Slides[1].setExit(new THREE.Vector3(-4, 0, -4));
+
+    this.Slides[2].setExit(new THREE.Vector3(4, -3, -4));
+    this.Slides[2].setStart(new THREE.Vector3(-4, -3, -4));
     this.hologram = new hologramShape(this.scene2.getScene(), geo, this.uniforms, 0);
   }
 
@@ -216,7 +241,8 @@ class App {
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
       this.mikuSprite.nextFrame();
       this.mikuSprite2.nextFrame();
-      this.ShapeSlot.next(2000);
+      this.MeshSlide1.next(2000);
+      this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
     }
 
     if(getParenRatio()) {
