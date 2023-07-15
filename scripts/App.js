@@ -197,7 +197,7 @@ class App {
     if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
       this.mikuSprite.nextFrame();
-      this.ShapeSlot.next();
+      //this.ShapeSlot.next();
     }
 
     this.mikuTube.updateMaterialOffset((1 - this.textAliveData.beat.currValue) / 10);
