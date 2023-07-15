@@ -83,6 +83,7 @@ h1 {
   padding: 10px 20px;
   white-space: nowrap;
   position: absolute;
+  color: var(--accent-color);
   /* top: 10vw; */
   font-size: max(1vw, 15px);
   /* transform-origin: right;
@@ -118,7 +119,7 @@ h1 {
 
 .y2k-text-style {
   font-family: 'Dela Gothic One', cursive;
-  font-size: max(2.7vw, 30px);
+  font-size: max(2.4vw, 20px);
   margin: 0px;
   white-space: nowrap;
   text-overflow: clip;
@@ -129,6 +130,21 @@ h1 {
   drop-shadow(-1px 5px 5px rgba(0,225,0,.1))
   drop-shadow(-2px 8px 8px rgba(0,225,225,.1))
   drop-shadow(-2px 13px 13px rgba(0,225,225,.1));
+}
+
+.y2k-text-style h1 {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+#top-text h1 {
+  bottom: 0;
+}
+
+#bottom-text h1 {
+  top: 0;
+  transform: translateY(-20%);
 }
 
 .lyric-intro-animation {

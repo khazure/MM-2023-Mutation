@@ -11,11 +11,8 @@ import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
 import infiniteTubes from './infiniteTubes.js';
 import MikuSprite from './mikuSprite.js';
-import PanelMap from './PanelMap.js';
-import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 
 import {getBeatRatio, getChordRatio} from './Lyrics.js';
-import { Sprite } from 'three';
 import FloatShapes from './FloatShapes.js';
 import ElemScene from './ElemScene.js';
 

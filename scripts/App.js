@@ -11,10 +11,7 @@ import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
 import infiniteTubes from './infiniteTubes.js';
 import MikuSprite from './mikuSprite.js';
-import PanelMap from './PanelMap.js';
-import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 import {getBeatRatio, getChordRatio} from './Lyrics.js';
-import { Sprite } from 'three';
 import FloatShapes from './FloatShapes.js';
 import ElemScene from './ElemScene.js';
 import * as TWEEN from '@tweenjs/tween.js';
@@ -200,6 +197,8 @@ class App {
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
       this.mikuSprite.nextFrame();
     }
+
+    this.fullScrShapes.incrementRotation((1 - this.textAliveData.chord.currValue) / 70);
     TWEEN.update(); //If tweening.
   }
 
