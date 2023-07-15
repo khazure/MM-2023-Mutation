@@ -148,7 +148,7 @@ class App {
     this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer);
     this.ShapeSlot = new Slot(this.scene1.getScene(), this.scene1.getCam(), 6, testShape);
     this.ShapeSlot.push(testSphere);
-    this.ShapeSlot.next(5000);
+    //this.ShapeSlot.next();
     this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
   }
 
@@ -199,6 +199,7 @@ class App {
     if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
       this.mikuSprite.nextFrame();
+      this.ShapeSlot.next();
     }
     TWEEN.update(); //If tweening.
   }

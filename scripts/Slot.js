@@ -8,7 +8,7 @@ export default class Particles {
     #meshes;
 
     //Where our current shape will be at.
-    #viewingPos;
+    #viewPos;
 
     //Where other shapes will be stored at.
     #hiddenPos;
@@ -25,34 +25,33 @@ export default class Particles {
     constructor(parentScene, camera, distFromCam, startMesh) {
         this.#meshes = [];
         this.#parent = parentScene;
-        this.#viewingPos = new THREE.Vector3();
+        this.#viewPos = new THREE.Vector3();
         this.#hiddenPos =  new THREE.Vector3();
         this.#exitPos = new THREE.Vector3();
 
         //Calculate distance between shapes using triangle.
         const angle = Math.tan(camera.fov);
-        this.#distInBetween = angle * distFromCam * 2;
+        this.#distInBetween = angle * distFromCam;
         //* 2 to act as buffer.
         //Note that shapes larger than fov of camera will not account for this.
 
-        this.#viewingPos.copy(camera.position);
+        this.#viewPos.copy(camera.position);
         //Assuming camera direction is still down negative z-axis.
         //Thus changing camera position itself will break this.
-        this.#viewingPos.add(new THREE.Vector3(0, -0.25, -1 * distFromCam));
-        console.log(this.#viewingPos);
+        this.#viewPos.add(new THREE.Vector3(0, -0.25, -1 * distFromCam));
+        console.log(this.#viewPos);
 
         //Where other shapes will be stored to be hidden.
-        this.#hiddenPos.copy(this.#viewingPos);
+        this.#hiddenPos.copy(this.#viewPos);
         this.#hiddenPos.add(new THREE.Vector3(0, this.#distInBetween, 0));
 
-        this.#exitPos.copy(this.#viewingPos);
+        this.#exitPos.copy(this.#viewPos);
         this.#exitPos.add(new THREE.Vector3(0, -1 * this.#distInBetween, 0));
 
         //
         this.#meshes.push(startMesh);
         this.#parent.add(this.#meshes[0]);
-        this.#meshes[0].position.copy(this.#viewingPos);
-        this.#meshes[0].updateMatrix();
+        this.setPosVector(0, this.#viewPos);
         this.#currIndex = 0;
     }
 
@@ -65,23 +64,51 @@ export default class Particles {
     }
 
     next(duration) {
-        const moveTween = new TWEEN.Tween({
-            x: this.#hiddenPos.x, 
-            y: this.#hiddenPos.y, 
-            z: this.#hiddenPos.z
-        })
-            .to({x: this.#viewingPos.x, y: this.#viewingPos.y, z: this.#viewingPos.z}, duration)
-            .easing(TWEEN.Easing.Elastic.InOut)
-            .onUpdate((coords) => {
-                this.#meshes[this.#currIndex + 1].position.set(coords.x, coords.y, coords.z);
-                this.#meshes[this.#currIndex + 1].updateMatrix();
+        if(this.#meshes.length > 1) {
+
+            console.log(this.#meshes); //Debug
+            //EnterTween
+            const enterTween = this._tweenToPos(this.#currIndex + 1, this.#hiddenPos, this.#viewPos, duration);
+
+            //ExitTween
+            const exitTween = this._tweenToPos(this.#currIndex, this.#viewPos, this.#exitPos, duration);
+            exitTween.onComplete(() => {
+                this.setPosVector(this.#currIndex, this.#hiddenPos);
+                //Update
+                if(this.#currIndex >= this.#meshes.length - 1) {//Race condition with tween above.
+                    this.#currIndex = 0;
+                } else {
+                    this.#currIndex++;
+                }
             })
-            .repeat(Infinity)
-            .delay(500);
-        moveTween.start();
-        //this.#currIndex = this.#currIndex + 1;
+            enterTween.start();
+            exitTween.start();
+        } else {
+            console.error("Slot object has less than 2 meshes!, .next canceled");
+        }
     }
 
+    _tweenToPos(index, start, end, duration = 5000, ease = TWEEN.Easing.Elastic.InOut) {
+        const tween = new TWEEN.Tween({x: start.x, y: start.y, z: start.z})
+            .to({x: end.x, y: end.y, z: end.z}, duration)
+            .easing(ease)
+            .onUpdate((coords) => {
+                this.setPosAt(index, coords.x, coords.y, coords.z);
+            })
+            //.repeat(Infinity) //Temp to demo this.
+            .delay(500); //Might need this as parameter.
+        return tween;
+    }   
+
+    setPosAt(index, x, y, z) {
+        this.#meshes[index].position.set(x, y, z);
+        this.#meshes[index].updateMatrix();
+    }
+
+    setPosVector(index, posVec) {
+        this.#meshes[index].position.copy(posVec);
+        this.#meshes[index].updateMatrix();
+    }
 
     getMeshAt(index) {
         return this.#meshes[index];
