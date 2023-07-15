@@ -3,9 +3,20 @@ import * as THREE from 'three';
 export default class MikuSprite {
   #mesh;
 
-  constructor(parentScene, uniforms, layer) {
-    const texture = this.spriteSheetTexture("../images/test_sheet.png", 2, 1, 5);
-    const alphaTexture = this.spriteSheetTexture("../images/test_sheet_alpha_map.png", 2, 1, 5);
+  /**
+   * Creates a miku sprite
+   * @param {*} parentScene - parent scene to add sprite to 
+   * @param {*} sheetInfo - object containing parameters:
+   *  - sheetPath: path to character sheet
+   *  - alphaPath: path to corresponding alpha map for sheet
+   *  - framesX: number of colummns in character sheet
+   *  - framesY: number of rows in character sheet
+   * @param {*} uniforms -
+   * @param {*} layer - layer to add sprite to
+   */
+  constructor(parentScene, sheetInfo, uniforms, layer) {
+    const texture = this.spriteSheetTexture(sheetInfo.sheetPath, sheetInfo.framesX, sheetInfo.framesY, 5);
+    const alphaTexture = this.spriteSheetTexture(sheetInfo.alphaPath,sheetInfo.framesX, sheetInfo.framesY, 5);
     const material = new THREE.MeshStandardMaterial({
       transparent: true,
       map: texture,
@@ -73,4 +84,14 @@ export default class MikuSprite {
     this.#mesh.material.map.animate();
     this.#mesh.material.alphaMap.animate();
   }
+
+  setRotation(value) {
+    this.#mesh.rotation.x = value;
+  }
+
+  // animateRotation(value) {
+
+  // }
+
+  // _tweenRotation()
 }

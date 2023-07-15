@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { BloomEffect, ChromaticAberrationEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
+import { BloomEffect, ChromaticAberrationEffect, DepthOfFieldEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 
 export default class ElemScene {
   #scene;
@@ -34,7 +34,7 @@ export default class ElemScene {
     this.#composer.addPass(renderPass);
     this.#bloomRender()
     this.#rgbRender();
-
+    this.#depthRender();
   }
 
   resizeRendererToDisplaySize(renderer) {
@@ -95,13 +95,6 @@ export default class ElemScene {
   }
 
   #bloomRender() {
-
-    // let bloomPass = new UnrealBloomPass(
-    //   new THREE.Vector2(window.innerWidth, window.innerHeight), // resolution?
-    //   0.5, //strength
-    //   0.4, // radius
-    //   0.1 //threshold
-    // );
     let effect = new BloomEffect({
       intensity: 0.5,
       radius: 0.4,
@@ -121,6 +114,16 @@ export default class ElemScene {
     const rgbPass = new EffectPass( this.#camera, effect );
     
     this.#composer.addPass( rgbPass );
+  }
+
+  #depthRender() {
+    const effect = new DepthOfFieldEffect(this.#camera, {
+      worldFocusRange: 35,
+      bokehScale: 5,
+      focusRange: 1
+    });
+    const depthPass = new EffectPass(this.#camera, effect);
+    this.#composer.addPass( depthPass );
   }
     
 }

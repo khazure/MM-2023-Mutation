@@ -48,6 +48,9 @@ import { Player } from "textalive-app-api";
   // keeps track of starting time for miku's speech in parenthesises
   let parenStart = null;
 
+  // keeps track of progress through paren part
+  let parenRatio = null;
+
   // keeps track of mouse position
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
@@ -183,21 +186,6 @@ const animateChar = function (now, unit) {
             }, OUTRO_DURATION);
           } else {
 
-            // preadd lyrics to container
-            // let word = document.createElement("span");
-            // word.textContent = child.text;
-            // //word.classList.add("hidden-visibility");
-            // word.id = child.startTime;
-
-            // word.style.animationDelay = "0." + index + "s";
-
-            // textContainer.appendChild(word);
-
-            // add whitespace
-            // let whiteSpace = document.createTextNode("\u00A0");
-            // textContainer.appendChild(whiteSpace);
-      
-            // phrase only
             phraseContainer.textContent = phraseContainer.textContent + child.text;
 
           }
@@ -249,6 +237,17 @@ function prepareForNewPhrase() {
   parenStart = null;
 }
 
+function calculateParenRatio(position) {
+  let alteredStart = null;
+  parenStart && (alteredStart = parenStart - INTRO_DURATION);
+  if (parenStart && currPhrase && position >= alteredStart && position <= currPhrase.endTime) {
+    const duration = (currPhrase.endTime - alteredStart) + INTRO_DURATION;
+    return (position - alteredStart) / duration;
+  } else {
+    return null;
+  }
+}
+
 /**
  * Translates lyrics upwards
  */
@@ -267,31 +266,6 @@ function movePreviousLyricsUp() {
       lyric.style.transform = `translateY(-${(30 * (prevLyrics.length - i))}px)`;
     }
   }
-}
-
-/**
- * Creates a container for a new line of lyrics. Does not add any lyrics to the container.
- * @returns {DOM Element} - text container
- */
-function createNewPhraseContainer() {
-  let parent = document.createElement("h1");
-  let textContainer = documen.createElement("span");
-
-  parent.appendChild(textContainer);
-
-  return textContainer;
-}
-
-/**
- * Adds blinking box to end of given text container. Looks like terminal blinking box
- * @param {DOM Element} textContainer - text Container to append blinking box to.
- */
-function addBlinkingBox(textContainer) {
-  // add blinking typebox to textContainer
-  let blinkingTxtBox = document.createElement("span");
-  blinkingTxtBox.textContent = "▌";
-  blinkingTxtBox.classList.add("blinking");
-  textContainer.append(blinkingTxtBox);
 }
 
 player.addListener({
@@ -449,6 +423,9 @@ function onThrottledTimeUpdate(position) {
   } else {
     qs(".grid").classList.replace("chorus", "non-chorus");
   }
+
+  parenRatio = calculateParenRatio(player.timer.position);
+  console.log(parenRatio);
 }
 
 /**
@@ -515,4 +492,8 @@ export function getBeatRatio() {
  */
 export function getChordRatio() {
   return currChordRatio;
+}
+
+export function getParenRatio() {
+  return parenRatio;
 }
