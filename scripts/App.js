@@ -157,11 +157,14 @@ class App {
     const testShape =  new THREE.Mesh(testGeo, testMat);
 
     const testSphere = new THREE.Mesh(new THREE.SphereGeometry(1), testMat);
+    const testIco =  new THREE.Mesh(new THREE.IcosahedronGeometry(1), testMat);
 
     this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer);
     this.ShapeSlot = new Slot(this.scene1.getScene(), this.scene1.getCam(), 6, testShape);
     this.ShapeSlot.push(testSphere);
-    //this.ShapeSlot.next();
+    this.ShapeSlot.push(testIco);
+    this.ShapeSlot.changeGeometryAt(0, new THREE.OctahedronGeometry());
+    this.ShapeSlot.changeMaterialAt(0, new THREE.MeshPhongMaterial({color: 0x33ccff}));
     this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
   }
 
@@ -213,7 +216,7 @@ class App {
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
       this.mikuSprite.nextFrame();
       this.mikuSprite2.nextFrame();
-      //this.ShapeSlot.next();
+      this.ShapeSlot.next(2000);
     }
 
     if(getParenRatio()) {
