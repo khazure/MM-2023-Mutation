@@ -6,7 +6,7 @@ export default class MikuSprite {
   constructor(parentScene, uniforms, layer) {
     const texture = this.spriteSheetTexture("../images/test_sheet.png", 2, 1, 5);
     const alphaTexture = this.spriteSheetTexture("../images/test_sheet_alpha_map.png", 2, 1, 5);
-    const material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshStandardMaterial({
       transparent: true,
       map: texture,
       alphaMap: alphaTexture

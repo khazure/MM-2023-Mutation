@@ -223,6 +223,14 @@ randomizeCubePos(width) {
     this.#mesh.setColorAt(instanceId, curColor);
     this.#mesh.instanceColor.needsUpdate = true;
   }
+
+  /**
+   * increments rotation of entire instanced mesh
+   * @param {number} value - value to increment rotation by
+   */
+  incrementRotation(value) {
+    this.#mesh.rotation.x += value;
+  }
 }
 
 
