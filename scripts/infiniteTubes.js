@@ -31,7 +31,7 @@ export default class infiniteTubes {
     // 0.02 : its radius (yeah it's a tiny tube)
     // 50 : the number of segments that make up the cross-section
     // false : a value to set if the tube is closed or not
-    var tubeGeometry = new THREE.TubeGeometry(curve, 700, 2, 50, false);
+    var tubeGeometry = new THREE.TubeGeometry(curve, 700, 3, 50, false);
 
     const loader = new THREE.TextureLoader();
     let rockPattern = loader.load('../images/miku.png');
@@ -57,9 +57,13 @@ export default class infiniteTubes {
     parentScene.add(this.#tube);
   }
 
-  updateMaterialOffset() {
-    // Update the offset of the material with the defined speed
-    this.#tubeMaterial.map.offset.x += this.#speed;
+  // updateMaterialOffset() {
+  //   // Update the offset of the material with the defined speed
+  //   this.#tubeMaterial.map.offset.x -= this.#speed;
+  // };
+
+  updateMaterialOffset(value) {
+    this.#tubeMaterial.map.offset.x -= value;
   };
 
   updateCurve() {

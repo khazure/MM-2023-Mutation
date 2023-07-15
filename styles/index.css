@@ -247,6 +247,23 @@ nav .material-symbols-outlined {
   text-align: center;
 }
 
+#metadata-box {
+  grid-column: 5 / span 3;
+  grid-row: 10 / span 1;
+  display: flex;
+  flex-direction: row;
+}
+
+#metadata-box div:first-child {
+  border-right: var(--accent-color) 3px solid;  
+}
+
+#metadata-box p {
+  margin: 0 2px;
+  font-size: 10px;
+  color: var(--accent-color);
+}
+
 #bg-texture {
   background: radial-gradient(farthest-corner circle at 70% 80%, #ff95ff 5%, transparent 50%, transparent),
   radial-gradient(farthest-corner circle at 0px 0px, #55ffff 10%, transparent 46%, transparent),

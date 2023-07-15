@@ -127,6 +127,7 @@ class App {
   _createMikuScene() {
     this.mikuScene = new ElemScene(document.querySelector("#miku-scene"), this.renderer);
     this.mikuSprite = new MikuSprite(this.mikuScene.getScene(), this.uniforms, 0);
+    this.mikuTube = new infiniteTubes(this.mikuScene.getScene(), this.uniforms, 0);
   }
 
   /**
@@ -197,6 +198,8 @@ class App {
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
       this.mikuSprite.nextFrame();
     }
+
+    this.mikuTube.updateMaterialOffset((1 - this.textAliveData.beat.currValue) / 10);
 
     this.fullScrShapes.incrementRotation((1 - this.textAliveData.chord.currValue) / 70);
     TWEEN.update(); //If tweening.
