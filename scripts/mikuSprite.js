@@ -15,8 +15,8 @@ export default class MikuSprite {
    * @param {*} layer - layer to add sprite to
    */
   constructor(parentScene, sheetInfo, uniforms, layer) {
-    const texture = this.spriteSheetTexture(sheetInfo.sheetPath, sheetInfo.framesX, sheetInfo.framesY, 5);
-    const alphaTexture = this.spriteSheetTexture(sheetInfo.alphaPath,sheetInfo.framesX, sheetInfo.framesY, 5);
+    const texture = this.spriteSheetTexture(sheetInfo.sheetPath, sheetInfo.framesX, sheetInfo.framesY, 200);
+    const alphaTexture = this.spriteSheetTexture(sheetInfo.alphaPath,sheetInfo.framesX, sheetInfo.framesY, 200);
     const material = new THREE.MeshPhysicalMaterial({
       transparent: true,
       map: texture,
@@ -27,7 +27,6 @@ export default class MikuSprite {
     });
 
     this.#mesh = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material);
-    //this.#mesh.scale.set(5, 5, 0);
     this.#mesh.layers.enable(layer);
     parentScene.add(this.#mesh);
   }
@@ -60,6 +59,7 @@ export default class MikuSprite {
         //timer = setInterval(nextFrame, frameDelay);
     }
     img.src = imageURL;
+    canvasTexture.magFilter = THREE.NearestFilter;
 
     canvasTexture.animate = function nextFrame() {
         count++;

@@ -357,7 +357,9 @@ function moveGradient(event) {
   const height = document.documentElement.clientHeight;
   const percentageX = x / width * 100;
   const percentageY = y / height * 100;
-  id("bg-texture").style.backgroundPosition = percentageX + "%" + percentageY + "%";
+  qsa(".bg-texture").forEach(bg => {
+    bg.style.backgroundPosition = percentageX + "%" + percentageY + "%";
+  })
 }
 
 /**
@@ -494,4 +496,8 @@ export function getChordRatio() {
 
 export function getParenRatio() {
   return parenRatio;
+}
+
+export function getPosition() {
+  return player.timer.position;
 }

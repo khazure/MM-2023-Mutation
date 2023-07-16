@@ -11,7 +11,7 @@ import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
 import infiniteTubes from './infiniteTubes.js';
 import MikuSprite from './mikuSprite.js';
-import {getBeatRatio, getChordRatio, getParenRatio} from './Lyrics.js';
+import {getBeatRatio, getChordRatio, getParenRatio, getPosition} from './Lyrics.js';
 import FloatShapes from './FloatShapes.js';
 import ElemScene from './ElemScene.js';
 import * as TWEEN from '@tweenjs/tween.js';
@@ -103,7 +103,9 @@ class App {
     this.textAliveData = {
       beat: { currValue: 1.0, prevValue: 1.0 },
       chord: { currValue: 1.0, prevValue: 1.0},
-      inChorus: { value: false }
+      position: { value: 0 },
+      inChorus: { value: false },
+      SECOND_CHORUS_START: { value: 110764.6}
     };
   }
 
@@ -146,17 +148,17 @@ class App {
   _createMikuScene() {
     this.mikuScene = new ElemScene(document.querySelector("#miku-scene"), this.renderer);
     const firstMiku = {
-      sheetPath: "../images/test_sheet.png",
-      alphaPath: "../images/test_sheet_alpha_map.png",
-      framesX: 2,
-      framesY: 1
+      sheetPath: "../images/miku_sprites.png",
+      alphaPath: "../images/alpha_sheet.png",
+      framesX: 5,
+      framesY: 2
     }
 
     const secondMiku = {
-      sheetPath: "../images/pixelmiku_wa.png",
-      alphaPath: "../images/singleAlpha.png",
-      framesX: 1,
-      framesY: 1
+      sheetPath: "../images/miku_speak.png",
+      alphaPath: "../images/alpha_speak.png",
+      framesX: 5,
+      framesY: 2
     }
 
     this.mikuSprite = new MikuSprite(this.mikuScene.getScene(), firstMiku, this.uniforms, 0);
@@ -168,7 +170,10 @@ class App {
 
     this.mikuParticles = new InstanceShapes(this.mikuScene.getScene(), new THREE.ShapeGeometry(this.heartShape), material, 2000, 0);
     this.mikuParticles.randomizeSpherePos(20);
+
+    // this.mikuBg = new Experiment(this.mikuScene.getScene(), new THREE.BoxGeometry(20, 20, 20), this.uniforms, 0);
     // this.mikuTube = new infiniteTubes(this.mikuScene.getScene(), this.uniforms, 0);
+    this.mikuBg = new hologramShape(this.mikuScene.getScene(), new THREE.SphereGeometry(20), this.uniforms, 0);
   }
 
   /**
@@ -262,13 +267,18 @@ class App {
     // update stored textAliveData
     this.textAliveData.beat.currValue = getBeatRatio();
     this.textAliveData.chord.currValue = getChordRatio();
+    this.textAliveData.position.value = getPosition();
 
     if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
-      this.mikuSprite.nextFrame();
-      this.mikuSprite2.nextFrame();
       this.MeshSlide1.next(2000);
       this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
+    }
+
+    if (Math.abs(this._linearToPiecewise(this.textAliveData.beat.currValue, 4) - 
+    this._linearToPiecewise(this.textAliveData.beat.prevValue, 4)) > 0.5) {
+      this.mikuSprite.nextFrame();
+      this.mikuSprite2.nextFrame();
     }
 
     if(getParenRatio()) {
@@ -279,12 +289,19 @@ class App {
       this.mikuSprite2.setRotation(90);
     }
 
-    this.mikuParticles.setRotation(THREE.MathUtils.degToRad(3));
+    this.mikuParticles.setRotation(THREE.MathUtils.degToRad(10));
+    //this.mikuParticles.translate(this.textAliveData.beat.currValue);
+    this.mikuParticles.incrementEntireRotation(0.002);
 
     // this.mikuTube.updateMaterialOffset((1 - this.textAliveData.beat.currValue) / 10);
 
-    this.fullScrShapes.incrementRotation((1 - this.textAliveData.chord.currValue) / 90);
-    this.fullScrShapes.setGeometry(new THREE.SphereGeometry(2));
+    //this.fullScrShapes.incrementEntireRotation((1 - this.textAliveData.chord.currValue) / 90);
+    if (this.textAliveData.position.value >= this.textAliveData.SECOND_CHORUS_START.value) {
+      this.fullScrShapes.setGeometry;
+    }
+
+    this.fullScrShapes.incrementEntireRotation(0.002);
+
     TWEEN.update(); //If tweening.
   }
 
@@ -318,6 +335,11 @@ class App {
     } else {
       return (2 * linearValue) - 1
     }
+  }
+
+  _linearToPiecewise(linearValue, numSplits) {
+    const multiple = linearValue - linearValue % (1 / numSplits);
+    return numSplits * (linearValue - multiple);
   }
 
   /**
