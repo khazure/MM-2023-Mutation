@@ -26,7 +26,7 @@ export default class InstanceShapes {
 randomizeCubePos(width) {
   const currShape = new THREE.Object3D();
   for (let i = 0; i < this.#mesh.count; i++) {
-      currShape.position.x = Math.random() * width - (width / 2); // 50 to -50
+      currShape.position.x = Math.random() * width - (width / 2);
       currShape.position.y = Math.random() * width - (width / 2);
       currShape.position.z = Math.random() * width - (width / 2);
 
@@ -35,6 +35,11 @@ randomizeCubePos(width) {
       currShape.rotation.y = Math.random() * 360;
       currShape.rotation.z = Math.random() * 360;
       
+      const scaleB = Math.random();
+      currShape.scale.x = scaleB;
+      currShape.scale.y = scaleB;
+      currShape.scale.z = scaleB;
+
       currShape.updateMatrix(); //Update matrix's (x,y,z)
       this.#mesh.setMatrixAt(i, currShape.matrix); //Change transformation matrix to new pos.
   }
@@ -57,6 +62,11 @@ randomizeCubePos(width) {
         currShape.rotation.x = Math.random() * 360;
         currShape.rotation.y = Math.random() * 360;
         currShape.rotation.z = Math.random() * 360;
+
+        const scaleB = Math.random();
+        currShape.scale.x = scaleB;
+        currShape.scale.y = scaleB;
+        currShape.scale.z = scaleB;
         
         currShape.updateMatrix(); //Update matrix's (x,y,z)
         this.#mesh.setMatrixAt(i, currShape.matrix); //Change transformation matrix to new pos.
@@ -74,6 +84,32 @@ randomizeCubePos(width) {
     } else {
       return this.#generateSpherePoint(radius);
     }
+  }
+
+  /**
+   * Rotate each instanced shape by given value (radians)
+   * @param {number} value - number in radians, amount to rotate the shapes by
+   */
+  setRotation(value) {
+    let currMatrix = new THREE.Matrix4();
+
+    for (let i = 0; i < this.#mesh.count; i++) {
+
+      this.#mesh.getMatrixAt(i, currMatrix)
+
+      // rotations
+      let rotationMatrix = currMatrix.clone();
+      rotationMatrix.makeRotationY(value);
+      currMatrix.multiply(rotationMatrix)
+      
+      this.#mesh.setMatrixAt(i, currMatrix); //Change transformation matrix to new pos.
+    }
+    this.#mesh.instanceMatrix.needsUpdate = true;
+  }
+
+  setGeometry(newGeo) {
+    this.#mesh.geometry.dispose();
+    this.#mesh.geometry = newGeo;
   }
 
   /**

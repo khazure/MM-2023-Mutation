@@ -256,20 +256,37 @@ nav .material-symbols-outlined {
 
 #metadata-box div:first-child {
   border-right: var(--accent-color) 3px solid;  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+#metadata-box div:nth-child(2) {
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  padding: 5px;
+  flex-direction: column;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #metadata-box p {
-  margin: 0 2px;
-  font-size: 10px;
+  font-size: 0.7em;
   color: var(--accent-color);
+  margin: 0;
 }
 
 #bg-texture {
-  background: radial-gradient(farthest-corner circle at 70% 80%, #ff95ff 5%, transparent 50%, transparent),
+  /* background: radial-gradient(farthest-corner circle at 70% 80%, #ff95ff 5%, transparent 50%, transparent),
   radial-gradient(farthest-corner circle at 0px 0px, #55ffff 10%, transparent 46%, transparent),
   radial-gradient(farthest-corner circle at 30% 100%, #ffff78 10%, transparent 80%, transparent),
   radial-gradient(farthest-corner circle at 100% 0px, #54ffff 10%, transparent 50%, transparent),
-  radial-gradient(farthest-corner circle at 100% 100%, #28ff7a 5%, transparent 70%, transparent);
-  background-size: 120% 120%;
-  /* filter: saturate(50%) brightness(90%); */
+  radial-gradient(farthest-corner circle at 100% 100%, #28ff7a 5%, transparent 70%, transparent); */
+  background: radial-gradient(50% 123.47% at 50% 50%, #00FF94 0%, #FF00C7 100%), linear-gradient(121.28deg, #213100 0%, #FF0000 100%), linear-gradient(360deg, #0029FF 0%, #8FFF00 100%), linear-gradient(114.9deg, #00C6A2 0%, #6A45A8 100%), radial-gradient(100% 148.07% at 0% 0%, #FFFFFF 0%, #1DCD00 100%);
+  background-blend-mode: screen, color-dodge, overlay, difference, normal;
+  background-size: 125% 125%;
+  filter: brightness(130%);
 }

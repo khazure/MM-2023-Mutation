@@ -308,7 +308,6 @@ function incrementVolume(value) {
   let vol = parseInt(slider.value) + parseInt(value);
   (vol > slider.max) && ( vol = slider.max);
   (vol < slider.min) && (vol = slider.min);
-  console.log(vol);
   id("volume-level").value = vol;
   player.volume = vol;
 }
@@ -425,7 +424,6 @@ function onThrottledTimeUpdate(position) {
   }
 
   parenRatio = calculateParenRatio(player.timer.position);
-  console.log(parenRatio);
 }
 
 /**

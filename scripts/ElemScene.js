@@ -9,7 +9,7 @@ export default class ElemScene {
 
   constructor(elem, renderer) {
     this.#scene = new THREE.Scene();
-    this.#scene.fog = new THREE.Fog(0xFF0000, 10, 40);
+    this.#scene.fog = new THREE.Fog(0x839EFF, 10, 40);
     this.#element = elem;
 
     const aspectRatio = elem.offsetWidth / elem.offsetHeight;
@@ -20,10 +20,14 @@ export default class ElemScene {
 
     //Setting up lighting
     {
-      //color, intensity
-      const light =  new THREE.DirectionalLight(0xFFFFFF, 1);
+      // color, intensity
+      const light =  new THREE.PointLight(0xFFFFFF, 1);
       light.position.set(-1, 2, 4);
       this.#scene.add(light);
+
+      const ambient = new THREE.AmbientLight(0x839EFF, 1);
+      ambient.position.set(1, 1, 4);
+      this.#scene.add(ambient);
     }
 
     // set up composer

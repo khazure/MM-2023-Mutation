@@ -17,10 +17,13 @@ export default class MikuSprite {
   constructor(parentScene, sheetInfo, uniforms, layer) {
     const texture = this.spriteSheetTexture(sheetInfo.sheetPath, sheetInfo.framesX, sheetInfo.framesY, 5);
     const alphaTexture = this.spriteSheetTexture(sheetInfo.alphaPath,sheetInfo.framesX, sheetInfo.framesY, 5);
-    const material = new THREE.MeshStandardMaterial({
+    const material = new THREE.MeshPhysicalMaterial({
       transparent: true,
       map: texture,
-      alphaMap: alphaTexture
+      alphaMap: alphaTexture,
+      // specularIntensity: 500,
+      emissiveIntensity: 500,
+      metalness: 1,
     });
 
     this.#mesh = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material);

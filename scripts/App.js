@@ -62,6 +62,9 @@ class App {
     this._onResize(); // Calc aspect for first time.
     this._addListeners();
 
+    // set up shapes
+    this._createHeartShape(100);
+
     // Scene Creation
     this._createMikuScene();
     this._createScene1();
@@ -105,6 +108,22 @@ class App {
   }
 
   /**
+   * Creates and stores a heart shape 
+   * @param {number} factor - amount to shrink the heart shapes by
+   */
+  _createHeartShape(factor) {
+    const x = 0, y = 0;
+    this.heartShape = new THREE.Shape();
+    this.heartShape.moveTo( x + 5 / factor, y + 5 / factor);
+    this.heartShape.bezierCurveTo( x + 5 / factor, y + 5 / factor, x + 4 / factor, y / factor, x / factor, y / factor );
+    this.heartShape.bezierCurveTo( x - 6 / factor, y / factor, x - 6 / factor, y + 7 / factor,x - 6 / factor, y + 7  / factor);
+    this.heartShape.bezierCurveTo( x - 6 / factor, y + 11 / factor, x - 3 / factor, y + 15.4 / factor, x + 5 / factor, y + 19  / factor);
+    this.heartShape.bezierCurveTo( x + 12 / factor, y + 15.4 / factor, x + 16 / factor, y + 11 / factor, x + 16 / factor, y + 7  / factor);
+    this.heartShape.bezierCurveTo( x + 16 / factor, y + 7 / factor, x + 16 / factor, y / factor, x + 10 / factor, y  / factor);
+    this.heartShape.bezierCurveTo( x + 7 / factor, y / factor, x + 5 / factor, y + 5 / factor, x + 5 / factor, y + 5  / factor);
+  }
+
+  /**
    * Creates the renderer for the app and its THREE.js scenes.
    */
   _createRenderer() {
@@ -142,7 +161,14 @@ class App {
 
     this.mikuSprite = new MikuSprite(this.mikuScene.getScene(), firstMiku, this.uniforms, 0);
     this.mikuSprite2 = new MikuSprite(this.mikuScene.getScene(), secondMiku, this.uniforms, 0);
-    this.mikuTube = new infiniteTubes(this.mikuScene.getScene(), this.uniforms, 0);
+
+    const material = new THREE.MeshStandardMaterial({
+      side: THREE.DoubleSide,
+    });
+
+    this.mikuParticles = new InstanceShapes(this.mikuScene.getScene(), new THREE.ShapeGeometry(this.heartShape), material, 2000, 0);
+    this.mikuParticles.randomizeSpherePos(20);
+    // this.mikuTube = new infiniteTubes(this.mikuScene.getScene(), this.uniforms, 0);
   }
 
   /**
@@ -211,7 +237,7 @@ class App {
 
     this.fullScrScene = new ElemScene(document.getElementById("graphic-grid"), this.renderer);
     this.fullScrShapes = new InstanceShapes(this.fullScrScene.getScene(), geo, mat, this.config.squareCount, 0);
-    this.fullScrShapes.randomizeSpherePos(40);
+    this.fullScrShapes.randomizeSpherePos(45);
   }
 
   /**
@@ -253,9 +279,12 @@ class App {
       this.mikuSprite2.setRotation(90);
     }
 
-    this.mikuTube.updateMaterialOffset((1 - this.textAliveData.beat.currValue) / 10);
+    this.mikuParticles.setRotation(THREE.MathUtils.degToRad(3));
+
+    // this.mikuTube.updateMaterialOffset((1 - this.textAliveData.beat.currValue) / 10);
 
     this.fullScrShapes.incrementRotation((1 - this.textAliveData.chord.currValue) / 90);
+    this.fullScrShapes.setGeometry(new THREE.SphereGeometry(2));
     TWEEN.update(); //If tweening.
   }
 
