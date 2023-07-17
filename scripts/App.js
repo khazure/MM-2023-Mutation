@@ -119,7 +119,7 @@ class App {
       inParen: {  currValue: false, prevValue: false },
       inChorus: { value: false },
       LYRICS_START: { value: 13726 },
-      FIRST_CHORUS_START: { value: 54754.3}, 
+      FIRST_CHORUS_END: { value:  80359.1}, 
       SECOND_CHORUS_START: { value: 110764.6}
     };
   }
@@ -251,14 +251,14 @@ class App {
     this.uniforms.uTime.value = time;
 
     // update previous textAliveData
-    let prevBeat = this.textAliveData.beat.prevValue = this.textAliveData.beat.currValue;
-    let prevChord = this.textAliveData.chord.prevValue = this.textAliveData.chord.currValue;
+    const prevBeat = this.textAliveData.beat.prevValue = this.textAliveData.beat.currValue;
+    const prevChord = this.textAliveData.chord.prevValue = this.textAliveData.chord.currValue;
     this.textAliveData.inParen.prevValue = this.textAliveData.inParen.currValue;
 
     // update stored textAliveData
-    let currBeat = this.textAliveData.beat.currValue = getBeatRatio();
-    let currChord = this.textAliveData.chord.currValue = getChordRatio();
-    let position = this.textAliveData.position.value = getPosition();
+    const currBeat = this.textAliveData.beat.currValue = getBeatRatio();
+    const currChord = this.textAliveData.chord.currValue = getChordRatio();
+    const position = this.textAliveData.position.value = getPosition();
     (getParenRatio()) ? (this.textAliveData.inParen.currValue = true) 
                       : (this.textAliveData.inParen.currValue = false);
     this.textAliveData.inChorus.value = getChorus();
@@ -270,16 +270,15 @@ class App {
     if (position < this.textAliveData.LYRICS_START.value) {
       difference = (Math.abs(prevChord - currChord) > 0.5);
       tweenDuration = 1000;
-    } else if ( position < this.textAliveData.FIRST_CHORUS_START.value ) {
+    } else if ( position < this.textAliveData.FIRST_CHORUS_END.value ) {
       difference = (Math.abs(prevBeat - currBeat) > 0.5);
       tweenDuration = 700;
     } else {
       difference = (Math.abs(this._linearToTwoLinears(currBeat) - 
                   this._linearToTwoLinears(prevBeat)) > 0.5);
-                  console.log(difference)
     }
 
-    // animate every textAlive half beat
+    // animate based on textAlive chord, beat, or half beat depending on song position
     if (difference) {
       this.MeshSlide1.next(tweenDuration, this.textAliveData.inChorus.value);
       //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
@@ -296,14 +295,15 @@ class App {
     // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
 
     // change geometry of bg shapes when in second chorus 
-    if (this.textAliveData.position.value >= this.textAliveData.SECOND_CHORUS_START.value) {
-      if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
-      this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
+    if (position >= this.textAliveData.SECOND_CHORUS_START.value) {
+      if (difference) {
         this.fullScrShapes.setGeometry(this._getRandomGeometry());
       }
     }
 
     this.scene1.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide1.getViewPos());
+    this.scene2.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide2.getViewPos());
+    
     // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
 
     this.fullScrShapes.incrementEntireRotation(0.002);
@@ -320,16 +320,10 @@ class App {
     if (prevParen !== currParen) {
       if (prevParen === false) {
         // entering animation
-        // this.mikuSprite2.setRotation(0);
-        // this.mikuSprite.setRotation(90);
         const duration = getCurrParenDuration();
         this.mikuSprite.tweenRotation(duration, 0, 180);
         this.mikuSprite2.tweenRotation(duration, 180, 0);
-      } else {
-        // exiting animation
-        // this.mikuSprite.setRotation(0);
-        // this.mikuSprite2.setRotation(90);
-      }
+      } 
     }
 
     // animate heart particles
@@ -345,8 +339,6 @@ class App {
 
       this.delta = this.delta % this.interval;
     }
-
-    //this.MeshSlide1.morphAt(1, this.Clock);
   }
 
   /**
@@ -394,15 +386,15 @@ class App {
 
     const geos = [
       new THREE.BoxGeometry(1.25, 1.25),
-      new THREE.CapsuleGeometry(0.8, 0.8, 4, 5),
-      new THREE.CylinderGeometry(1, 1, 1.5),
+      new THREE.CapsuleGeometry(0.5, 0.8),
+      new THREE.CylinderGeometry(0.5, 0.5, 1.5),
       new THREE.ConeGeometry(1, 1, 10),
       new THREE.DodecahedronGeometry(),
       new THREE.IcosahedronGeometry(1),
       new THREE.OctahedronGeometry(1),
       new THREE.SphereGeometry(1),
       new THREE.TetrahedronGeometry(1.25),
-      new THREE.TorusGeometry(0.8, 0.6),
+      new THREE.TorusGeometry(0.7, 0.3),
       new THREE.TorusKnotGeometry(0.6, 0.25),
     ];
 

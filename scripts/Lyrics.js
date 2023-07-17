@@ -213,11 +213,6 @@ const animateChar = function (now, unit) {
       let bubbleClass = id("speech-bubble").classList;
       (parenStart && now >= parenStart - (INTRO_DURATION + OUTRO_DURATION)) 
         ? bubbleClass.replace("lyric-outro-animation", "bounce-in") : null;
-
-      // for each child with id in currentContainer, show if time is past
-      // qs(".current-container").childNodes.forEach((word) => {
-      //   (word.id && now >= parseInt(word.id)) && (word.classList.remove("hidden-visibility"));
-      // });
     }
   }
 }
@@ -252,26 +247,6 @@ function calculateParenRatio(position) {
   } else {
     currParenDuration = null;
     return null;
-  }
-}
-
-/**
- * Translates lyrics upwards
- */
-function movePreviousLyricsUp() {
-  let prevLyrics = qsa(".lyric");
-
-  for (let i = 0; i < prevLyrics.length; i++) {
-    let lyric = prevLyrics[i];
-
-    // if out of viewport, delete
-    if(!isInViewport(lyric)) {
-      lyric.remove();
-    } else {
-
-      // else, move up
-      lyric.style.transform = `translateY(-${(30 * (prevLyrics.length - i))}px)`;
-    }
   }
 }
 
@@ -417,6 +392,16 @@ function onThrottledTimeUpdate(position) {
 
   inChorus = (player.findChorus(player.timer.position) !== null);
 
+  const bars = qsa(".vertical-bar");
+  if (inChorus) {
+    bars[0].classList.add("double-col-left");
+    bars[1].classList.add('double-col-right');
+  } else {
+    bars[0].classList.remove("double-col-left");
+    bars[1].classList.remove('double-col-right');
+
+  }
+
   parenRatio = calculateParenRatio(player.timer.position + OUTRO_DURATION);
 }
 
@@ -453,17 +438,6 @@ function qs(name) {
 
 function qsa(name) {
   return document.querySelectorAll(name);
-}
-
-// https://www.javascripttutorial.net/dom/css/check-if-an-element-is-visible-in-the-viewport/
-function isInViewport(element) {
-  const rect = element.getBoundingClientRect();
-  return (
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-  );
 }
 
 /**
