@@ -11,7 +11,7 @@ import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
 import infiniteTubes from './infiniteTubes.js';
 import MikuSprite from './mikuSprite.js';
-import {getBeatRatio, getChordRatio, getCurrParenDuration, getParenRatio, getPosition} from './Lyrics.js';
+import {getBeatRatio, getChordRatio, getCurrParenDuration, getParenRatio, getPosition, getChorus} from './Lyrics.js';
 import FloatShapes from './FloatShapes.js';
 import ElemScene from './ElemScene.js';
 import * as TWEEN from '@tweenjs/tween.js';
@@ -264,14 +264,16 @@ class App {
     this.textAliveData.position.value = getPosition();
     (getParenRatio()) ? (this.textAliveData.inParen.currValue = true) 
                       : (this.textAliveData.inParen.currValue = false);
+    this.textAliveData.inChorus.value = getChorus();
 
     this._updateMikuScene();
 
     if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
-      this.MeshSlide1.next(2000, true);
+      console.log(this.textAliveData.inChorus.value)
+      this.MeshSlide1.next(300, this.textAliveData.inChorus.value);
       //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
-      this.MeshSlide2.next(2000, true);
+      this.MeshSlide2.next(300, this.textAliveData.inChorus.value);
     }
 
     //this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1]);

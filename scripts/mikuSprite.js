@@ -100,7 +100,6 @@ export default class MikuSprite {
       .to({angle: endAngle}, duration)
       .easing(ease)
       .onUpdate((coords) => {
-        console.log(coords.angle)
         this.#mesh.rotation.y = coords.angle;
       });
       return tween;

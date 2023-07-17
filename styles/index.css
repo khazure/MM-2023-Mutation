@@ -248,8 +248,8 @@ nav .material-symbols-outlined {
 }
 
 #metadata-box {
-  grid-column: 5 / span 3;
-  grid-row: 10 / span 1;
+  grid-column: 15 / span 3;
+  grid-row: 7 / span 1;
   display: flex;
   flex-direction: row;
 }
@@ -318,5 +318,4 @@ nav .material-symbols-outlined {
   background-blend-mode: screen, color-dodge, overlay, difference, normal;
   background-size: 125% 125%;
   filter: brightness(130%);
-
 }

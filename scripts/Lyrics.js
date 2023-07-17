@@ -35,13 +35,7 @@ import { Player } from "textalive-app-api";
   // Keeps track of current lyric at word level
   let currWord = null;
 
-  // keeps track of current beat
-  let currBeat = null;
-
   let currBeatRatio = null;
-
-  // keeps track of current chord
-  let currChord = null;
 
   let currChordRatio = null;
 
@@ -52,6 +46,8 @@ import { Player } from "textalive-app-api";
   let parenRatio = null;
 
   let currParenDuration = null;
+
+  let inChorus = false;
 
   // keeps track of mouse position
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -430,11 +426,7 @@ function onThrottledTimeUpdate(position) {
   //   id("beat-reactor").style.backgroundColor = random_rgba();
   // }
 
-  if (player.findChorus(position)) {
-    qs(".grid").classList.replace("non-chorus", "chorus");
-  } else {
-    qs(".grid").classList.replace("chorus", "non-chorus");
-  }
+  inChorus = (player.findChorus(player.timer.position) !== null);
 
   parenRatio = calculateParenRatio(player.timer.position + OUTRO_DURATION);
 }
@@ -515,4 +507,8 @@ export function getPosition() {
 
 export function getCurrParenDuration() {
   return currParenDuration;
+}
+
+export function getChorus() {
+  return inChorus;
 }
