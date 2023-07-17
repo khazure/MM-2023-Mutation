@@ -16,10 +16,8 @@ import { Player } from "textalive-app-api";
   });
 
   const FIRST_CHORUS_START = 54754.3;
-  const FIRST_CHORUS_END = 80359.1;
 
   const SECOND_CHORUS_START = 110764.6;
-  const SECOND_CHORUS_END = 136369.4;
 
   const END_TIME = 165015;
 
@@ -45,8 +43,10 @@ import { Player } from "textalive-app-api";
   // keeps track of progress through paren part
   let parenRatio = null;
 
+  // keeps track of the current paren duration
   let currParenDuration = null;
 
+  // boolean of if inChorus or not
   let inChorus = false;
 
   // keeps track of mouse position
@@ -75,7 +75,6 @@ function init() {
   id("reset-btn").addEventListener("click", resetMusic);
   id("vol-up-btn").addEventListener("click", () => {
     incrementVolume(10);
-    id("vol-mute-btn").classList.remove("selected");
   });
   id("vol-down-btn").addEventListener("click", () => {
     incrementVolume(-10);
@@ -290,6 +289,8 @@ function incrementVolume(value) {
   let vol = currVol + parseInt(value);
   (vol > 100) && ( vol = currVol);
   (vol < 0) && (vol = currVol);
+  (vol === 0) ? id("vol-mute-btn").classList.add("selected") 
+              : id("vol-mute-btn").classList.remove("selected");
   player.volume = vol;
 }
 

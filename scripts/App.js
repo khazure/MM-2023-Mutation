@@ -215,7 +215,6 @@ class App {
    */
   _update() {
     const time = this.clock.getElapsedTime();
-    this.uniforms.uTime.value = time;
 
     // update previous textAliveData
     const prevBeat = this.textAliveData.beat.prevValue = this.textAliveData.beat.currValue;
