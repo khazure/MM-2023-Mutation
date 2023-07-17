@@ -10,10 +10,9 @@
 - [License](#license)
 
 ## Overview
-Provide a brief overview of the project, including its purpose and main features. Mention any relevant technologies, frameworks, or libraries used.
 
 A colorful static webpage based around the song "Mutation" by Rin (Kuroneko Lounge) made for
-Magical Mirai 2023's programming contest! It utilizes ThreeJS and TextAlive App API to create a bright and cheerful depiction of miku and mutations.
+Magical Mirai 2023's programming contest! It utilizes the TextAlive App API, ThreeJS, and TweenJS to create a bright and cheerful depiction of miku and the creative "mutations" she fosters.
 
 ## Features
 
