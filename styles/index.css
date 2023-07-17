@@ -171,6 +171,20 @@ nav .material-symbols-outlined {
   transition: 200ms;
 }
 
+#loading-overlay {
+  background-color: rgba(20, 20, 20, 0.95);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#media {
+  right: 0;
+  bottom: 0;
+  position: absolute;
+}
+
 nav#left-nav {
   grid-column: 5 / span 3;
   grid-row: 10 / span 3;

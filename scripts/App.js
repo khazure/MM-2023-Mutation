@@ -233,7 +233,7 @@ class App {
     const position = this.textAliveData.position.value = getPosition();
     (getParenRatio()) ? (this.textAliveData.inParen.currValue = true) 
                       : (this.textAliveData.inParen.currValue = false);
-    this.textAliveData.inChorus.value = getChorus();
+    const inChorus = this.textAliveData.inChorus.value = getChorus();
 
     this._updateMikuScene();
 
@@ -253,12 +253,12 @@ class App {
 
     // animate based on textAlive chord, beat, or half beat depending on song position
     if (difference) {
-      this.MeshSlide1.next(tweenDuration, this.textAliveData.inChorus.value);
+      this.MeshSlide1.next(tweenDuration, inChorus);
       //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
-      this.MeshSlide2.next(tweenDuration, this.textAliveData.inChorus.value);
+      this.MeshSlide2.next(tweenDuration, inChorus);
 
       // if in chorus, add new geometries to meshSlides
-      if (this.textAliveData.inChorus.value) {
+      if (inChorus) {
         this.MeshSlide1.push( new THREE.Mesh(this._getRandomGeometry(), this._getRandomMaterial()));
         this.MeshSlide2.push( new THREE.Mesh(this._getRandomGeometry(), this._getRandomMaterial()));
       }
@@ -271,13 +271,15 @@ class App {
       }
     }
 
+    // rotate full screen shapes
+    let incrementAmount = 0;
+    (inChorus) ? (incrementAmount = (1 - currBeat) / 50) : (incrementAmount = 0.002);
+    this.fullScrShapes.incrementEntireRotation(incrementAmount);
+
+    // slight camera rotation based on mouse position
     this.mikuScene.updateCamPos(this.mousePos[0], this.mousePos[1], new THREE.Vector3(0, 0, 0));
     this.scene1.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide1.getViewPos());
     this.scene2.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide2.getViewPos());
-
-    // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
-
-    this.fullScrShapes.incrementEntireRotation(0.002);
 
     TWEEN.update(); //If tweening.
   }
@@ -397,7 +399,6 @@ class App {
       // this.mousePos[1] = eve.clientY / window.innerHeight;
       this.mousePos[0] = ( eve.clientX - (window.innerWidth / 2)) / window.innerWidth;
       this.mousePos[1] = ( eve.clientY - (window.innerHeight / 2)) / window.innerHeight;
-      //console.log(this.mousePos);
     })
     window.addEventListener('resize', this._resizeScreen);
   }
@@ -419,7 +420,6 @@ class App {
    * Resizes the renderer to element's size.
    */
   _onResize() {
-    //console.log(this.mousePos);
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
   }
 }

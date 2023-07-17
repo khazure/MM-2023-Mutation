@@ -76,7 +76,6 @@ export default class MeshSlide {
     this.#view = new Vector3();
     this.#view.copy(camera.position);
     this.#view.add(new Vector3(0, -0.25, -1 * distFromCam));
-    console.log(this.#view);
 
     //Calculate distance between shapes using triangle.
     const angle = Math.tan(camera.fov / 2);
@@ -95,9 +94,7 @@ export default class MeshSlide {
   push(mesh) {
     const temp = this.rotateMeshRandomly(mesh);
     this.#meshes.push(temp);
-    //console.log(this.#meshes);
     this.#parent.add(temp);
-    //console.log(this.#parent);
     this.#setPosVector(this.#meshes.length - 1, this.#start);
   }
 
@@ -133,7 +130,6 @@ export default class MeshSlide {
       exitTween.onComplete(() => {
         this.#setPosVector(this.#currIndex, this.#start);
         this.#currIndex = next;
-        console.log(this.#currIndex);
         this.#clearChangeBuffer();
         this.#tweening = false; //Async, needs boolean to indicate if tweening.
       });

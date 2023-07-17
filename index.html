@@ -4,14 +4,13 @@
   <link rel="icon" href="/images/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000" />
-  <title>Mutation</title>
+  <title>Hyper Mutation</title>
   <meta
     name="description"
     content="Magical Mirai 2023 programming contest entry"
   />
   <link rel="stylesheet" href="/styles/index.css" />
   <link rel="stylesheet" href="/styles/lyrics.css" />
-  <link rel="stylesheet" href="/styles/glitch.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=DotGothic16&family=Potta+One&family=Rampart+One&family=RocknRoll+One&family=Train+One&display=swap" rel="stylesheet">
@@ -29,7 +28,6 @@
 </head>
 <body>
   <main>
-    <!--nothing changes when canvas is omitted???-->
     <canvas id="c" class="full-screen"></canvas>
     <section id="loading-overlay" class="top-level full-screen">
       <article id="loading-pop-up" class="window">
@@ -55,7 +53,6 @@
           </button>
         </div>
         <div class="window-body">
-          <img alt="Hatsune Miku" src="/images/miku.png">
           <p>Installation complete. Run [ミュウテイション.exe]?</p>
           <button class="play-btn">Yes</button>
           <button class="play-btn">Yes</button>
@@ -68,18 +65,6 @@
       <div id="miku-scene" class="graphic-box">
         <div id="speech-bubble" class="lyric-outro-animation"></div>
       </div>
-      <!-- <div id="metadata-box" class="graphic-box">
-        <div>
-          <img src="../images/miku.png">
-        </div>
-        <div>
-          <p>ミュウテイション</p>
-          <p>Rin（Kuroneko Lounge）</p>
-          <p>
-            <span id="position"><span>-</strong> [ms]</span>
-          </p>
-        </div>
-      </div> -->
       <nav id="left-nav">
         <button id="play-btn" class="play-btn hidden" >
           <span class="material-symbols-outlined">

@@ -57,20 +57,6 @@ h1 {
   }
 }
 
-#loading-overlay {
-  background-color: rgba(20, 20, 20, 0.6);
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#media {
-  right: 0;
-  bottom: 0;
-  position: absolute;
-}
-
 #speech-bubble {
   background-color: var(--default-white);
   width: min-content;

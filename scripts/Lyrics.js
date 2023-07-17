@@ -319,8 +319,6 @@ function resetMusic() {
   id("speech-bubble").innerHTML = "";
   currPhrase = null;
   currWord = null;
-  currBeat = null;
-  currChord = null;
   player.video && player.requestMediaSeek(0);
 }
 
