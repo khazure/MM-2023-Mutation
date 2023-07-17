@@ -71,11 +71,6 @@ h1 {
   position: absolute;
 }
 
-#current-container {
-  /* animation-name: reveal-to-right;
-  animation-duration: 1000ms; */
-}
-
 #speech-bubble {
   background-color: var(--default-white);
   width: min-content;
@@ -85,12 +80,9 @@ h1 {
   position: absolute;
   color: var(--accent-color);
   /* top: 10vw; */
-  font-size: max(1vw, 15px);
-  /* transform-origin: right;
-  transform: translateX(-18vw);
-  left: 35%; */
+  font-size: max(1vw, 12px);
   top: 30%;
-  left: -10%;
+  left: 5%;
   filter: 
   drop-shadow(2px 0 var(--light-accent))
   drop-shadow(0 2px var(--light-accent))
@@ -261,5 +253,17 @@ h1 {
   }
   100% {
     opacity: 0;
+  }
+}
+
+@media only screen and (max-width: 950px) {
+  #speech-bubble {
+    left: -20%;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  #speech-bubble {
+    left: -50%;
   }
 }

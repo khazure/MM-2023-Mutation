@@ -371,10 +371,6 @@ function onAppReady(app) {
  * @param {number} position - https://developer.textalive.jp/packages/textalive-app-api/interfaces/playereventlistener.html#onthrottledtimeupdate
  */
 function onThrottledTimeUpdate(position) {
-
-  // Update current position
-  qs("#position strong").textContent = String(Math.floor(position));
-
   // More precise timing information can be retrieved by `player.timer.position` at any time
 
   let beat = player.findBeat(position);
@@ -391,11 +387,11 @@ function onThrottledTimeUpdate(position) {
 
   const bars = qsa(".vertical-bar");
   if (inChorus) {
-    bars[0].classList.add("double-col-left");
-    bars[1].classList.add('double-col-right');
+    bars[0].classList.add("chorus-vertical");
+    bars[1].classList.add('chorus-vertical');
   } else {
-    bars[0].classList.remove("double-col-left");
-    bars[1].classList.remove('double-col-right');
+    bars[0].classList.remove("chorus-vertical");
+    bars[1].classList.remove('chorus-vertical');
   }
 
   parenRatio = calculateParenRatio(player.timer.position + OUTRO_DURATION);

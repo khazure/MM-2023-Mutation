@@ -98,7 +98,8 @@ class App {
       inChorus: { value: false },
       LYRICS_START: { value: 13726 },
       FIRST_CHORUS_END: { value:  80359.1}, 
-      SECOND_CHORUS_START: { value: 110764.6}
+      SECOND_CHORUS_START: { value: 110764.6},
+      SECOND_CHORUS_END: { value: 136369.4 }
     };
   }
   /**
@@ -241,7 +242,8 @@ class App {
     if (position < this.textAliveData.LYRICS_START.value) {
       difference = (Math.abs(prevChord - currChord) > 0.5);
       tweenDuration = 1000;
-    } else if ( position < this.textAliveData.FIRST_CHORUS_END.value ) {
+    } else if ( position < this.textAliveData.FIRST_CHORUS_END.value 
+              || position > this.textAliveData.SECOND_CHORUS_END.value) {
       difference = (Math.abs(prevBeat - currBeat) > 0.5);
       tweenDuration = 700;
     } else {
@@ -373,10 +375,11 @@ class App {
   _getRandomMaterial() {
     const colors = [
       0xFFFFFF,
-      0x80E8DD,
-      0xB7F6AF,
-      0xE784BA,
-      0xF9C1A0,
+      0xADFFF7,
+      0xD3FFCD,
+      0xFFD2DE,
+      0xFFE2D1,
+      0xFCFFB4,
     ]
 
     const color = colors[Math.floor(Math.random() * colors.length)];
