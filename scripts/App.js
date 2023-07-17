@@ -72,7 +72,7 @@ class App {
     this._addListeners();
 
     // set up shapes
-    this._createHeartShape(100);
+    this.heartShape = this._createHeartShape(100);
 
     // Scene Creation
     this._createMikuScene();
@@ -126,14 +126,15 @@ class App {
    */
   _createHeartShape(factor) {
     const x = 0, y = 0;
-    this.heartShape = new THREE.Shape();
-    this.heartShape.moveTo( x + 5 / factor, y + 5 / factor);
-    this.heartShape.bezierCurveTo( x + 5 / factor, y + 5 / factor, x + 4 / factor, y / factor, x / factor, y / factor );
-    this.heartShape.bezierCurveTo( x - 6 / factor, y / factor, x - 6 / factor, y + 7 / factor,x - 6 / factor, y + 7  / factor);
-    this.heartShape.bezierCurveTo( x - 6 / factor, y + 11 / factor, x - 3 / factor, y + 15.4 / factor, x + 5 / factor, y + 19  / factor);
-    this.heartShape.bezierCurveTo( x + 12 / factor, y + 15.4 / factor, x + 16 / factor, y + 11 / factor, x + 16 / factor, y + 7  / factor);
-    this.heartShape.bezierCurveTo( x + 16 / factor, y + 7 / factor, x + 16 / factor, y / factor, x + 10 / factor, y  / factor);
-    this.heartShape.bezierCurveTo( x + 7 / factor, y / factor, x + 5 / factor, y + 5 / factor, x + 5 / factor, y + 5  / factor);
+    let heartShape = new THREE.Shape();
+    heartShape.moveTo( x + 5 / factor, y + 5 / factor);
+    heartShape.bezierCurveTo( x + 5 / factor, y + 5 / factor, x + 4 / factor, y / factor, x / factor, y / factor );
+    heartShape.bezierCurveTo( x - 6 / factor, y / factor, x - 6 / factor, y + 7 / factor,x - 6 / factor, y + 7  / factor);
+    heartShape.bezierCurveTo( x - 6 / factor, y + 11 / factor, x - 3 / factor, y + 15.4 / factor, x + 5 / factor, y + 19  / factor);
+    heartShape.bezierCurveTo( x + 12 / factor, y + 15.4 / factor, x + 16 / factor, y + 11 / factor, x + 16 / factor, y + 7  / factor);
+    heartShape.bezierCurveTo( x + 16 / factor, y + 7 / factor, x + 16 / factor, y / factor, x + 10 / factor, y  / factor);
+    heartShape.bezierCurveTo( x + 7 / factor, y / factor, x + 5 / factor, y + 5 / factor, x + 5 / factor, y + 5  / factor);
+    return heartShape;
   }
 
   /**
@@ -271,9 +272,12 @@ class App {
     //this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1]);
     // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
 
-    //this.fullScrShapes.incrementEntireRotation((1 - this.textAliveData.chord.currValue) / 90);
+    // change geometry of bg shapes when in second chorus 
     if (this.textAliveData.position.value >= this.textAliveData.SECOND_CHORUS_START.value) {
-      this.fullScrShapes.setGeometry;
+      if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
+      this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
+        this.fullScrShapes.setGeometry(this._getRandomGeometry());
+      }
     }
 
     this.scene1.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide1.getViewPos());
@@ -360,18 +364,41 @@ class App {
   }
 
   /**
-   * 
-   * @param {number} linearValue 
-   * @returns 
+   * return a random geometry
+   * @returns {Geometry} - random THREE geometry
    */
-  _linearToGaussian(linearValue) {
-    let a = 0.4;
-    let b = 0.5;
-    let c = 2.4;
-    let coefficient = 1 / (a * Math.sqrt(2 * Math.PI));
-    let exp = -c * Math.pow((linearValue - b) / a, 2);
-    let product = coefficient * Math.pow(Math.E, exp);
-    return product;
+  _getRandomGeometry() {
+    const extrudeSettings = {
+      steps: 2,
+      depth: 2,
+      bevelEnabled: true,
+      bevelThickness: 1,
+      bevelSize: 1,
+      bevelOffset: 0,
+      bevelSegments: 1
+    }
+
+    const geos = [
+      // new THREE.BoxGeometry(),
+      // new THREE.CapsuleGeometry(1, 1, 4, 8),
+      // new THREE.CylinderGeometry(1, 1, 2),
+      // new THREE.DodecahedronGeometry(),
+      // new THREE.IcosahedronGeometry(1),
+      // new THREE.OctahedronGeometry(),
+      // new THREE.SphereGeometry(1),
+      // new THREE.TetrahedronGeometry(1),
+      // new THREE.TorusGeometry(),
+      // new THREE.TorusKnotGeometry(),
+      new THREE.ExtrudeGeometry(this._createHeartShape(50), extrudeSettings)
+    ];
+
+    return geos[Math.floor(Math.random() * geos.length)];
+  }
+
+  _getRandomMaterial() {
+    const materials = [
+
+    ];
   }
 
   _addListeners() {
