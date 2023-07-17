@@ -200,21 +200,19 @@ class App {
     const geo = new THREE.SphereGeometry(this.config.sphereSize);
 
     this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer, this.config.defaultCamZ);
-    this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), 6, meshes);
+    this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), this.config.shapeDist, meshes);
+    this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
+
     //this.MeshSlide1.push(new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0x33ccff})));
     //this.MeshSlide1.push();
     //this.MeshSlide1.setGeometryAt(0, new THREE.OctahedronGeometry());
     //this.MeshSlide1.setMaterialAt(0, new THREE.MeshPhongMaterial({color: 0xffffff}));
-    this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
   }
 
   _createScene2(meshes) {
     const geo = new THREE.SphereGeometry(this.config.sphereSize);
-    
-    //The option to change mid animation still there with .push or .change
-    
+
     this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer, this.config.defaultCamZ);
-    
     this.MeshSlide2 = new MeshSlide(this.scene2.getScene(), this.scene2.getCam(), this.config.shapeDist, meshes);
     this.hologram = new hologramShape(this.scene2.getScene(), geo, this.uniforms, 0);
   }
@@ -290,9 +288,6 @@ class App {
         this.MeshSlide2.push( new THREE.Mesh(this._getRandomGeometry(), this._getRandomMaterial()));
       }
     }
-
-    //this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1]);
-    // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
 
     // change geometry of bg shapes when in second chorus 
     if (position >= this.textAliveData.SECOND_CHORUS_START.value) {

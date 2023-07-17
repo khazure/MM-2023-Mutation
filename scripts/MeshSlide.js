@@ -1,4 +1,4 @@
-import {Mesh, Vector3} from 'three';
+import {Mesh, Vector3, Quaternion} from 'three';
 import {Tween, Easing} from '@tweenjs/tween.js';
 
 /**
@@ -93,7 +93,7 @@ export default class MeshSlide {
   }
 
   push(mesh) {
-    const temp = mesh.clone();
+    const temp = this.rotateMeshRandomly(mesh);
     this.#meshes.push(temp);
     //console.log(this.#meshes);
     this.#parent.add(temp);
@@ -101,12 +101,21 @@ export default class MeshSlide {
     this.#setPosVector(this.#meshes.length - 1, this.#start);
   }
 
+  rotateMeshRandomly(mesh) {
+    let result = mesh.clone();
+    result.setRotationFromQuaternion(new Quaternion(Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI).normalize());
+    result.position.copy(mesh.position);
+    result.updateMatrix();
+    return result;
+  }
+
   next(duration = 5000, random = false, ease = Easing.Elastic.InOut) {
-    this.#nextIndex = (this.#currIndex + 1) % this.#meshes.length;
+    //Note to self: NEVER, ever use fields or globals with time, especially inconsistent time methods.
+    let next = (this.#currIndex + 1) % this.#meshes.length; //Making this a field screws up tweens.
     if(random) {
-      this.#nextIndex = Math.floor(Math.random() * this.#meshes.length); 
-      while(this.#nextIndex === this.#currIndex && this.#meshes.length > 2) { //This seems hacky... Too bad!
-        this.#nextIndex = Math.floor(Math.random() * this.#meshes.length); //Reroll to avoid picking current.
+      next = Math.floor(Math.random() * this.#meshes.length); 
+      while(next === this.#currIndex && this.#meshes.length > 2) { //This seems hacky... Too bad!
+        next = Math.floor(Math.random() * this.#meshes.length); //Reroll to avoid picking current.
       }
     }
     /*//To fix misc. next() call at start:
@@ -119,11 +128,11 @@ export default class MeshSlide {
       console.error("MeshSlide requires at least 2 meshes to perform .next");
     } else if (!this.#tweening) {
       this.#tweening = true; //Dependent on compiler, hopefully just 1 clock after line above.
-      const enterTween = this.#createTween(this.#nextIndex, this.#start, this.#view, duration, ease);
+      const enterTween = this.#createTween(next, this.#start, this.#view, duration, ease);
       const exitTween = this.#createTween(this.#currIndex, this.#view, this.#exit, duration, ease);
       exitTween.onComplete(() => {
         this.#setPosVector(this.#currIndex, this.#start);
-        this.#currIndex = this.#nextIndex;
+        this.#currIndex = next;
         console.log(this.#currIndex);
         this.#clearChangeBuffer();
         this.#tweening = false; //Async, needs boolean to indicate if tweening.
@@ -196,7 +205,7 @@ export default class MeshSlide {
    */
   #setGeoHelper(index, newGeo) {
     this.#meshes[index].geometry.dispose();
-    this.#meshes[index].geometry = newGeo;
+    this.#meshes[index].geometry = newGeo.clone;
   }
 
   /**
@@ -222,7 +231,7 @@ export default class MeshSlide {
    */
   #setMatHelper(index, newMat) {
     this.#meshes[index].material.dispose();
-    this.#meshes[index].material = newMat;
+    this.#meshes[index].material = newMat.clone;
   }
 
   /**
