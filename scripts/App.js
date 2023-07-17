@@ -31,7 +31,9 @@ class App {
     this.config = {
       squareSize: 1.5,
       squareCount: 500,
-      sphereSize: 15
+      sphereSize: 15,
+      camZoom: 10,
+      shapeDist: 8.5 //Too many possible shapes to automate, must be set manaully.
 
       //BELOW ARE FROM EXAMPLE, shows what stuff goes here. 
 
@@ -191,12 +193,10 @@ class App {
     ];
 
 
-    this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer, 10);
-    this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), 6, meshes);
-    //this.MeshSlide1.push(testSphere);
-    //this.MeshSlide1.push(testIco);
-    //this.MeshSlide1.setGeometryAt(0, new THREE.OctahedronGeometry());
-    //this.MeshSlide1.setMaterialAt(0, new THREE.MeshPhongMaterial({color: 0xffffff}));
+    this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer, this.config.camZoom);
+    this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), this.config.shapeDist, meshes);
+    //this.MeshSlide1.setGeometryAt(0, new THREE.SphereGeometry(0.5));
+    //this.MeshSlide1.setMaterialAt(0, new THREE.MeshPhongMaterial({color: 0xFFFFFF}));
     this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
   }
 
@@ -209,9 +209,9 @@ class App {
       new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xffcc00}))
     ]; //The option to change mid animation still there with .push or .change
     
-    this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer, 10);
+    this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer, this.config.camZoom);
     
-    this.MeshSlide2 = new MeshSlide(this.scene2.getScene(), this.scene2.getCam(), 6, meshes);
+    this.MeshSlide2 = new MeshSlide(this.scene2.getScene(), this.scene2.getCam(), this.config.shapeDist, meshes);
     this.hologram = new hologramShape(this.scene2.getScene(), geo, this.uniforms, 0);
   }
 
@@ -224,7 +224,7 @@ class App {
     const geo = new THREE.BoxGeometry(size, size, size);
     const mat = new THREE.MeshPhongMaterial(0xFFFFFF);
 
-    this.fullScrScene = new ElemScene(document.getElementById("graphic-grid"), this.renderer, 10);
+    this.fullScrScene = new ElemScene(document.getElementById("graphic-grid"), this.renderer, this.config.camZoom);
     this.fullScrShapes = new InstanceShapes(this.fullScrScene.getScene(), geo, mat, this.config.squareCount, 0);
     this.fullScrShapes.randomizeSpherePos(45);
   }
@@ -259,12 +259,12 @@ class App {
 
     if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
-      this.MeshSlide1.next(2000);
+      this.MeshSlide1.next(2000, true);
       //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
-      this.MeshSlide2.next(2000);
+      this.MeshSlide2.next(2000, true);
     }
 
-    this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1]);
+    //this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1]);
     // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
 
     //this.fullScrShapes.incrementEntireRotation((1 - this.textAliveData.chord.currValue) / 90);
@@ -272,7 +272,7 @@ class App {
       this.fullScrShapes.setGeometry;
     }
 
-    this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1]);
+    this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1], this.MeshSlide1.getViewPos());
     // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
 
     this.fullScrShapes.incrementEntireRotation(0.002);
@@ -305,6 +305,8 @@ class App {
 
       this.delta = this.delta % this.interval;
     }
+
+    //this.MeshSlide1.morphAt(1, this.Clock);
   }
 
   /**

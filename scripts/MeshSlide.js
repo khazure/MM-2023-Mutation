@@ -24,29 +24,33 @@ export default class MeshSlide {
 
   #tweening;
 
+  #nextIndex;
+
   constructor(parentScene, camera, distFromCam, startMeshes = [new THREE.Mesh(new THREE.BoxGeometry())]) {
     this.#meshes = [];
     this.#parent = parentScene;
+    this.changeBuffer = [];
 
-    this._createPositions(camera, distFromCam);
+    this.#createPositions(camera, distFromCam);
 
     for(let i = 0; i < startMeshes.length; i++) {
       this.#meshes.push(startMeshes[i].clone());
+      this.#meshes[i].geometry.computeBoundingSphere();
       this.#parent.add(this.#meshes[i]);
-      this._setPosVector(i, this.#start);
+      this.#setPosVector(i, this.#start);
     }
-    this._setPosVector(0, this.#view);
+    this.#setPosVector(0, this.#view);
     this.#currIndex = 0;
 
     this.#tweening = false;
   }
 
-  _createPositions(camera, distFromCam) {
+  #createPositions(camera, distFromCam) {
 
     this.#view = new THREE.Vector3();
     this.#view.copy(camera.position);
     this.#view.add(new THREE.Vector3(0, -0.25, -1 * distFromCam));
-    //console.log(this.#view);
+    console.log(this.#view);
 
     //Calculate distance between shapes using triangle.
     const angle = Math.tan(camera.fov / 2);
@@ -65,11 +69,17 @@ export default class MeshSlide {
   push(mesh) {
     this.#meshes.push(mesh);
     this.#parent.add(this.#meshes[this.#meshes.length - 1]);
-    this._setPosVector(this.#meshes.length - 1, this.#start);
+    this.#setPosVector(this.#meshes.length - 1, this.#start);
   }
 
-  next(duration = 5000, ease = TWEEN.Easing.Elastic.InOut) {
+  next(duration = 5000, random = false, ease = TWEEN.Easing.Elastic.InOut) {
     let next = (this.#currIndex + 1) % this.#meshes.length;
+    if(random) {
+      next = Math.floor(Math.random() * this.#meshes.length); 
+      while(next === this.#currIndex) { //This seems hacky... Too bad!
+        next = Math.floor(Math.random() * this.#meshes.length); //Reroll to avoid picking current.
+      }
+    }
     /*//To fix misc. next() call at start:
     if(this.#tweening === undefined) {
       this.#tweening = false;
@@ -80,11 +90,12 @@ export default class MeshSlide {
       console.error("MeshSlide requires at least 2 meshes to perform .next");
     } else if (!this.#tweening) {
       this.#tweening = true; //Dependent on compiler, hopefully just 1 clock after line above.
-      const enterTween = this._createTween(next, this.#start, this.#view, duration, ease);
-      const exitTween = this._createTween(this.#currIndex, this.#view, this.#exit, duration, ease);
+      const enterTween = this.#createTween(next, this.#start, this.#view, duration, ease);
+      const exitTween = this.#createTween(this.#currIndex, this.#view, this.#exit, duration, ease);
       exitTween.onComplete(() => {
-        this._setPosVector(this.#currIndex, this.#start);
+        this.#setPosVector(this.#currIndex, this.#start);
         this.#currIndex = next;
+        this.#clearChangeBuffer();
         this.#tweening = false; //Async, needs boolean to indicate if tweening.
       });
 
@@ -105,17 +116,43 @@ export default class MeshSlide {
    * @param {TWEEN.Easing} ease is the easing function to apply.
    * @returns the created tween.
    */
-  _createTween(index, start, end, duration = 5000, ease = TWEEN.Easing.Elastic.InOut) {
+  #createTween(index, start, end, duration = 5000, ease = TWEEN.Easing.Elastic.InOut) {
     const tween = new TWEEN.Tween({ x: start.x, y: start.y, z: start.z })
       .to({ x: end.x, y: end.y, z: end.z }, duration)
       .easing(ease)
       .onUpdate((coords) => {
-        this._setPosAt(index, coords.x, coords.y, coords.z);
+        this.#setPosAt(index, coords.x, coords.y, coords.z);
       })
     //.repeat(Infinity) //Temp to demo this.
     //.delay(500); //Might need this as parameter.
     return tween;
   }
+
+  #clearChangeBuffer() {
+    const length = this.changeBuffer.length;
+    for(let i = 0; i < length; i++) { 
+      //console.log("Change buffer empty 1");
+      const current =  this.changeBuffer.shift();
+      //this.#setGeoHelper(current.index, current.geo);
+      if(this.#currIndex == current.index) {
+        this.changeBuffer.push(current) //Queue for next tween.
+      } else if (current.isGeo) {
+        this.#setGeoHelper(current.index, current.newProp);
+      } else {
+        this.#setMatHelper(current.index, current.newProp);
+      }
+    }
+  }
+
+  // morphAt(index, time) {
+  //   const vertices = this.#meshes[index].geometry.attributes.position;
+  //   for(let i = 0; i < vertices.count; i++) {
+  //     const newX = vertices.getX(i);
+  //     const xsin = Math.sin(newX + time);
+  //     vertices.setZ(i, xsin);
+  //   }
+  //   vertices.needsUpdate = true;
+  // }
 
   /**
    * Changes geometry at the 
@@ -124,55 +161,55 @@ export default class MeshSlide {
    * @param {THREE.BufferGeometry} newGeo is the new geometery to replace the old one.
    */
   setGeometryAt(index, newGeo) {
+    //Hidden
+    if(index !== this.#currIndex && (index !== this.#nextIndex || !this.#tweening)) {
+      this.#setGeoHelper(index, newGeo);
+    } else { //Is visable or tweening right now, change later in tween.onComplete.
+      this.changeBuffer.push({index: index, newProp: newGeo, isGeo: true});
+    }
+  }
+
+  #setGeoHelper(index, newGeo) {
     this.#meshes[index].geometry.dispose();
     this.#meshes[index].geometry = newGeo;
   }
 
   setMaterialAt(index, newMat) {
+    if(index !== this.#currIndex && (index !== this.#nextIndex || !this.#tweening)) {
+      this.#setMatHelper(index, newMat);
+    } else { //Is visable or tweening right now, change later in tween.onComplete.
+      this.changeBuffer.push({index: index, newProp: newMat, isGeo: false});
+    }
+  }
+
+  #setMatHelper(index, newMat) {
     this.#meshes[index].material.dispose();
     this.#meshes[index].material = newMat;
   }
 
-  setStart(posVec3) {
-    this.#start.copy(posVec3);
-  }
-
-  setView(posVec3) {
-    this.#view.copy(posVec3);
-  }
-
-  setExit(posVec3) {
-    this.#exit.copy(posVec3);
-  }
-
-  addStart(posVec3) {
-    this.#start.add(posVec3);
-  }
-
-  addView(posVec3) {
-    this.#view.add(posVec3);
-  }
-
-  addExit(posVec3) {
-    this.#exit.add(posVec3);
-  }
-
-  _setPosAt(index, x, y, z) {
+  #setPosAt(index, x, y, z) {
     this.#meshes[index].position.set(x, y, z);
+    this.#meshes[index].geometry.computeBoundingSphere();
+    this.#meshes[index].geometry.computeBoundingBox();
     this.#meshes[index].updateMatrix();
   }
 
-  _setPosVector(index, posVec) {
+  #setPosVector(index, posVec) {
     this.#meshes[index].position.copy(posVec);
+    this.#meshes[index].geometry.computeBoundingSphere();
+    this.#meshes[index].geometry.computeBoundingBox();
     this.#meshes[index].updateMatrix();
   }
-
   getMeshAt(index) {
     return this.#meshes[index];
   }
 
   getCount() {
     return this.#meshes.length;
+  }
+
+  getViewPos() {
+    return this.#view;
   }
 
 }
