@@ -11,7 +11,7 @@ import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
 import infiniteTubes from './infiniteTubes.js';
 import MikuSprite from './mikuSprite.js';
-import {getBeatRatio, getChordRatio, getParenRatio} from './Lyrics.js';
+import {getBeatRatio, getChordRatio, getParenRatio, getPosition} from './Lyrics.js';
 import FloatShapes from './FloatShapes.js';
 import ElemScene from './ElemScene.js';
 import * as TWEEN from '@tweenjs/tween.js';
@@ -63,6 +63,9 @@ class App {
     this._onResize(); // Calc aspect for first time.
     this._addListeners();
 
+    // set up shapes
+    this._createHeartShape(100);
+
     // Scene Creation
     this._createMikuScene();
     this._createScene1();
@@ -101,9 +104,27 @@ class App {
     this.textAliveData = {
       beat: { currValue: 1.0, prevValue: 1.0 },
       chord: { currValue: 1.0, prevValue: 1.0},
-      inChorus: { value: false }
+      position: { value: 0 },
+      inChorus: { value: false },
+      SECOND_CHORUS_START: { value: 110764.6}
     };
   }
+  /**
+   * Creates and stores a heart shape 
+   * @param {number} factor - amount to shrink the heart shapes by
+   */
+  _createHeartShape(factor) {
+    const x = 0, y = 0;
+    this.heartShape = new THREE.Shape();
+    this.heartShape.moveTo( x + 5 / factor, y + 5 / factor);
+    this.heartShape.bezierCurveTo( x + 5 / factor, y + 5 / factor, x + 4 / factor, y / factor, x / factor, y / factor );
+    this.heartShape.bezierCurveTo( x - 6 / factor, y / factor, x - 6 / factor, y + 7 / factor,x - 6 / factor, y + 7  / factor);
+    this.heartShape.bezierCurveTo( x - 6 / factor, y + 11 / factor, x - 3 / factor, y + 15.4 / factor, x + 5 / factor, y + 19  / factor);
+    this.heartShape.bezierCurveTo( x + 12 / factor, y + 15.4 / factor, x + 16 / factor, y + 11 / factor, x + 16 / factor, y + 7  / factor);
+    this.heartShape.bezierCurveTo( x + 16 / factor, y + 7 / factor, x + 16 / factor, y / factor, x + 10 / factor, y  / factor);
+    this.heartShape.bezierCurveTo( x + 7 / factor, y / factor, x + 5 / factor, y + 5 / factor, x + 5 / factor, y + 5  / factor);
+  }
+
   /**
    * Creates the renderer for the app and its THREE.js scenes.
    */
@@ -127,22 +148,32 @@ class App {
   _createMikuScene() {
     this.mikuScene = new ElemScene(document.querySelector("#miku-scene"), this.renderer);
     const firstMiku = {
-      sheetPath: "../images/test_sheet.png",
-      alphaPath: "../images/test_sheet_alpha_map.png",
-      framesX: 2,
-      framesY: 1
+      sheetPath: "../images/miku_sprites.png",
+      alphaPath: "../images/alpha_sheet.png",
+      framesX: 5,
+      framesY: 2
     }
 
     const secondMiku = {
-      sheetPath: "../images/pixelmiku_wa.png",
-      alphaPath: "../images/singleAlpha.png",
-      framesX: 1,
-      framesY: 1
+      sheetPath: "../images/miku_speak.png",
+      alphaPath: "../images/alpha_speak.png",
+      framesX: 5,
+      framesY: 2
     }
 
     this.mikuSprite = new MikuSprite(this.mikuScene.getScene(), firstMiku, this.uniforms, 0);
     this.mikuSprite2 = new MikuSprite(this.mikuScene.getScene(), secondMiku, this.uniforms, 0);
-    this.mikuTube = new infiniteTubes(this.mikuScene.getScene(), this.uniforms, 0);
+
+    const material = new THREE.MeshStandardMaterial({
+      side: THREE.DoubleSide,
+    });
+
+    this.mikuParticles = new InstanceShapes(this.mikuScene.getScene(), new THREE.ShapeGeometry(this.heartShape), material, 2000, 0);
+    this.mikuParticles.randomizeSpherePos(20);
+
+    // this.mikuBg = new Experiment(this.mikuScene.getScene(), new THREE.BoxGeometry(20, 20, 20), this.uniforms, 0);
+    // this.mikuTube = new infiniteTubes(this.mikuScene.getScene(), this.uniforms, 0);
+    this.mikuBg = new hologramShape(this.mikuScene.getScene(), new THREE.SphereGeometry(20), this.uniforms, 0);
   }
 
   /**
@@ -195,7 +226,7 @@ class App {
 
     this.fullScrScene = new ElemScene(document.getElementById("graphic-grid"), this.renderer);
     this.fullScrShapes = new InstanceShapes(this.fullScrScene.getScene(), geo, mat, this.config.squareCount, 0);
-    this.fullScrShapes.randomizeSpherePos(40);
+    this.fullScrShapes.randomizeSpherePos(45);
   }
 
   /**
@@ -203,10 +234,12 @@ class App {
    */
   _createClock() {
     this.clock = new THREE.Clock();
+    this.delta = 0;
+    this.interval = 1/150;
   }
 
   /**
-   * Updates the App's values for textAlive and animation.
+   * Updates the App
    * This runs every frame before rendering.
    */
   _update() {
@@ -220,11 +253,12 @@ class App {
     // update stored textAliveData
     this.textAliveData.beat.currValue = getBeatRatio();
     this.textAliveData.chord.currValue = getChordRatio();
+    this.textAliveData.position.value = getPosition();
+
+    this._updateMikuScene();
 
     if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
-      this.mikuSprite.nextFrame();
-      this.mikuSprite2.nextFrame();
       this.MeshSlide1.next(2000);
       //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
       this.MeshSlide2.next(2000);
@@ -233,6 +267,23 @@ class App {
     this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1]);
     // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
 
+    //this.fullScrShapes.incrementEntireRotation((1 - this.textAliveData.chord.currValue) / 90);
+    if (this.textAliveData.position.value >= this.textAliveData.SECOND_CHORUS_START.value) {
+      this.fullScrShapes.setGeometry;
+    }
+
+    this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1]);
+    // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
+
+    this.fullScrShapes.incrementEntireRotation(0.002);
+
+    TWEEN.update(); //If tweening.
+  }
+
+  /**
+   * Update the miku scene before render
+   */
+  _updateMikuScene() {
     if(getParenRatio()) {
       this.mikuSprite2.setRotation(0);
       this.mikuSprite.setRotation(90);
@@ -241,10 +292,19 @@ class App {
       this.mikuSprite2.setRotation(90);
     }
 
-    this.mikuTube.updateMaterialOffset((1 - this.textAliveData.beat.currValue) / 10);
+    // animate heart particles
+    this.mikuParticles.setRotation(THREE.MathUtils.degToRad(10));
+    this.mikuParticles.incrementEntireRotation(-0.003);
 
-    this.fullScrShapes.incrementRotation((1 - this.textAliveData.chord.currValue) / 90);
-    TWEEN.update(); //If tweening.
+    // throttled update of sprite frames
+    this.delta += this.clock.getDelta();
+
+    if (this.delta > this.interval) {
+      this.mikuSprite.nextFrame();
+      this.mikuSprite2.nextFrame();
+
+      this.delta = this.delta % this.interval;
+    }
   }
 
   /**
@@ -277,6 +337,11 @@ class App {
     } else {
       return (2 * linearValue) - 1
     }
+  }
+
+  _linearToPiecewise(linearValue, numSplits) {
+    const multiple = linearValue - linearValue % (1 / numSplits);
+    return numSplits * (linearValue - multiple);
   }
 
   /**

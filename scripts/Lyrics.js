@@ -308,7 +308,6 @@ function incrementVolume(value) {
   let vol = parseInt(slider.value) + parseInt(value);
   (vol > slider.max) && ( vol = slider.max);
   (vol < slider.min) && (vol = slider.min);
-  console.log(vol);
   id("volume-level").value = vol;
   player.volume = vol;
 }
@@ -358,7 +357,9 @@ function moveGradient(event) {
   const height = document.documentElement.clientHeight;
   const percentageX = x / width * 100;
   const percentageY = y / height * 100;
-  id("bg-texture").style.backgroundPosition = percentageX + "%" + percentageY + "%";
+  qsa(".bg-texture").forEach(bg => {
+    bg.style.backgroundPosition = percentageX + "%" + percentageY + "%";
+  })
 }
 
 /**
@@ -425,7 +426,6 @@ function onThrottledTimeUpdate(position) {
   }
 
   parenRatio = calculateParenRatio(player.timer.position);
-  console.log(parenRatio);
 }
 
 /**
@@ -496,4 +496,8 @@ export function getChordRatio() {
 
 export function getParenRatio() {
   return parenRatio;
+}
+
+export function getPosition() {
+  return player.timer.position;
 }
