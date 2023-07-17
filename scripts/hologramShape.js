@@ -17,7 +17,6 @@ export default class hologramShape {
     this.#line.layers.set(layer);
     parentScene.add(this.#line);
 
-
     // made hologram inside
 
     let material = new THREE.ShaderMaterial( {
@@ -26,7 +25,7 @@ export default class hologramShape {
       opacity: 0.9,
       vertexShader: vertexShader,
       fragmentShader: fragmentShader,
-      uniforms
+      uniforms,
     });
 
     this.#mesh = new THREE.Mesh(geometry, material);

@@ -12,10 +12,9 @@ export default class MikuSprite {
    *  - alphaPath: path to corresponding alpha map for sheet
    *  - framesX: number of colummns in character sheet
    *  - framesY: number of rows in character sheet
-   * @param {*} uniforms -
    * @param {*} layer - layer to add sprite to
    */
-  constructor(parentScene, sheetInfo, uniforms, layer) {
+  constructor(parentScene, sheetInfo, layer) {
     const texture = this.spriteSheetTexture(sheetInfo.sheetPath, sheetInfo.framesX, sheetInfo.framesY, 200);
     const alphaTexture = this.spriteSheetTexture(sheetInfo.alphaPath,sheetInfo.framesX, sheetInfo.framesY, 200);
     const material = new THREE.MeshPhysicalMaterial({

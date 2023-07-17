@@ -1,18 +1,9 @@
 import * as THREE from 'three';
-//Importmap recognizes three/addons
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import InstanceShapes from './InstanceShapes.js';
-import BasicShape from './BasicShape.js';
-import BasicWireframe from './BasicWireframe.js';
-import Experiment from './experiment.js';
-import Experiment2 from './Experiment2.js';
-import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
-import infiniteTubes from './infiniteTubes.js';
 import MikuSprite from './mikuSprite.js';
 import {getBeatRatio, getChordRatio, getCurrParenDuration, getParenRatio, getPosition, getChorus} from './Lyrics.js';
-import FloatShapes from './FloatShapes.js';
 import ElemScene from './ElemScene.js';
 import * as TWEEN from '@tweenjs/tween.js';
 import MeshSlide from './MeshSlide.js';
@@ -41,21 +32,8 @@ class App {
         new THREE.Mesh(new THREE.IcosahedronGeometry(1), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
         new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xFFFFFF}))
       ]
-
-      //BELOW ARE FROM EXAMPLE, shows what stuff goes here. 
-
-      //backgroundColor: new Color('#0d021f'),
-      //cameraSpeed: 0,
-      //cameraRadius: 4.5,
-      //particlesSpeed: 0,
-      //particlesCount: 3000,
-      //bloomStrength: 1.45,
-      //bloomThreshold: 0.34,
-      //bloomRadius: 0.5
     }
 
-    //Don't know these are needed below.
-    //this.tick = 0;
     this._resizeScreen = () => this._onResize();
   }
 
@@ -174,8 +152,8 @@ class App {
       framesY: 1
     }
 
-    this.mikuSprite = new MikuSprite(this.mikuScene.getScene(), firstMiku, this.uniforms, 0);
-    this.mikuSprite2 = new MikuSprite(this.mikuScene.getScene(), secondMiku, this.uniforms, 0);
+    this.mikuSprite = new MikuSprite(this.mikuScene.getScene(), firstMiku, 0);
+    this.mikuSprite2 = new MikuSprite(this.mikuScene.getScene(), secondMiku, 0);
 
     this.mikuSprite.setRotation(0);
     this.mikuSprite2.setRotation(Math.PI);
@@ -200,11 +178,6 @@ class App {
     this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer, this.config.defaultCamZ);
     this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), this.config.shapeDist, meshes);
     this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
-
-    //this.MeshSlide1.push(new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0x33ccff})));
-    //this.MeshSlide1.push();
-    //this.MeshSlide1.setGeometryAt(0, new THREE.OctahedronGeometry());
-    //this.MeshSlide1.setMaterialAt(0, new THREE.MeshPhongMaterial({color: 0xffffff}));
   }
 
   _createScene2(meshes) {

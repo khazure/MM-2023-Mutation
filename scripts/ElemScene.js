@@ -63,11 +63,6 @@ export default class ElemScene {
     const {left, right, top, bottom, width, height} = this.#element.getBoundingClientRect();
     const isVisible = bottom >= 0 && top <= renderer.domElement.clientHeight &&
                     right  >= 0 && left <= renderer.domElement.clientWidth;
-    // const isVisable =  bot < 0 ||
-    //     top > renderer.domElement.clientHeight ||
-    //     right < 0 ||
-    //     left > renderer.domElement.clientWidth;
-    //console.log(isVisable);
 
     // will always be visible
     this.#camera.aspect = width/height;
@@ -81,28 +76,11 @@ export default class ElemScene {
 
     //renderer.render(this.#scene, this.#camera);
     this.#composer.render(); 
-
-    // if(isVisible) {
-    //     this.#camera.aspect = width/height;
-    //     this.#camera.updateProjectionMatrix();
-        
-    //     //setScissor and setViewport set bottom differently
-    //     const posBot = renderer.domElement.clientHeight - bottom;
-
-    //     renderer.setScissor(left, posBot, width, height);
-    //     renderer.setViewport(left, posBot, width, height);
-
-    //     renderer.render(this.#scene, this.#camera);
-    // }
   }
 
   updateCamPos(mouseX, mouseY, focusPos) {
-    //this.#camera.position.x = Math.sin( 1 * Math.PI * ( mouseX - .5 ) ) * 1;
-    //this.#camera.position.y = Math.sin( 1 * Math.PI * ( mouseY - .5 ) ) * 1 + 1;
-    //this.#camera.position.z = Math.cos( 1 * Math.PI * ( mouseX - .5 ) ) * 1 + this.#cameraZoom;
-    this.#camera.position.x += ( (mouseX) - this.#camera.position.x ) * .05;
-    this.#camera.position.y += ( - ( mouseY) - this.#camera.position.y ) * .05;
-    //this.#camera.position.z = this.#cameraZoom
+    this.#camera.position.x += (mouseX - this.#camera.position.x ) * .05;
+    this.#camera.position.y += ( -1 * mouseY - this.#camera.position.y ) * .05;
     this.#camera.lookAt(focusPos.x, focusPos.y, focusPos.z);
   }
 
