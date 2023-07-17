@@ -30,7 +30,7 @@ class App {
         new THREE.Mesh(new THREE.OctahedronGeometry(), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
         new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
         new THREE.Mesh(new THREE.IcosahedronGeometry(1), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
-        new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xFFFFFF}))
+        new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.25), new THREE.MeshPhongMaterial({color: 0xFFFFFF}))
       ]
     }
 
@@ -96,6 +96,8 @@ class App {
       position: { value: 0 },
       inParen: {  currValue: false, prevValue: false },
       inChorus: { value: false },
+      LYRICS_START: { value: 13726 },
+      FIRST_CHORUS_END: { value:  80359.1}, 
       SECOND_CHORUS_START: { value: 110764.6}
     };
   }
@@ -194,7 +196,7 @@ class App {
    */
   _createFullScreenScene() {
     const size = this.config.squareSize;
-    const geo = new THREE.BoxGeometry(size, size, size);
+    const geo = new THREE.SphereGeometry(size);
     const mat = new THREE.MeshPhongMaterial(0xFFFFFF);
 
     this.fullScrScene = new ElemScene(document.getElementById("graphic-grid"), this.renderer, this.config.defaultCamZ);
@@ -220,27 +222,38 @@ class App {
     this.uniforms.uTime.value = time;
 
     // update previous textAliveData
-    this.textAliveData.beat.prevValue = this.textAliveData.beat.currValue;
-    this.textAliveData.chord.prevValue = this.textAliveData.chord.currValue;
+    const prevBeat = this.textAliveData.beat.prevValue = this.textAliveData.beat.currValue;
+    const prevChord = this.textAliveData.chord.prevValue = this.textAliveData.chord.currValue;
     this.textAliveData.inParen.prevValue = this.textAliveData.inParen.currValue;
 
     // update stored textAliveData
-    this.textAliveData.beat.currValue = getBeatRatio();
-    this.textAliveData.chord.currValue = getChordRatio();
-    this.textAliveData.position.value = getPosition();
+    const currBeat = this.textAliveData.beat.currValue = getBeatRatio();
+    const currChord = this.textAliveData.chord.currValue = getChordRatio();
+    const position = this.textAliveData.position.value = getPosition();
     (getParenRatio()) ? (this.textAliveData.inParen.currValue = true) 
                       : (this.textAliveData.inParen.currValue = false);
     this.textAliveData.inChorus.value = getChorus();
 
     this._updateMikuScene();
 
-    // animate every textAlive half beat
-    if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
-    this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
-      //this.MeshSlide1.next(300, this.textAliveData.inChorus.value);
-      this.MeshSlide1.next(300, false);
+    let difference = false;
+    let tweenDuration = 300;
+    if (position < this.textAliveData.LYRICS_START.value) {
+      difference = (Math.abs(prevChord - currChord) > 0.5);
+      tweenDuration = 1000;
+    } else if ( position < this.textAliveData.FIRST_CHORUS_END.value ) {
+      difference = (Math.abs(prevBeat - currBeat) > 0.5);
+      tweenDuration = 700;
+    } else {
+      difference = (Math.abs(this._linearToTwoLinears(currBeat) - 
+                  this._linearToTwoLinears(prevBeat)) > 0.5);
+    }
+
+    // animate based on textAlive chord, beat, or half beat depending on song position
+    if (difference) {
+      this.MeshSlide1.next(tweenDuration, this.textAliveData.inChorus.value);
       //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
-      this.MeshSlide2.next(300, this.textAliveData.inChorus.value);
+      this.MeshSlide2.next(tweenDuration, this.textAliveData.inChorus.value);
 
       // if in chorus, add new geometries to meshSlides
       if (this.textAliveData.inChorus.value) {
@@ -250,14 +263,16 @@ class App {
     }
 
     // change geometry of bg shapes when in second chorus 
-    if (this.textAliveData.position.value >= this.textAliveData.SECOND_CHORUS_START.value) {
-      if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
-      this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
+    if (position >= this.textAliveData.SECOND_CHORUS_START.value) {
+      if (difference) {
         this.fullScrShapes.setGeometry(this._getRandomGeometry());
       }
     }
 
+    this.mikuScene.updateCamPos(this.mousePos[0], this.mousePos[1], new THREE.Vector3(0, 0, 0));
     this.scene1.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide1.getViewPos());
+    this.scene2.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide2.getViewPos());
+
     // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
 
     this.fullScrShapes.incrementEntireRotation(0.002);
@@ -274,16 +289,10 @@ class App {
     if (prevParen !== currParen) {
       if (prevParen === false) {
         // entering animation
-        // this.mikuSprite2.setRotation(0);
-        // this.mikuSprite.setRotation(90);
         const duration = getCurrParenDuration();
         this.mikuSprite.tweenRotation(duration, 0, 180);
         this.mikuSprite2.tweenRotation(duration, 180, 0);
-      } else {
-        // exiting animation
-        // this.mikuSprite.setRotation(0);
-        // this.mikuSprite2.setRotation(90);
-      }
+      } 
     }
 
     // animate heart particles
@@ -299,8 +308,6 @@ class App {
 
       this.delta = this.delta % this.interval;
     }
-
-    //this.MeshSlide1.morphAt(1, this.Clock);
   }
 
   /**
@@ -345,28 +352,19 @@ class App {
    * @returns {Geometry} - random THREE geometry
    */
   _getRandomGeometry() {
-    const extrudeSettings = {
-      steps: 2,
-      depth: 1,
-      bevelEnabled: true,
-      bevelThickness: 0.2,
-      bevelSize: 0.2,
-      bevelOffset: 0,
-      bevelSegments: 1
-    }
 
     const geos = [
-      new THREE.BoxGeometry(),
-      new THREE.CapsuleGeometry(1, 1, 4, 8),
-      new THREE.CylinderGeometry(1, 1, 2),
+      new THREE.BoxGeometry(1.25, 1.25),
+      new THREE.CapsuleGeometry(0.5, 0.8),
+      new THREE.CylinderGeometry(0.5, 0.5, 1.5),
+      new THREE.ConeGeometry(1, 1, 10),
       new THREE.DodecahedronGeometry(),
       new THREE.IcosahedronGeometry(1),
-      new THREE.OctahedronGeometry(),
+      new THREE.OctahedronGeometry(1),
       new THREE.SphereGeometry(1),
-      new THREE.TetrahedronGeometry(1),
-      new THREE.TorusGeometry(),
-      new THREE.TorusKnotGeometry(),
-      new THREE.ExtrudeGeometry(this._createHeartShape(10), extrudeSettings)
+      new THREE.TetrahedronGeometry(1.25),
+      new THREE.TorusGeometry(0.7, 0.3),
+      new THREE.TorusKnotGeometry(0.6, 0.25),
     ];
 
     return geos[Math.floor(Math.random() * geos.length)];

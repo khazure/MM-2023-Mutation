@@ -73,17 +73,16 @@ function init() {
 
   id("pause-btn").addEventListener("click", pauseMusic);
   id("reset-btn").addEventListener("click", resetMusic);
-  id("volume-level").addEventListener("input", changeVolume);
   id("vol-up-btn").addEventListener("click", () => {
-    incrementVolume(10);
+    incrementVolume(5);
   });
   id("vol-down-btn").addEventListener("click", () => {
-    incrementVolume(-10);
+    incrementVolume(-5);
   });
+  id("vol-mute-btn").addEventListener("click", () => {
+    setVolume(0);
+  })
   qs("body").addEventListener("mousemove", moveGradient);
-
-  // set volume initially
-  changeVolume();
 
   //temp:
   id("chorus-btn").addEventListener("click", jumpChorus);
@@ -213,11 +212,6 @@ const animateChar = function (now, unit) {
       let bubbleClass = id("speech-bubble").classList;
       (parenStart && now >= parenStart - (INTRO_DURATION + OUTRO_DURATION)) 
         ? bubbleClass.replace("lyric-outro-animation", "bounce-in") : null;
-
-      // for each child with id in currentContainer, show if time is past
-      // qs(".current-container").childNodes.forEach((word) => {
-      //   (word.id && now >= parseInt(word.id)) && (word.classList.remove("hidden-visibility"));
-      // });
     }
   }
 }
@@ -255,26 +249,6 @@ function calculateParenRatio(position) {
   }
 }
 
-/**
- * Translates lyrics upwards
- */
-function movePreviousLyricsUp() {
-  let prevLyrics = qsa(".lyric");
-
-  for (let i = 0; i < prevLyrics.length; i++) {
-    let lyric = prevLyrics[i];
-
-    // if out of viewport, delete
-    if(!isInViewport(lyric)) {
-      lyric.remove();
-    } else {
-
-      // else, move up
-      lyric.style.transform = `translateY(-${(30 * (prevLyrics.length - i))}px)`;
-    }
-  }
-}
-
 player.addListener({
   onAppReady,
   onVideoReady,
@@ -305,17 +279,15 @@ function pauseMusic(event) {
   
 }
 
-function changeVolume() {
-  let volumeLvl = id("volume-level").value;
-  player.volume = volumeLvl;
+function setVolume(value) {
+  player.volume = value;
 }
 
 function incrementVolume(value) {
-  const slider = id("volume-level");
-  let vol = parseInt(slider.value) + parseInt(value);
-  (vol > slider.max) && ( vol = slider.max);
-  (vol < slider.min) && (vol = slider.min);
-  id("volume-level").value = vol;
+  const currVol = player.volume;
+  let vol = currVol + parseInt(value);
+  (vol > 100) && ( vol = currVol);
+  (vol < 0) && (vol = currVol);
   player.volume = vol;
 }
 
@@ -400,11 +372,9 @@ function onAppReady(app) {
  */
 function onThrottledTimeUpdate(position) {
 
-  // 再生位置を表示する
   // Update current position
   qs("#position strong").textContent = String(Math.floor(position));
 
-  // さらに精確な情報が必要な場合は `player.timer.position` でいつでも取得できます
   // More precise timing information can be retrieved by `player.timer.position` at any time
 
   let beat = player.findBeat(position);
@@ -412,21 +382,21 @@ function onThrottledTimeUpdate(position) {
   // number from 0 to 1 representing percentage of completion of beat
   currBeatRatio = beat ? 1 - ((beat.endTime - position) / beat.duration) : null;
 
-  // animate if new beat is encountered
-  // if (beat && beat != currBeat) {
-  //   currBeat = beat;
-  // } 
-
   // animate if new chord encountered
   let chord = player.findChord(position);
 
   currChordRatio = chord ? 1 - ((chord.endTime - position) / chord.duration) : null;
-  // if (chord && chord != currChord) {
-  //   currChord = chord;
-  //   id("beat-reactor").style.backgroundColor = random_rgba();
-  // }
 
   inChorus = (player.findChorus(player.timer.position) !== null);
+
+  const bars = qsa(".vertical-bar");
+  if (inChorus) {
+    bars[0].classList.add("double-col-left");
+    bars[1].classList.add('double-col-right');
+  } else {
+    bars[0].classList.remove("double-col-left");
+    bars[1].classList.remove('double-col-right');
+  }
 
   parenRatio = calculateParenRatio(player.timer.position + OUTRO_DURATION);
 }
@@ -464,17 +434,6 @@ function qs(name) {
 
 function qsa(name) {
   return document.querySelectorAll(name);
-}
-
-// https://www.javascripttutorial.net/dom/css/check-if-an-element-is-visible-in-the-viewport/
-function isInViewport(element) {
-  const rect = element.getBoundingClientRect();
-  return (
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-  );
 }
 
 /**
