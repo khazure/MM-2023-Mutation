@@ -146,7 +146,7 @@ class App {
    * Contains a miku sprite. 
    */
   _createMikuScene() {
-    this.mikuScene = new ElemScene(document.querySelector("#miku-scene"), this.renderer);
+    this.mikuScene = new ElemScene(document.querySelector("#miku-scene"), this.renderer, 5);
     const firstMiku = {
       sheetPath: "../images/miku_sprites.png",
       alphaPath: "../images/alpha_sheet.png",
@@ -191,7 +191,7 @@ class App {
     ];
 
 
-    this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer);
+    this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer, 10);
     this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), 6, meshes);
     //this.MeshSlide1.push(testSphere);
     //this.MeshSlide1.push(testIco);
@@ -209,7 +209,7 @@ class App {
       new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xffcc00}))
     ]; //The option to change mid animation still there with .push or .change
     
-    this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer);
+    this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer, 10);
     
     this.MeshSlide2 = new MeshSlide(this.scene2.getScene(), this.scene2.getCam(), 6, meshes);
     this.hologram = new hologramShape(this.scene2.getScene(), geo, this.uniforms, 0);
@@ -224,7 +224,7 @@ class App {
     const geo = new THREE.BoxGeometry(size, size, size);
     const mat = new THREE.MeshPhongMaterial(0xFFFFFF);
 
-    this.fullScrScene = new ElemScene(document.getElementById("graphic-grid"), this.renderer);
+    this.fullScrScene = new ElemScene(document.getElementById("graphic-grid"), this.renderer, 10);
     this.fullScrShapes = new InstanceShapes(this.fullScrScene.getScene(), geo, mat, this.config.squareCount, 0);
     this.fullScrShapes.randomizeSpherePos(45);
   }

@@ -7,7 +7,13 @@ export default class ElemScene {
   #element;
   #composer;
 
-  constructor(elem, renderer) {
+  /**
+   * Construct a threejs scene
+   * @param {*} elem - DOM element to add the scene to
+   * @param {*} renderer - renderer used for the scene
+   * @param {*} cameraZoom - initial z position of the camera
+   */
+  constructor(elem, renderer, cameraZoom) {
     this.#scene = new THREE.Scene();
     this.#scene.fog = new THREE.Fog(0x839EFF, 10, 40);
     this.#element = elem;
@@ -15,7 +21,7 @@ export default class ElemScene {
     const aspectRatio = elem.offsetWidth / elem.offsetHeight;
     //fov, aspect, near, far
     this.#camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 1000);
-    this.#camera.position.set(0, 1, 10);
+    this.#camera.position.set(0, 1, cameraZoom);
     this.#camera.lookAt(0, 0, 0);
 
     //Setting up lighting

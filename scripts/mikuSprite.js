@@ -23,7 +23,7 @@ export default class MikuSprite {
       alphaMap: alphaTexture,
     });
 
-    this.#mesh = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material);
+    this.#mesh = new THREE.Mesh(new THREE.PlaneGeometry(3, 3), material);
     this.#mesh.layers.enable(layer);
     parentScene.add(this.#mesh);
   }
