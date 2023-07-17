@@ -74,13 +74,15 @@ function init() {
   id("pause-btn").addEventListener("click", pauseMusic);
   id("reset-btn").addEventListener("click", resetMusic);
   id("vol-up-btn").addEventListener("click", () => {
-    incrementVolume(5);
+    incrementVolume(10);
+    id("vol-mute-btn").classList.remove("selected");
   });
   id("vol-down-btn").addEventListener("click", () => {
-    incrementVolume(-5);
+    incrementVolume(-10);
   });
-  id("vol-mute-btn").addEventListener("click", () => {
-    setVolume(0);
+  id("vol-mute-btn").addEventListener("click", (event) => {
+    (player.volume > 0) ? setVolume(0) : setVolume(100);
+    event.currentTarget.classList.toggle("selected");
   })
   qs("body").addEventListener("mousemove", moveGradient);
 

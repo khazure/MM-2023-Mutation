@@ -24,13 +24,19 @@ button {
   transition: 200ms;
 }
 
-button:hover {
+button:hover, button.selected:hover {
   cursor: pointer;
+  filter: brightness(170%);
 }
 
 button:active {
-  scale: 0.9;
+  scale: 0.8;
   filter: contrast(0.6);
+}
+
+button.selected {
+  /* filter: invert(1) hue-rotate(220deg) brightness(160%); */
+  filter: brightness(80%);
 }
 
 .last-col {
