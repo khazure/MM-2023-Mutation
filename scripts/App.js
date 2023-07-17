@@ -223,7 +223,7 @@ class App {
    */
   _createFullScreenScene() {
     const size = this.config.squareSize;
-    const geo = new THREE.BoxGeometry(size, size, size);
+    const geo = new THREE.SphereGeometry(size);
     const mat = new THREE.MeshPhongMaterial(0xFFFFFF);
 
     this.fullScrScene = new ElemScene(document.getElementById("graphic-grid"), this.renderer, this.config.defaultCamZ);

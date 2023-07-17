@@ -73,17 +73,16 @@ function init() {
 
   id("pause-btn").addEventListener("click", pauseMusic);
   id("reset-btn").addEventListener("click", resetMusic);
-  id("volume-level").addEventListener("input", changeVolume);
   id("vol-up-btn").addEventListener("click", () => {
-    incrementVolume(10);
+    incrementVolume(5);
   });
   id("vol-down-btn").addEventListener("click", () => {
-    incrementVolume(-10);
+    incrementVolume(-5);
   });
+  id("vol-mute-btn").addEventListener("click", () => {
+    setVolume(0);
+  })
   qs("body").addEventListener("mousemove", moveGradient);
-
-  // set volume initially
-  changeVolume();
 
   //temp:
   id("chorus-btn").addEventListener("click", jumpChorus);
@@ -280,17 +279,15 @@ function pauseMusic(event) {
   
 }
 
-function changeVolume() {
-  let volumeLvl = id("volume-level").value;
-  player.volume = volumeLvl;
+function setVolume(value) {
+  player.volume = value;
 }
 
 function incrementVolume(value) {
-  const slider = id("volume-level");
-  let vol = parseInt(slider.value) + parseInt(value);
-  (vol > slider.max) && ( vol = slider.max);
-  (vol < slider.min) && (vol = slider.min);
-  id("volume-level").value = vol;
+  const currVol = player.volume;
+  let vol = currVol + parseInt(value);
+  (vol > 100) && ( vol = currVol);
+  (vol < 0) && (vol = currVol);
   player.volume = vol;
 }
 

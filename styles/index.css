@@ -168,12 +168,9 @@ nav .material-symbols-outlined {
 }
 
 #graphic-grid > nav {
-  grid-column: 4 / span 1;
-  grid-row: 5 / span 6;
-  display: flex;
-  flex-direction: column;
-  align-items: end;
-  justify-content: start;
+  grid-column: 5 / span 3;
+  grid-row: 10 / span 3;
+
 }
 
 #graphic-grid > nav > button {
@@ -187,24 +184,6 @@ nav .material-symbols-outlined {
   color: var(--accent-color);
   -webkit-text-stroke: var(--default-white) 0.8px;
   text-shadow: 0px 0px 5px var(--default-white);
-}
-
-#graphic-grid > nav input {
-  transform: rotate(-90deg);
-  transform-origin: left;
-  width: min(20vh, 130px);
-  position: absolute;
-  left: 40%;
-  bottom: 0;
-}
-
-#graphic-grid > nav #slider-wrapper {
-  display: inline-block;
-  width: 20px;
-  height: 150px;
-  position: relative;
-  margin: 0 0.2em;
-  overflow-y: hidden;
 }
 
 #miku-scene {
