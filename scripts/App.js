@@ -39,7 +39,7 @@ class App {
         new THREE.Mesh(new THREE.OctahedronGeometry(), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
         new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
         new THREE.Mesh(new THREE.IcosahedronGeometry(1), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
-        new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xFFFFFF}))
+        new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.25), new THREE.MeshPhongMaterial({color: 0xFFFFFF}))
       ]
 
       //BELOW ARE FROM EXAMPLE, shows what stuff goes here. 
@@ -391,28 +391,19 @@ class App {
    * @returns {Geometry} - random THREE geometry
    */
   _getRandomGeometry() {
-    const extrudeSettings = {
-      steps: 2,
-      depth: 1,
-      bevelEnabled: true,
-      bevelThickness: 0.2,
-      bevelSize: 0.2,
-      bevelOffset: 0,
-      bevelSegments: 1
-    }
 
     const geos = [
-      new THREE.BoxGeometry(),
-      new THREE.CapsuleGeometry(1, 1, 4, 8),
-      new THREE.CylinderGeometry(1, 1, 2),
+      new THREE.BoxGeometry(1.25, 1.25),
+      new THREE.CapsuleGeometry(0.8, 0.8, 4, 5),
+      new THREE.CylinderGeometry(1, 1, 1.5),
+      new THREE.ConeGeometry(1, 1, 10),
       new THREE.DodecahedronGeometry(),
       new THREE.IcosahedronGeometry(1),
-      new THREE.OctahedronGeometry(),
+      new THREE.OctahedronGeometry(1),
       new THREE.SphereGeometry(1),
-      new THREE.TetrahedronGeometry(1),
-      new THREE.TorusGeometry(),
-      new THREE.TorusKnotGeometry(),
-      new THREE.ExtrudeGeometry(this._createHeartShape(10), extrudeSettings)
+      new THREE.TetrahedronGeometry(1.25),
+      new THREE.TorusGeometry(0.8, 0.6),
+      new THREE.TorusKnotGeometry(0.6, 0.25),
     ];
 
     return geos[Math.floor(Math.random() * geos.length)];
