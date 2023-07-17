@@ -6,7 +6,6 @@ export default class ElemScene {
   #camera;
   #element;
   #composer;
-  #cameraZoom;
 
   /**
    * Construct a threejs scene
@@ -23,7 +22,6 @@ export default class ElemScene {
     //fov, aspect, near, far
     this.#camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 1000);
     this.#camera.position.set(0, 1, cameraZoom);
-    this.#cameraZoom = cameraZoom;
     this.#camera.lookAt(0, 0, 0);
 
     //Setting up lighting

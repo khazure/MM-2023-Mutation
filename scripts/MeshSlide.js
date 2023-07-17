@@ -1,6 +1,10 @@
-import * as THREE from 'three';
-import * as TWEEN from '@tweenjs/tween.js';
+import {Mesh, Vector3} from 'three';
+import {Tween, Easing} from '@tweenjs/tween.js';
 
+/**
+ * A Threejs effect where meshes are slid in from a hidden position to
+ * a visable position, then subsequently slid out on the next cycle.
+ */
 export default class MeshSlide {
 
   //Parent scene for this effect.
@@ -40,29 +44,38 @@ export default class MeshSlide {
    * @param {Number} distFromCam is the distance from camera to viewing position.
    * @param {THREE.Mesh[]} startMeshes is the starting pool of meshes to slide in.
    */
-  constructor(parentScene, camera, distFromCam, startMeshes = [new THREE.Mesh(new THREE.BoxGeometry())]) {
+  constructor(parentScene, camera, distFromCam, startMeshes = [new Mesh(new THREE.BoxGeometry())]) {
     this.#meshes = [];
     this.#parent = parentScene;
     this.changeBuffer = [];
+    this.#currIndex = 0;
+    this.#tweening = false;
 
     this.#createPositions(camera, distFromCam);
+    this.#createMeshes(startMeshes);
+    this.#setPosVector(0, this.#view);
+  }
+
+  /**
+   * Copies the inputed meshes and uses it as our starting pool
+   * of meshes to slide in.
+   * 
+   * @param {THREE.Mesh[]} startMeshes 
+   */
+  #createMeshes(startMeshes) {
     for(let i = 0; i < startMeshes.length; i++) {
       this.#meshes.push(startMeshes[i].clone());
       this.#meshes[i].geometry.computeBoundingSphere();
       this.#parent.add(this.#meshes[i]);
       this.#setPosVector(i, this.#start);
     }
-    this.#setPosVector(0, this.#view);
-    this.#currIndex = 0;
-
-    this.#tweening = false;
   }
 
   #createPositions(camera, distFromCam) {
 
-    this.#view = new THREE.Vector3();
+    this.#view = new Vector3();
     this.#view.copy(camera.position);
-    this.#view.add(new THREE.Vector3(0, -0.25, -1 * distFromCam));
+    this.#view.add(new Vector3(0, -0.25, -1 * distFromCam));
     console.log(this.#view);
 
     //Calculate distance between shapes using triangle.
@@ -70,13 +83,13 @@ export default class MeshSlide {
     this.#bufferDist = angle * distFromCam * 2;  //* 2 to act as buffer.
     //Note that shapes larger than fov of camera will not account for this.
 
-    this.#start = new THREE.Vector3();
+    this.#start = new Vector3();
     this.#start.copy(this.#view);
-    this.#start.add(new THREE.Vector3(0, this.#bufferDist, 0));
+    this.#start.add(new Vector3(0, this.#bufferDist, 0));
 
-    this.#exit = new THREE.Vector3();
+    this.#exit = new Vector3();
     this.#exit.copy(this.#view);
-    this.#exit.add(new THREE.Vector3(0, -1 * this.#bufferDist, 0));
+    this.#exit.add(new Vector3(0, -1 * this.#bufferDist, 0));
   }
 
   push(mesh) {
@@ -85,7 +98,7 @@ export default class MeshSlide {
     this.#setPosVector(this.#meshes.length - 1, this.#start);
   }
 
-  next(duration = 5000, random = false, ease = TWEEN.Easing.Elastic.InOut) {
+  next(duration = 5000, random = false, ease = Easing.Elastic.InOut) {
     let next = (this.#currIndex + 1) % this.#meshes.length;
     if(random) {
       next = Math.floor(Math.random() * this.#meshes.length); 
@@ -129,15 +142,13 @@ export default class MeshSlide {
    * @param {TWEEN.Easing} ease is the easing function to apply.
    * @returns the created tween.
    */
-  #createTween(index, start, end, duration = 5000, ease = TWEEN.Easing.Elastic.InOut) {
-    const tween = new TWEEN.Tween({ x: start.x, y: start.y, z: start.z })
+  #createTween(index, start, end, duration = 5000, ease = Easing.Elastic.InOut) {
+    const tween = new Tween({ x: start.x, y: start.y, z: start.z })
       .to({ x: end.x, y: end.y, z: end.z }, duration)
       .easing(ease)
       .onUpdate((coords) => {
         this.#setPosAt(index, coords.x, coords.y, coords.z);
-      })
-    //.repeat(Infinity) //Temp to demo this.
-    //.delay(500); //Might need this as parameter.
+    })
     return tween;
   }
 
@@ -149,7 +160,7 @@ export default class MeshSlide {
       //this.#setGeoHelper(current.index, current.geo);
       if(this.#currIndex == current.index) {
         this.changeBuffer.push(current) //Queue for next tween.
-      } else if (current.isGeo) {
+      } else if (current.newProp.isBufferGeometry) {
         this.#setGeoHelper(current.index, current.newProp);
       } else {
         this.#setMatHelper(current.index, current.newProp);
@@ -157,18 +168,9 @@ export default class MeshSlide {
     }
   }
 
-  // morphAt(index, time) {
-  //   const vertices = this.#meshes[index].geometry.attributes.position;
-  //   for(let i = 0; i < vertices.count; i++) {
-  //     const newX = vertices.getX(i);
-  //     const xsin = Math.sin(newX + time);
-  //     vertices.setZ(i, xsin);
-  //   }
-  //   vertices.needsUpdate = true;
-  // }
-
   /**
-   * Changes geometry at the 
+   * Changes the geometry of the mesh at inputted index,
+   * if this mesh is currently visable, wait until it is hidden.
    * 
    * @param {Integer} index of the mesh to change geometry.
    * @param {THREE.BufferGeometry} newGeo is the new geometery to replace the old one.
@@ -178,28 +180,55 @@ export default class MeshSlide {
     if(index !== this.#currIndex && (index !== this.#nextIndex || !this.#tweening)) {
       this.#setGeoHelper(index, newGeo);
     } else { //Is visable or tweening right now, change later in tween.onComplete.
-      this.changeBuffer.push({index: index, newProp: newGeo, isGeo: true});
+      this.changeBuffer.push({index: index, newProp: newGeo});
     }
   }
 
+  /**
+   * Helper to setGeometryAt, immediately replaces geometry.
+   * 
+   * @param {Integer} index of the mesh to change geometry.
+   * @param {THREE.BufferGeometry} newGeo is the new geometery to replace the old one.
+   */
   #setGeoHelper(index, newGeo) {
     this.#meshes[index].geometry.dispose();
     this.#meshes[index].geometry = newGeo;
   }
 
+  /**
+   * Changes the material of the mesh at inputted index,
+   * if this mesh is currently visable, wait until it is hidden.
+   * 
+   * @param {Integer} index of the mesh to change geometry.
+   * @param {THREE.Material} newMat is the new material to replace the old one.
+   */
   setMaterialAt(index, newMat) {
     if(index !== this.#currIndex && (index !== this.#nextIndex || !this.#tweening)) {
       this.#setMatHelper(index, newMat);
     } else { //Is visable or tweening right now, change later in tween.onComplete.
-      this.changeBuffer.push({index: index, newProp: newMat, isGeo: false});
+      this.changeBuffer.push({index: index, newProp: newMat});
     }
   }
 
+  /**
+   * Helper to setMaterialAt, immediately replaces material.
+   * 
+   * @param {Integer} index of the mesh to change geometry.
+   * @param {THREE.Material} newMat is the new material to replace the old one.
+   */
   #setMatHelper(index, newMat) {
     this.#meshes[index].material.dispose();
     this.#meshes[index].material = newMat;
   }
 
+  /**
+   * Sets the position of the mesh at the inputted index.
+   * 
+   * @param {Integer} index of the mesh changing position.
+   * @param {Number} x is the new x coordinate to set.
+   * @param {Number} y is the new y coordinate to set.
+   * @param {Number} z is the new z coordinate to set.
+   */
   #setPosAt(index, x, y, z) {
     this.#meshes[index].position.set(x, y, z);
     this.#meshes[index].geometry.computeBoundingSphere();
@@ -207,12 +236,26 @@ export default class MeshSlide {
     this.#meshes[index].updateMatrix();
   }
 
+  /**
+   * Sets the position of the mesh at the inputted index.
+   * 
+   * @param {Integer} index of the mesh changing position.
+   * @param {THREE.Vector3} posVec is the new position vector to set.
+   */
   #setPosVector(index, posVec) {
     this.#meshes[index].position.copy(posVec);
     this.#meshes[index].geometry.computeBoundingSphere();
     this.#meshes[index].geometry.computeBoundingBox();
     this.#meshes[index].updateMatrix();
   }
+
+  /**
+   * Gets the mesh at inputted index.
+   * 
+   * 
+   * @param {Integer} index of the mesh to retrieve.
+   * @returns 
+   */
   getMeshAt(index) {
     return this.#meshes[index];
   }
