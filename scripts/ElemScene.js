@@ -6,6 +6,7 @@ export default class ElemScene {
   #camera;
   #element;
   #composer;
+  #cameraZoom;
 
   /**
    * Construct a threejs scene
@@ -22,6 +23,7 @@ export default class ElemScene {
     //fov, aspect, near, far
     this.#camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 1000);
     this.#camera.position.set(0, 1, cameraZoom);
+    this.#cameraZoom = cameraZoom;
     this.#camera.lookAt(0, 0, 0);
 
     //Setting up lighting
@@ -97,11 +99,12 @@ export default class ElemScene {
   }
 
   updateCamPos(mouseX, mouseY, focusPos) {
-    this.#camera.position.x = Math.sin( .5 * Math.PI * ( mouseX - .5 ) ) * 1;
-    this.#camera.position.y = Math.sin( .25 * Math.PI * ( mouseY - .5 ) ) * 1 + 1;
-    this.#camera.position.z = Math.cos( .5 * Math.PI * ( mouseX - .5 ) ) * 1 + 9;
-    // this.#camera.position.x += ( mouseX - this.#camera.position.x ) * .05;
-    // this.#camera.position.y += ( - ( mouseY - 200 ) - this.#camera.position.y ) * .05;
+    //this.#camera.position.x = Math.sin( 1 * Math.PI * ( mouseX - .5 ) ) * 1;
+    //this.#camera.position.y = Math.sin( 1 * Math.PI * ( mouseY - .5 ) ) * 1 + 1;
+    //this.#camera.position.z = Math.cos( 1 * Math.PI * ( mouseX - .5 ) ) * 1 + this.#cameraZoom;
+    this.#camera.position.x += ( mouseX - this.#camera.position.x ) * .05;
+    this.#camera.position.y += ( - ( mouseY) - this.#camera.position.y ) * .05;
+    //this.#camera.position.z += ( mouseX - this.#camera.position.z ) * .05;
     this.#camera.lookAt(focusPos.x, focusPos.y, focusPos.z);
   }
 
