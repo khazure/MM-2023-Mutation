@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8" />
-  <link rel="icon" href="/images/miku.png" />
+  <link rel="icon" href="/images/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000" />
-  <title>Mutation</title>
+  <title>Hyper Mutation</title>
   <meta
     name="description"
     content="Magical Mirai 2023 programming contest entry"
   />
   <link rel="stylesheet" href="/styles/index.css" />
   <link rel="stylesheet" href="/styles/lyrics.css" />
-  <link rel="stylesheet" href="/styles/glitch.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=DotGothic16&family=Potta+One&family=Rampart+One&family=RocknRoll+One&family=Train+One&display=swap" rel="stylesheet">
@@ -29,7 +28,6 @@
 </head>
 <body>
   <main>
-    <!--nothing changes when canvas is omitted???-->
     <canvas id="c" class="full-screen"></canvas>
     <section id="loading-overlay" class="top-level full-screen">
       <article id="loading-pop-up" class="window">
@@ -55,10 +53,7 @@
           </button>
         </div>
         <div class="window-body">
-          <img alt="Hatsune Miku" src="/images/miku.png">
           <p>Installation complete. Run [ミュウテイション.exe]?</p>
-          <p>Publisher: Rin（Kuroneko Lounge）</p>
-          <p>Featuring: その名はもちろん初音ミク</p>
           <button class="play-btn">Yes</button>
           <button class="play-btn">Yes</button>
         </div>
@@ -70,19 +65,7 @@
       <div id="miku-scene" class="graphic-box">
         <div id="speech-bubble" class="lyric-outro-animation"></div>
       </div>
-      <div id="metadata-box" class="graphic-box">
-        <div>
-          <img src="../images/miku.png">
-        </div>
-        <div>
-          <p>ミュウテイション</p>
-          <p>Rin（Kuroneko Lounge）</p>
-          <p>
-            <span id="position"><strong>-</strong> [ms]</span>
-          </p>
-        </div>
-      </div>
-      <nav>
+      <nav id="left-nav">
         <button id="play-btn" class="play-btn hidden" >
           <span class="material-symbols-outlined">
             sound_sampler
@@ -98,6 +81,20 @@
             stop_circle
           </span>
         </button>
+        <!-- Below are temporary -->
+        <div id="debug-tools">
+          <button id="jump-btn">
+            <span style="font-size: 1em;">Lyrics start</span>
+          </button>
+          <button id="chorus-btn" >
+            <span style="font-size: 1em;">Chorus</span>
+          </button>
+          <button id="2nd-chorus-btn" >
+            <span style="font-size: 1em;">2nd Chorus</span>
+          </button>  
+        </div>
+      </nav>
+      <nav id="right-nav">
         <button id="vol-up-btn">
           <span class="material-symbols-outlined">
             volume_up
@@ -113,23 +110,7 @@
             no_sound
           </span>
         </button>
-        <!-- Below are temporary -->
-        <button id="jump-btn">
-          <span style="font-size: 1em;">Lyrics start</span>
-        </button>
-        <button id="chorus-btn" >
-          <span style="font-size: 1em;">Chorus</span>
-        </button>
-        <button id="2nd-chorus-btn" >
-          <span style="font-size: 1em;">2nd Chorus</span>
-        </button>
       </nav>
-      <!-- <div id="graphic-bottom-right">
-        <div class="graphic-box"></div>
-        <p>
-          <span id="position"><strong>-</strong> [ms]</span>
-        </p>  
-      </div> -->
       <div id="top-text" class="y2k-text-style current-container">
         <h1>
           <span class="hidden-visibility">placeholder</span>
@@ -144,10 +125,10 @@
     <div class="static full-screen bottom-level bg-texture">
     </div>
     <div class="rainbow full-screen bottom-level bg-texture"></div>
-    <div class="full-screen grid bottom-level">
+    <div class="full-screen bottom-level">
       <div id="media"></div>
-      <div class="vertical-bar bottom-level"></div>
-      <div class="vertical-bar bottom-level last-col"> 
+      <div id="right-vertical" class="vertical-bar bottom-level"></div>
+      <div id="left-vertical" class="vertical-bar bottom-level"> 
     </div>
   </main>
 </body>

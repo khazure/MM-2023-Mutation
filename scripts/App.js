@@ -98,7 +98,8 @@ class App {
       inChorus: { value: false },
       LYRICS_START: { value: 13726 },
       FIRST_CHORUS_END: { value:  80359.1}, 
-      SECOND_CHORUS_START: { value: 110764.6}
+      SECOND_CHORUS_START: { value: 110764.6},
+      SECOND_CHORUS_END: { value: 136369.4 }
     };
   }
   /**
@@ -232,7 +233,7 @@ class App {
     const position = this.textAliveData.position.value = getPosition();
     (getParenRatio()) ? (this.textAliveData.inParen.currValue = true) 
                       : (this.textAliveData.inParen.currValue = false);
-    this.textAliveData.inChorus.value = getChorus();
+    const inChorus = this.textAliveData.inChorus.value = getChorus();
 
     this._updateMikuScene();
 
@@ -241,7 +242,8 @@ class App {
     if (position < this.textAliveData.LYRICS_START.value) {
       difference = (Math.abs(prevChord - currChord) > 0.5);
       tweenDuration = 1000;
-    } else if ( position < this.textAliveData.FIRST_CHORUS_END.value ) {
+    } else if ( position < this.textAliveData.FIRST_CHORUS_END.value 
+              || position > this.textAliveData.SECOND_CHORUS_END.value) {
       difference = (Math.abs(prevBeat - currBeat) > 0.5);
       tweenDuration = 700;
     } else {
@@ -251,31 +253,31 @@ class App {
 
     // animate based on textAlive chord, beat, or half beat depending on song position
     if (difference) {
-      this.MeshSlide1.next(tweenDuration, this.textAliveData.inChorus.value);
+      this.MeshSlide1.next(tweenDuration, inChorus);
       //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
-      this.MeshSlide2.next(tweenDuration, this.textAliveData.inChorus.value);
+      this.MeshSlide2.next(tweenDuration, inChorus);
 
       // if in chorus, add new geometries to meshSlides
-      if (this.textAliveData.inChorus.value) {
+      if (inChorus) {
         this.MeshSlide1.push( new THREE.Mesh(this._getRandomGeometry(), this._getRandomMaterial()));
         this.MeshSlide2.push( new THREE.Mesh(this._getRandomGeometry(), this._getRandomMaterial()));
       }
     }
 
     // change geometry of bg shapes when in second chorus 
-    if (position >= this.textAliveData.SECOND_CHORUS_START.value) {
-      if (difference) {
+    if (position >= this.textAliveData.SECOND_CHORUS_START.value && inChorus && difference) {
         this.fullScrShapes.setGeometry(this._getRandomGeometry());
-      }
     }
 
-    this.mikuScene.updateCamPos(this.mousePos[0], this.mousePos[1], new THREE.Vector3(0, 0, 0));
+    // rotate full screen shapes
+    let incrementAmount = 0;
+    (inChorus) ? (incrementAmount = (1 - currBeat) / 50) : (incrementAmount = 0.002);
+    this.fullScrShapes.incrementEntireRotation(incrementAmount);
+
+    // slight camera rotation based on mouse position
+    this.mikuScene.updateCamPos(this.mousePos[0] * 2, this.mousePos[1] * 2, new THREE.Vector3(0, 0, 0));
     this.scene1.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide1.getViewPos());
     this.scene2.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide2.getViewPos());
-
-    // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
-
-    this.fullScrShapes.incrementEntireRotation(0.002);
 
     TWEEN.update(); //If tweening.
   }
@@ -373,10 +375,11 @@ class App {
   _getRandomMaterial() {
     const colors = [
       0xFFFFFF,
-      0x80E8DD,
-      0xB7F6AF,
-      0xE784BA,
-      0xF9C1A0,
+      0xADFFF7,
+      0xD3FFCD,
+      0xFFD2DE,
+      0xFFE2D1,
+      0xFCFFB4,
     ]
 
     const color = colors[Math.floor(Math.random() * colors.length)];
@@ -394,7 +397,6 @@ class App {
       // this.mousePos[1] = eve.clientY / window.innerHeight;
       this.mousePos[0] = ( eve.clientX - (window.innerWidth / 2)) / window.innerWidth;
       this.mousePos[1] = ( eve.clientY - (window.innerHeight / 2)) / window.innerHeight;
-      //console.log(this.mousePos);
     })
     document.getElementById(("reset-btn")).addEventListener('click', () => {
       this.MeshSlide1.reset();
@@ -420,7 +422,6 @@ class App {
    * Resizes the renderer to element's size.
    */
   _onResize() {
-    //console.log(this.mousePos);
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
   }
 }

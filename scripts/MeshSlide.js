@@ -84,7 +84,6 @@ export default class MeshSlide {
     this.#view = new Vector3();
     this.#view.copy(camera.position);
     this.#view.add(new Vector3(0, -0.25, -1 * distFromCam));
-    //console.log(this.#view);
 
     //Calculate distance between shapes using triangle.
     const angle = Math.tan(camera.fov / 2);
@@ -103,9 +102,7 @@ export default class MeshSlide {
   push(mesh) {
     const temp = this.rotateMeshRandomly(mesh);
     this.#meshes.push(temp);
-    //console.log(this.#meshes);
     this.#parent.add(temp);
-    //console.log(this.#parent);
     this.#setPosVector(this.#meshes.length - 1, this.#start);
   }
 
@@ -145,9 +142,8 @@ export default class MeshSlide {
       const exitTween = this.#createTween(exitIndex, this.#view, this.#exit, duration, Easing.Elastic.InOut);
       exitTween.dynamic = true;
       exitTween.onComplete(() => {
-        this.#setPosVector(exitIndex, this.#start);
+        this.#setPosVector(this.#currIndex, this.#start);
         this.#currIndex = enterIndex;
-        //console.log(this.#currIndex);
         this.#clearChangeBuffer();
         this.#tweening = false; //Async, needs boolean to indicate if tweening.
         if(this.#needReset) {
@@ -268,7 +264,10 @@ export default class MeshSlide {
       this.#meshes[index].geometry.computeBoundingBox();
       this.#meshes[index].updateMatrix();
     } catch (error) {
-      console.log("its fine, cancel the");
+      //This should only occur when reseting while tweening
+
+      //This is is very bad for continued development
+      //But I don't have time to actually solve this problem... Too bad!
     }
   }
 
