@@ -16,6 +16,7 @@ import FloatShapes from './FloatShapes.js';
 import ElemScene from './ElemScene.js';
 import * as TWEEN from '@tweenjs/tween.js';
 import MeshSlide from './MeshSlide.js';
+import { MeshPhongMaterial } from 'three';
 
 
 class App {
@@ -262,11 +263,18 @@ class App {
 
     this._updateMikuScene();
 
+    // animate every textAlive half beat
     if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
       this.MeshSlide1.next(300, this.textAliveData.inChorus.value);
       //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
       this.MeshSlide2.next(300, this.textAliveData.inChorus.value);
+
+      // if in chorus, add new geometries to meshSlides
+      if (this.textAliveData.inChorus.value) {
+        this.MeshSlide1.push( new THREE.Mesh(this._getRandomGeometry(), this._getRandomMaterial()));
+        this.MeshSlide2.push( new THREE.Mesh(this._getRandomGeometry(), this._getRandomMaterial()));
+      }
     }
 
     //this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1]);
@@ -370,41 +378,55 @@ class App {
   _getRandomGeometry() {
     const extrudeSettings = {
       steps: 2,
-      depth: 2,
+      depth: 1,
       bevelEnabled: true,
-      bevelThickness: 1,
-      bevelSize: 1,
+      bevelThickness: 0.2,
+      bevelSize: 0.2,
       bevelOffset: 0,
       bevelSegments: 1
     }
 
     const geos = [
-      // new THREE.BoxGeometry(),
-      // new THREE.CapsuleGeometry(1, 1, 4, 8),
-      // new THREE.CylinderGeometry(1, 1, 2),
-      // new THREE.DodecahedronGeometry(),
-      // new THREE.IcosahedronGeometry(1),
-      // new THREE.OctahedronGeometry(),
-      // new THREE.SphereGeometry(1),
-      // new THREE.TetrahedronGeometry(1),
-      // new THREE.TorusGeometry(),
-      // new THREE.TorusKnotGeometry(),
-      new THREE.ExtrudeGeometry(this._createHeartShape(50), extrudeSettings)
+      new THREE.BoxGeometry(),
+      new THREE.CapsuleGeometry(1, 1, 4, 8),
+      new THREE.CylinderGeometry(1, 1, 2),
+      new THREE.DodecahedronGeometry(),
+      new THREE.IcosahedronGeometry(1),
+      new THREE.OctahedronGeometry(),
+      new THREE.SphereGeometry(1),
+      new THREE.TetrahedronGeometry(1),
+      new THREE.TorusGeometry(),
+      new THREE.TorusKnotGeometry(),
+      new THREE.ExtrudeGeometry(this._createHeartShape(10), extrudeSettings)
     ];
 
     return geos[Math.floor(Math.random() * geos.length)];
   }
 
   _getRandomMaterial() {
-    const materials = [
+    const colors = [
+      0xFFFFFF,
+      0x80E8DD,
+      0xB7F6AF,
+      0xE784BA,
+      0xF9C1A0,
+    ]
 
+    const color = Math.floor(Math.random() * colors.length);
+
+    const materials = [
+      new MeshPhongMaterial({color: color})
     ];
+
+    return Math.floor(Math.random() * materials.length);
   }
 
   _addListeners() {
     window.addEventListener('mousemove', (eve) => {
-      this.mousePos[0] = eve.clientX / window.innerWidth;
-      this.mousePos[1] = eve.clientY / window.innerHeight;
+      // this.mousePos[0] = eve.clientX / window.innerWidth;
+      // this.mousePos[1] = eve.clientY / window.innerHeight;
+      this.mousePos[0] = ( eve.clientX - (window.innerWidth / 2)) / window.innerWidth;
+      this.mousePos[1] = ( eve.clientY - (window.innerHeight / 2)) / window.innerHeight;
       //console.log(this.mousePos);
     })
     window.addEventListener('resize', this._resizeScreen);
