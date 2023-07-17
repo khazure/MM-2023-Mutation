@@ -3,36 +3,49 @@ import * as TWEEN from '@tweenjs/tween.js';
 
 export default class MeshSlide {
 
+  //Parent scene for this effect.
   #parent;
 
+  //The meshes being rotated in and out.
   #meshes;
 
-  //Where our current shape will be at.
+  //Where our current shape will be viewed at.
   #view;
 
   //Where other shapes will be stored at.
   #start;
 
   //Tween current shape to pos to exit out of view.
-  //Once finish tween, relocate it back to hidden.
+  //Once finish tween, relocate it back to start.
   #exit;
 
   //Distance between shapes, calculated from camera.
   #bufferDist;
 
+  //Index of the current shape being viewed
   #currIndex;
 
+  //True if this effect is tweening, else false.
   #tweening;
 
+  //Index of the next shape to be viewed.
   #nextIndex;
 
+  /**
+   * Threejs effect:
+   * Slides in meshes from an hidden positon and slides them out to an exit position.
+   * 
+   * @param {THREE.Scene} parentScene is the parent scene for this effect.
+   * @param {THREE.PerspectiveCamera} camera is camera for the parent scene, used positioning.
+   * @param {Number} distFromCam is the distance from camera to viewing position.
+   * @param {THREE.Mesh[]} startMeshes is the starting pool of meshes to slide in.
+   */
   constructor(parentScene, camera, distFromCam, startMeshes = [new THREE.Mesh(new THREE.BoxGeometry())]) {
     this.#meshes = [];
     this.#parent = parentScene;
     this.changeBuffer = [];
 
     this.#createPositions(camera, distFromCam);
-
     for(let i = 0; i < startMeshes.length; i++) {
       this.#meshes.push(startMeshes[i].clone());
       this.#meshes[i].geometry.computeBoundingSphere();
@@ -211,5 +224,4 @@ export default class MeshSlide {
   getViewPos() {
     return this.#view;
   }
-
 }
