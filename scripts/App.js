@@ -296,9 +296,10 @@ class App {
       }
     }
 
+    this.mikuScene.updateCamPos(this.mousePos[0], this.mousePos[1], new THREE.Vector3(0, 0, 0));
     this.scene1.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide1.getViewPos());
     this.scene2.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide2.getViewPos());
-    
+
     // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
 
     this.fullScrShapes.incrementEntireRotation(0.002);

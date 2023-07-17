@@ -399,7 +399,6 @@ function onThrottledTimeUpdate(position) {
   } else {
     bars[0].classList.remove("double-col-left");
     bars[1].classList.remove('double-col-right');
-
   }
 
   parenRatio = calculateParenRatio(player.timer.position + OUTRO_DURATION);
