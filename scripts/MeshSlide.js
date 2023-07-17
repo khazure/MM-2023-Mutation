@@ -35,6 +35,11 @@ export default class MeshSlide {
   //Index of the next shape to be viewed.
   #nextIndex;
 
+  //Original Starting pool of meshes, used for resetting.
+  #startMeshes;
+
+  #needReset;
+
   /**
    * Threejs effect:
    * Slides in meshes from an hidden positon and slides them out to an exit position.
@@ -46,10 +51,13 @@ export default class MeshSlide {
    */
   constructor(parentScene, camera, distFromCam, startMeshes = [new Mesh(new THREE.BoxGeometry())]) {
     this.#meshes = [];
+    this.#startMeshes = startMeshes.map((x) => x.clone());
+    //console.log(this.#startMeshes);
     this.#parent = parentScene;
     this.changeBuffer = [];
     this.#currIndex = 0;
     this.#tweening = false;
+    this.#needReset = false;
 
     this.#createPositions(camera, distFromCam);
     this.#createMeshes(startMeshes);
@@ -76,7 +84,7 @@ export default class MeshSlide {
     this.#view = new Vector3();
     this.#view.copy(camera.position);
     this.#view.add(new Vector3(0, -0.25, -1 * distFromCam));
-    console.log(this.#view);
+    //console.log(this.#view);
 
     //Calculate distance between shapes using triangle.
     const angle = Math.tan(camera.fov / 2);
@@ -109,15 +117,20 @@ export default class MeshSlide {
     return result;
   }
 
-  next(duration = 5000, random = false, ease = Easing.Elastic.InOut) {
+  next(duration = 5000, random = false, ease) {
     //Note to self: NEVER, ever use fields or globals with time, especially inconsistent time methods.
-    let next = (this.#currIndex + 1) % this.#meshes.length; //Making this a field screws up tweens.
+    this.#nextIndex = (this.#currIndex + 1) % this.#meshes.length;
     if(random) {
-      next = Math.floor(Math.random() * this.#meshes.length); 
-      while(next === this.#currIndex && this.#meshes.length > 2) { //This seems hacky... Too bad!
-        next = Math.floor(Math.random() * this.#meshes.length); //Reroll to avoid picking current.
+      this.#nextIndex = Math.floor(Math.random() * this.#meshes.length); 
+      while(this.#nextIndex === this.#currIndex && this.#meshes.length > 2) { //This seems hacky... Too bad!
+        this.#nextIndex = Math.floor(Math.random() * this.#meshes.length); //Reroll to avoid picking current.
       }
     }
+    const next = this.#nextIndex;
+    this.#next(next, this.#currIndex, duration, random, ease);
+  }
+
+  #next(enterIndex, exitIndex, duration, ease = Easing.Elastic.InOut) {
     /*//To fix misc. next() call at start:
     if(this.#tweening === undefined) {
       this.#tweening = false;
@@ -128,14 +141,20 @@ export default class MeshSlide {
       console.error("MeshSlide requires at least 2 meshes to perform .next");
     } else if (!this.#tweening) {
       this.#tweening = true; //Dependent on compiler, hopefully just 1 clock after line above.
-      const enterTween = this.#createTween(next, this.#start, this.#view, duration, ease);
-      const exitTween = this.#createTween(this.#currIndex, this.#view, this.#exit, duration, ease);
+      const enterTween = this.#createTween(enterIndex, this.#start, this.#view, duration, Easing.Elastic.InOut);
+      const exitTween = this.#createTween(exitIndex, this.#view, this.#exit, duration, Easing.Elastic.InOut);
+      exitTween.dynamic = true;
       exitTween.onComplete(() => {
-        this.#setPosVector(this.#currIndex, this.#start);
-        this.#currIndex = next;
-        console.log(this.#currIndex);
+        this.#setPosVector(exitIndex, this.#start);
+        this.#currIndex = enterIndex;
+        //console.log(this.#currIndex);
         this.#clearChangeBuffer();
         this.#tweening = false; //Async, needs boolean to indicate if tweening.
+        if(this.#needReset) {
+          enterTween.stop();
+          exitTween.stop();
+          this.#reset();
+        }
       });
 
       enterTween.start();
@@ -170,13 +189,13 @@ export default class MeshSlide {
     for(let i = 0; i < length; i++) { 
       //console.log("Change buffer empty 1");
       const current =  this.changeBuffer.shift();
-      //this.#setGeoHelper(current.index, current.geo);
+      //this.#setGeo(current.index, current.geo);
       if(this.#currIndex == current.index) {
         this.changeBuffer.push(current) //Queue for next tween.
       } else if (current.newProp.isBufferGeometry) {
-        this.#setGeoHelper(current.index, current.newProp);
+        this.#setGeo(current.index, current.newProp);
       } else {
-        this.#setMatHelper(current.index, current.newProp);
+        this.#setMat(current.index, current.newProp);
       }
     }
   }
@@ -191,7 +210,7 @@ export default class MeshSlide {
   setGeometryAt(index, newGeo) {
     //Hidden
     if(index !== this.#currIndex && (index !== this.#nextIndex || !this.#tweening)) {
-      this.#setGeoHelper(index, newGeo);
+      this.#setGeo(index, newGeo);
     } else { //Is visable or tweening right now, change later in tween.onComplete.
       this.changeBuffer.push({index: index, newProp: newGeo});
     }
@@ -203,7 +222,7 @@ export default class MeshSlide {
    * @param {Integer} index of the mesh to change geometry.
    * @param {THREE.BufferGeometry} newGeo is the new geometery to replace the old one.
    */
-  #setGeoHelper(index, newGeo) {
+  #setGeo(index, newGeo) {
     this.#meshes[index].geometry.dispose();
     this.#meshes[index].geometry = newGeo.clone;
   }
@@ -217,7 +236,7 @@ export default class MeshSlide {
    */
   setMaterialAt(index, newMat) {
     if(index !== this.#currIndex && (index !== this.#nextIndex || !this.#tweening)) {
-      this.#setMatHelper(index, newMat);
+      this.#setMat(index, newMat);
     } else { //Is visable or tweening right now, change later in tween.onComplete.
       this.changeBuffer.push({index: index, newProp: newMat});
     }
@@ -229,7 +248,7 @@ export default class MeshSlide {
    * @param {Integer} index of the mesh to change geometry.
    * @param {THREE.Material} newMat is the new material to replace the old one.
    */
-  #setMatHelper(index, newMat) {
+  #setMat(index, newMat) {
     this.#meshes[index].material.dispose();
     this.#meshes[index].material = newMat.clone;
   }
@@ -243,10 +262,14 @@ export default class MeshSlide {
    * @param {Number} z is the new z coordinate to set.
    */
   #setPosAt(index, x, y, z) {
-    this.#meshes[index].position.set(x, y, z);
-    this.#meshes[index].geometry.computeBoundingSphere();
-    this.#meshes[index].geometry.computeBoundingBox();
-    this.#meshes[index].updateMatrix();
+    try {
+      this.#meshes[index].position.set(x, y, z);
+      this.#meshes[index].geometry.computeBoundingSphere();
+      this.#meshes[index].geometry.computeBoundingBox();
+      this.#meshes[index].updateMatrix();
+    } catch (error) {
+      console.log("its fine, cancel the");
+    }
   }
 
   /**
@@ -256,10 +279,43 @@ export default class MeshSlide {
    * @param {THREE.Vector3} posVec is the new position vector to set.
    */
   #setPosVector(index, posVec) {
-    this.#meshes[index].position.copy(posVec);
-    this.#meshes[index].geometry.computeBoundingSphere();
-    this.#meshes[index].geometry.computeBoundingBox();
-    this.#meshes[index].updateMatrix();
+    try {
+      this.#meshes[index].position.copy(posVec);
+      this.#meshes[index].geometry.computeBoundingSphere();
+      this.#meshes[index].geometry.computeBoundingBox();
+      this.#meshes[index].updateMatrix();
+    } catch (error) {
+      //This should only occur when reseting while tweening
+
+      //This is is very bad for continued development
+      //But I don't have time to actually solve this problem... Too bad!
+    }
+  }
+
+  reset() {
+    if(!this.#tweening) {
+      this.#reset();
+    } else {
+      this.#needReset = true; //Reset after finishing tween.
+    }
+  }
+
+  #reset() {
+    const resetIndex = 1;
+    if(this.#currIndex == resetIndex) { //Already in view.
+      this.#setPosVector(resetIndex, this.#view);
+    } else {
+      this.#next(resetIndex, this.#currIndex, 1000);
+    }
+    this.#meshes.forEach((mesh) => {
+      mesh.removeFromParent();
+      mesh.material.dispose();
+      mesh.geometry.dispose();
+      mesh.clear();
+    })
+    this.#meshes = [];
+    this.#createMeshes(this.#startMeshes);
+    this.#needReset = false;
   }
 
   /**

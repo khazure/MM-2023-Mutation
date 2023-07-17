@@ -396,6 +396,10 @@ class App {
       this.mousePos[1] = ( eve.clientY - (window.innerHeight / 2)) / window.innerHeight;
       //console.log(this.mousePos);
     })
+    document.getElementById(("reset-btn")).addEventListener('click', () => {
+      this.MeshSlide1.reset();
+      this.MeshSlide2.reset();
+    });
     window.addEventListener('resize', this._resizeScreen);
   }
 
