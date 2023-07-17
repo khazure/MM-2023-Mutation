@@ -268,14 +268,15 @@ class App {
     let difference = false;
     let tweenDuration = 300;
     if (position < this.textAliveData.LYRICS_START.value) {
-      difference = (Math.abs(prevChord - currChord > 0.5));
+      difference = (Math.abs(prevChord - currChord) > 0.5);
       tweenDuration = 1000;
     } else if ( position < this.textAliveData.FIRST_CHORUS_START.value ) {
-      difference = (Math.abs(prevBeat - currBeat > 0.5));
+      difference = (Math.abs(prevBeat - currBeat) > 0.5);
       tweenDuration = 700;
     } else {
       difference = (Math.abs(this._linearToTwoLinears(currBeat) - 
-                  this._linearToTwoLinears(prevBeat) > 0.5));
+                  this._linearToTwoLinears(prevBeat)) > 0.5);
+                  console.log(difference)
     }
 
     // animate every textAlive half beat
