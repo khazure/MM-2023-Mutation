@@ -284,7 +284,7 @@ class App {
       this.fullScrShapes.setGeometry;
     }
 
-    this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1], this.MeshSlide1.getViewPos());
+    this.scene1.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide1.getViewPos());
     // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
 
     this.fullScrShapes.incrementEntireRotation(0.002);
