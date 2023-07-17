@@ -118,6 +118,8 @@ class App {
       position: { value: 0 },
       inParen: {  currValue: false, prevValue: false },
       inChorus: { value: false },
+      LYRICS_START: { value: 13726 },
+      FIRST_CHORUS_START: { value: 54754.3}, 
       SECOND_CHORUS_START: { value: 110764.6}
     };
   }
@@ -249,26 +251,38 @@ class App {
     this.uniforms.uTime.value = time;
 
     // update previous textAliveData
-    this.textAliveData.beat.prevValue = this.textAliveData.beat.currValue;
-    this.textAliveData.chord.prevValue = this.textAliveData.chord.currValue;
+    let prevBeat = this.textAliveData.beat.prevValue = this.textAliveData.beat.currValue;
+    let prevChord = this.textAliveData.chord.prevValue = this.textAliveData.chord.currValue;
     this.textAliveData.inParen.prevValue = this.textAliveData.inParen.currValue;
 
     // update stored textAliveData
-    this.textAliveData.beat.currValue = getBeatRatio();
-    this.textAliveData.chord.currValue = getChordRatio();
-    this.textAliveData.position.value = getPosition();
+    let currBeat = this.textAliveData.beat.currValue = getBeatRatio();
+    let currChord = this.textAliveData.chord.currValue = getChordRatio();
+    let position = this.textAliveData.position.value = getPosition();
     (getParenRatio()) ? (this.textAliveData.inParen.currValue = true) 
                       : (this.textAliveData.inParen.currValue = false);
     this.textAliveData.inChorus.value = getChorus();
 
     this._updateMikuScene();
 
+    let difference = false;
+    let tweenDuration = 300;
+    if (position < this.textAliveData.LYRICS_START.value) {
+      difference = (Math.abs(prevChord - currChord > 0.5));
+      tweenDuration = 1000;
+    } else if ( position < this.textAliveData.FIRST_CHORUS_START.value ) {
+      difference = (Math.abs(prevBeat - currBeat > 0.5));
+      tweenDuration = 700;
+    } else {
+      difference = (Math.abs(this._linearToTwoLinears(currBeat) - 
+                  this._linearToTwoLinears(prevBeat) > 0.5));
+    }
+
     // animate every textAlive half beat
-    if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
-    this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
-      this.MeshSlide1.next(300, this.textAliveData.inChorus.value);
+    if (difference) {
+      this.MeshSlide1.next(tweenDuration, this.textAliveData.inChorus.value);
       //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
-      this.MeshSlide2.next(300, this.textAliveData.inChorus.value);
+      this.MeshSlide2.next(tweenDuration, this.textAliveData.inChorus.value);
 
       // if in chorus, add new geometries to meshSlides
       if (this.textAliveData.inChorus.value) {

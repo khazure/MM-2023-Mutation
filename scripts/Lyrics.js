@@ -320,6 +320,7 @@ function incrementVolume(value) {
 }
 
 function jumpMusic() {
+  console.log(player.video.firstChar.startTime)
   player.video &&
   player.requestMediaSeek(player.video.firstChar.startTime);
 }
@@ -400,11 +401,9 @@ function onAppReady(app) {
  */
 function onThrottledTimeUpdate(position) {
 
-  // 再生位置を表示する
   // Update current position
   qs("#position strong").textContent = String(Math.floor(position));
 
-  // さらに精確な情報が必要な場合は `player.timer.position` でいつでも取得できます
   // More precise timing information can be retrieved by `player.timer.position` at any time
 
   let beat = player.findBeat(position);
@@ -412,19 +411,10 @@ function onThrottledTimeUpdate(position) {
   // number from 0 to 1 representing percentage of completion of beat
   currBeatRatio = beat ? 1 - ((beat.endTime - position) / beat.duration) : null;
 
-  // animate if new beat is encountered
-  // if (beat && beat != currBeat) {
-  //   currBeat = beat;
-  // } 
-
   // animate if new chord encountered
   let chord = player.findChord(position);
 
   currChordRatio = chord ? 1 - ((chord.endTime - position) / chord.duration) : null;
-  // if (chord && chord != currChord) {
-  //   currChord = chord;
-  //   id("beat-reactor").style.backgroundColor = random_rgba();
-  // }
 
   inChorus = (player.findChorus(player.timer.position) !== null);
 
