@@ -201,8 +201,8 @@ class App {
 
     this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer, this.config.defaultCamZ);
     this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), 6, meshes);
-    //this.MeshSlide1.push(testSphere);
-    //this.MeshSlide1.push(testIco);
+    //this.MeshSlide1.push(new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0x33ccff})));
+    //this.MeshSlide1.push();
     //this.MeshSlide1.setGeometryAt(0, new THREE.OctahedronGeometry());
     //this.MeshSlide1.setMaterialAt(0, new THREE.MeshPhongMaterial({color: 0xffffff}));
     this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
@@ -426,13 +426,13 @@ class App {
       0xF9C1A0,
     ]
 
-    const color = Math.floor(Math.random() * colors.length);
+    const color = colors[Math.floor(Math.random() * colors.length)];
 
     const materials = [
       new MeshPhongMaterial({color: color})
     ];
 
-    return Math.floor(Math.random() * materials.length);
+    return materials[Math.floor(Math.random() * materials.length)];
   }
 
   _addListeners() {

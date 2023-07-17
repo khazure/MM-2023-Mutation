@@ -320,7 +320,6 @@ function incrementVolume(value) {
 }
 
 function jumpMusic() {
-  console.log(player.video.firstChar.startTime)
   player.video &&
   player.requestMediaSeek(player.video.firstChar.startTime);
 }

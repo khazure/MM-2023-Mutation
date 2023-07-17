@@ -93,17 +93,20 @@ export default class MeshSlide {
   }
 
   push(mesh) {
-    this.#meshes.push(mesh);
-    this.#parent.add(this.#meshes[this.#meshes.length - 1]);
+    const temp = mesh.clone();
+    this.#meshes.push(temp);
+    //console.log(this.#meshes);
+    this.#parent.add(temp);
+    //console.log(this.#parent);
     this.#setPosVector(this.#meshes.length - 1, this.#start);
   }
 
   next(duration = 5000, random = false, ease = Easing.Elastic.InOut) {
-    let next = (this.#currIndex + 1) % this.#meshes.length;
+    this.#nextIndex = (this.#currIndex + 1) % this.#meshes.length;
     if(random) {
-      next = Math.floor(Math.random() * this.#meshes.length); 
-      while(next === this.#currIndex) { //This seems hacky... Too bad!
-        next = Math.floor(Math.random() * this.#meshes.length); //Reroll to avoid picking current.
+      this.#nextIndex = Math.floor(Math.random() * this.#meshes.length); 
+      while(this.#nextIndex === this.#currIndex && this.#meshes.length > 2) { //This seems hacky... Too bad!
+        this.#nextIndex = Math.floor(Math.random() * this.#meshes.length); //Reroll to avoid picking current.
       }
     }
     /*//To fix misc. next() call at start:
@@ -112,15 +115,16 @@ export default class MeshSlide {
       console.log("Skipping first .next()...");
     } else
     */
-    if(this.#currIndex === next) { 
+    if(this.#meshes.length < 2) { 
       console.error("MeshSlide requires at least 2 meshes to perform .next");
     } else if (!this.#tweening) {
       this.#tweening = true; //Dependent on compiler, hopefully just 1 clock after line above.
-      const enterTween = this.#createTween(next, this.#start, this.#view, duration, ease);
+      const enterTween = this.#createTween(this.#nextIndex, this.#start, this.#view, duration, ease);
       const exitTween = this.#createTween(this.#currIndex, this.#view, this.#exit, duration, ease);
       exitTween.onComplete(() => {
         this.#setPosVector(this.#currIndex, this.#start);
-        this.#currIndex = next;
+        this.#currIndex = this.#nextIndex;
+        console.log(this.#currIndex);
         this.#clearChangeBuffer();
         this.#tweening = false; //Async, needs boolean to indicate if tweening.
       });
