@@ -13,11 +13,6 @@ import { MeshPhongMaterial } from 'three';
 class App {
   constructor(element) {
     this.container = document.querySelector(element);
-
-    //Add uniforms 
-    this.uniforms = {
-      uTime: { value: 0.0 },
-    };
     
     //Values that will be used in initialization and setup
     this.config = {
