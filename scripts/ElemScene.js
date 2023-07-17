@@ -102,8 +102,8 @@ export default class ElemScene {
     //this.#camera.position.x = Math.sin( 1 * Math.PI * ( mouseX - .5 ) ) * 1;
     //this.#camera.position.y = Math.sin( 1 * Math.PI * ( mouseY - .5 ) ) * 1 + 1;
     //this.#camera.position.z = Math.cos( 1 * Math.PI * ( mouseX - .5 ) ) * 1 + this.#cameraZoom;
-    this.#camera.position.x += ( mouseX - this.#camera.position.x ) * .05;
-    this.#camera.position.y += ( - ( mouseY) - this.#camera.position.y ) * .05;
+    this.#camera.position.x += ( (mouseX * 5) - this.#camera.position.x ) * .05;
+    this.#camera.position.y += ( - ( mouseY * 5) - this.#camera.position.y ) * .05;
     //this.#camera.position.z += ( mouseX - this.#camera.position.z ) * .05;
     this.#camera.lookAt(focusPos.x, focusPos.y, focusPos.z);
   }
