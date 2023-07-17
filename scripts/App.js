@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import InstanceShapes from './InstanceShapes.js';
 import hologramShape from './hologramShape.js';
-import MikuSprite from './mikuSprite.js';
+import MikuSprite from './MikuSprite.js';
 import {getBeatRatio, getChordRatio, getCurrParenDuration, getParenRatio, getPosition, getChorus} from './Lyrics.js';
 import ElemScene from './ElemScene.js';
 import * as TWEEN from '@tweenjs/tween.js';
@@ -34,7 +34,7 @@ class App {
       ]
     }
 
-    this._resizeScreen = () => this._onResize();
+    this.resizeScreen = () => this._onResize();
   }
 
   /**
@@ -254,7 +254,6 @@ class App {
     // animate based on textAlive chord, beat, or half beat depending on song position
     if (difference) {
       this.MeshSlide1.next(tweenDuration, inChorus);
-      //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
       this.MeshSlide2.next(tweenDuration, inChorus);
 
       // if in chorus, add new geometries to meshSlides
@@ -279,7 +278,7 @@ class App {
     this.scene1.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide1.getViewPos());
     this.scene2.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide2.getViewPos());
 
-    TWEEN.update(); //If tweening.
+    TWEEN.update();
   }
 
   /**

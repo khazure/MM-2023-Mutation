@@ -5,14 +5,14 @@ export default class MikuSprite {
   #mesh;
 
   /**
-   * Creates a miku sprite
-   * @param {*} parentScene - parent scene to add sprite to 
+   * Creates a miku sprite.
+   * @param {THREE.Scene} parentScene - parent scene to add sprite to.
    * @param {*} sheetInfo - object containing parameters:
    *  - sheetPath: path to character sheet
    *  - alphaPath: path to corresponding alpha map for sheet
    *  - framesX: number of colummns in character sheet
-   *  - framesY: number of rows in character sheet
-   * @param {*} layer - layer to add sprite to
+   *  - framesY: number of rows in character sheet.
+   * @param {Integer} layer - layer to add sprite to.
    */
   constructor(parentScene, sheetInfo, layer) {
     const texture = this.spriteSheetTexture(sheetInfo.sheetPath, sheetInfo.framesX, sheetInfo.framesY, 200);
@@ -33,11 +33,11 @@ export default class MikuSprite {
    * Creates a texture from a sprite sheet that animates the sprite by
    * going from frame to frame in the sprite sheet grid. Used by the material
    * of the sprite.
-   * @param {*} imageURL - url of sprite sheet
-   * @param {*} framesX - number of frames on the x-axis
-   * @param {*} framesY - Number of frames on the y-axis
-   * @param {*} frameDelay - delay between frames
-   * @param {*} _endFrame - optional, denotes ending frame if entire row isn't used
+   * @param {URL} imageURL - url of sprite sheet
+   * @param {Integer} framesX - number of frames on the x-axis
+   * @param {Integer} framesY - Number of frames on the y-axis
+   * @param {Number} frameDelay - delay between frames
+   * @param {Integer} _endFrame - optional, denotes ending frame if entire row isn't used
    * @returns texture for use by Sprite's material
    */
   spriteSheetTexture(imageURL, framesX, framesY, frameDelay, _endFrame) {
@@ -92,7 +92,7 @@ export default class MikuSprite {
     this.#mesh.rotation.y = value;
   }
 
-  _createRotationTween(startAngle, endAngle, duration = 300, ease = TWEEN.Easing.Cubic.InOut) {
+  #createRotationTween(startAngle, endAngle, duration = 300, ease = TWEEN.Easing.Cubic.InOut) {
     startAngle = THREE.MathUtils.degToRad(startAngle);
     endAngle = THREE.MathUtils.degToRad(endAngle);
     const tween = new TWEEN.Tween({angle: startAngle})
@@ -105,8 +105,8 @@ export default class MikuSprite {
   }
 
   tweenRotation(delay, startAngle, endAngle) {
-    const enterTween = this._createRotationTween(startAngle, endAngle);
-    const exitTween = this._createRotationTween(endAngle, startAngle);
+    const enterTween = this.#createRotationTween(startAngle, endAngle);
+    const exitTween = this.#createRotationTween(endAngle, startAngle);
     exitTween.delay(delay);
 
     enterTween.start().onComplete(() => exitTween.start());
