@@ -56,7 +56,7 @@ class App {
    * Initializes the App, performs setup and starts animation loop
    */
   init() {
-    this.mousePos = [0.5, 0.5];
+    this.mousePos = [0, 0];
 
     // Setup
     this._createTextAliveTracker();
@@ -382,8 +382,10 @@ class App {
 
   _addListeners() {
     window.addEventListener('mousemove', (eve) => {
-      this.mousePos[0] = eve.clientX / window.innerWidth;
-      this.mousePos[1] = eve.clientY / window.innerHeight;
+      //this.mousePos[0] = eve.clientX / window.innerWidth;
+      //this.mousePos[1] = eve.clientY / window.innerHeight;
+      this.mousePos[0] = ( eve.clientX - (window.innerWidth / 2)) / window.innerWidth;
+			this.mousePos[1] = ( eve.clientY - (window.innerHeight / 2)) / window.innerHeight;
       //console.log(this.mousePos);
     })
     window.addEventListener('resize', this._resizeScreen);
