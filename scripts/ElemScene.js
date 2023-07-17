@@ -102,7 +102,7 @@ export default class ElemScene {
     this.#camera.position.z = Math.cos( .5 * Math.PI * ( mouseX - .5 ) ) * 1 + 9;
     // this.#camera.position.x += ( mouseX - this.#camera.position.x ) * .05;
     // this.#camera.position.y += ( - ( mouseY - 200 ) - this.#camera.position.y ) * .05;
-    // this.#camera.lookAt(focusPos.x, focusPos.y, focusPos.z);
+    this.#camera.lookAt(focusPos.x, focusPos.y, focusPos.z);
   }
 
   getScene() {

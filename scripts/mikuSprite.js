@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as TWEEN from '@tweenjs/tween.js';
 
 export default class MikuSprite {
   #mesh;
@@ -23,7 +24,7 @@ export default class MikuSprite {
       alphaMap: alphaTexture,
     });
 
-    this.#mesh = new THREE.Mesh(new THREE.PlaneGeometry(3, 3), material);
+    this.#mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     this.#mesh.layers.enable(layer);
     parentScene.add(this.#mesh);
   }
@@ -86,9 +87,30 @@ export default class MikuSprite {
   }
 
   /**
-   * Set the x rotation of the sprite plane
+   * Set the y rotation of the sprite plane
    */
   setRotation(value) {
-    this.#mesh.rotation.x = value;
+    this.#mesh.rotation.y = value;
+  }
+
+  _createRotationTween(startAngle, endAngle, duration = 300, ease = TWEEN.Easing.Cubic.InOut) {
+    startAngle = THREE.MathUtils.degToRad(startAngle);
+    endAngle = THREE.MathUtils.degToRad(endAngle);
+    const tween = new TWEEN.Tween({angle: startAngle})
+      .to({angle: endAngle}, duration)
+      .easing(ease)
+      .onUpdate((coords) => {
+        console.log(coords.angle)
+        this.#mesh.rotation.y = coords.angle;
+      });
+      return tween;
+  }
+
+  tweenRotation(delay, startAngle, endAngle) {
+    const enterTween = this._createRotationTween(startAngle, endAngle);
+    const exitTween = this._createRotationTween(endAngle, startAngle);
+    exitTween.delay(delay);
+
+    enterTween.start().onComplete(() => exitTween.start());
   }
 }

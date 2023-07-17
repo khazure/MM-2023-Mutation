@@ -277,24 +277,6 @@ randomizeCubePos(width) {
   incrementEntireRotation(value) {
     this.#mesh.rotation.x += value;
   }
-
-  // translate(value) {
-  //   let currMatrix = new THREE.Matrix4();
-
-  //   for (let i = 0; i < this.#mesh.count; i++) {
-
-  //     this.#mesh.getMatrixAt(i, currMatrix);
-
-  //     // rotations
-  //     value = Math.sin(THREE.MathUtils.degToRad(value * 360)) / 5;
-  //     let transMatrix = new THREE.Matrix4();
-  //     transMatrix.makeTranslation(0, 0, value);
-  //     currMatrix.multiply(transMatrix);
-      
-  //     this.#mesh.setMatrixAt(i, currMatrix); //Change transformation matrix to new pos.
-  //   }
-  //   this.#mesh.instanceMatrix.needsUpdate = true;
-  // }
 }
 
 
