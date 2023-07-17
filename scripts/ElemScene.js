@@ -8,10 +8,10 @@ export default class ElemScene {
   #composer;
 
   /**
-   * Construct a threejs scene
-   * @param {*} elem - DOM element to add the scene to
-   * @param {*} renderer - renderer used for the scene
-   * @param {*} cameraZoom - initial z position of the camera
+   * Construct a threejs scene in given element.
+   * @param {Document} elem - DOM element to add the scene to.
+   * @param {THREE.Renderer} renderer - renderer used for the scene.
+   * @param {Number} cameraZoom - initial z position of the camera.
    */
   constructor(elem, renderer, cameraZoom) {
     this.#scene = new THREE.Scene();
