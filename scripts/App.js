@@ -54,6 +54,7 @@ class App {
    * Initializes the App, performs setup and starts animation loop
    */
   init() {
+    this.mousePos = [0.5, 0.5];
 
     // Setup
     this._createTextAliveTracker();
@@ -103,7 +104,6 @@ class App {
       inChorus: { value: false }
     };
   }
-
   /**
    * Creates the renderer for the app and its THREE.js scenes.
    */
@@ -179,24 +179,8 @@ class App {
     ]; //The option to change mid animation still there with .push or .change
     
     this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer);
-    this.Slides = [];
-    for(let count = 0; count < 3; count++) {
-      this.Slides.push(new MeshSlide(this.scene2.getScene(), this.scene2.getCam(), 6, meshes));
-    }
-    this.Slides[0].setView(new THREE.Vector3(0, 3, -4));
-    this.Slides[1].setView(new THREE.Vector3(0, 0, -4));
-    this.Slides[2].setView(new THREE.Vector3(0, -3, -4)); //Race condition again with .setView
-
-    this.Slides[0].setExit(new THREE.Vector3(4, 3, -4));
-    this.Slides[0].setView(new THREE.Vector3(0, 3, -4));
-    this.Slides[0].setStart(new THREE.Vector3(-4, 3, -4));
-
-    this.Slides[1].setStart(new THREE.Vector3(4, 0, -4));
-    this.Slides[1].setView(new THREE.Vector3(0, 0, -4));
-    this.Slides[1].setExit(new THREE.Vector3(-4, 0, -4));
-
-    this.Slides[2].setExit(new THREE.Vector3(4, -3, -4));
-    this.Slides[2].setStart(new THREE.Vector3(-4, -3, -4));
+    
+    this.MeshSlide2 = new MeshSlide(this.scene2.getScene(), this.scene2.getCam(), 6, meshes);
     this.hologram = new hologramShape(this.scene2.getScene(), geo, this.uniforms, 0);
   }
 
@@ -242,8 +226,12 @@ class App {
       this.mikuSprite.nextFrame();
       this.mikuSprite2.nextFrame();
       this.MeshSlide1.next(2000);
-      this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
+      //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
+      this.MeshSlide2.next(2000);
     }
+
+    this.scene1.updateCamPos(this.mousePos[0], this.mousePos[1]);
+    // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
 
     if(getParenRatio()) {
       this.mikuSprite2.setRotation(0);
@@ -307,6 +295,11 @@ class App {
   }
 
   _addListeners() {
+    window.addEventListener('mousemove', (eve) => {
+      this.mousePos[0] = eve.clientX / window.innerWidth;
+      this.mousePos[1] = eve.clientY / window.innerHeight;
+      //console.log(this.mousePos);
+    })
     window.addEventListener('resize', this._resizeScreen);
   }
 
@@ -327,6 +320,7 @@ class App {
    * Resizes the renderer to element's size.
    */
   _onResize() {
+    //console.log(this.mousePos);
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
   }
 }

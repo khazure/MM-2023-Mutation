@@ -86,6 +86,13 @@ export default class ElemScene {
     // }
   }
 
+  updateCamPos(mouseX, mouseY) {
+    this.#camera.position.x = Math.sin( .5 * Math.PI * ( mouseX - .5 ) ) * 1;
+    this.#camera.position.y = Math.sin( .25 * Math.PI * ( mouseY - .5 ) ) * 1 + 1;
+    this.#camera.position.z = Math.cos( .5 * Math.PI * ( mouseX - .5 ) ) * 1 + 9;
+
+  }
+
   getScene() {
     return this.#scene;
   }
