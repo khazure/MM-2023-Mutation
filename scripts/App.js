@@ -32,8 +32,14 @@ class App {
       squareSize: 1.5,
       squareCount: 500,
       sphereSize: 15,
-      defaultCamZ: 10,
-      shapeDist: 8.5 //Too many possible shapes to automate, must be set manaully.
+      defaultCamZ: 6,
+      shapeDist: 8.5, //Too many possible shapes to automate, must be set manaully.
+      meshes: [
+        new THREE.Mesh(new THREE.OctahedronGeometry(), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
+        new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
+        new THREE.Mesh(new THREE.IcosahedronGeometry(1), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
+        new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xFFFFFF}))
+      ]
 
       //BELOW ARE FROM EXAMPLE, shows what stuff goes here. 
 
@@ -70,13 +76,12 @@ class App {
 
     // Scene Creation
     this._createMikuScene();
-    this._createScene1();
-    this._createScene2();
+    this._createScene1(this.config.meshes);
+    this._createScene2(this.config.meshes);
     this._createFullScreenScene();
 
     // Animate
     this._setAnimationLoop();
-    console.log(this);
   }
 
   /**
@@ -178,25 +183,17 @@ class App {
     });
 
     this.mikuParticles = new InstanceShapes(this.mikuScene.getScene(), new THREE.ShapeGeometry(this.heartShape), material, 1500, 0);
-    this.mikuParticles.randomizeSpherePos(15);
+    this.mikuParticles.randomizeSpherePos(12);
 
-    this.mikuBg = new hologramShape(this.mikuScene.getScene(), new THREE.SphereGeometry(20), this.uniforms, 0);
+    this.mikuBg = new hologramShape(this.mikuScene.getScene(), new THREE.SphereGeometry(15), this.uniforms, 0);
   }
 
   /**
    * Creates the scene for the small box in upper-left corner.
    * Currently contains an hologram sphere.
    */
-  _createScene1() {
+  _createScene1(meshes) {
     const geo = new THREE.SphereGeometry(this.config.sphereSize);
-
-    let meshes = [
-      new THREE.Mesh(new THREE.OctahedronGeometry(), new THREE.MeshPhongMaterial({color: 0x33ccff})),
-      new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshPhongMaterial({color: 0xff5050})),
-      new THREE.Mesh(new THREE.IcosahedronGeometry(1), new THREE.MeshPhongMaterial({color: 0x00cc99})),
-      new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xffcc00}))
-    ];
-
 
     this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer, this.config.defaultCamZ);
     this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), 6, meshes);
@@ -207,14 +204,10 @@ class App {
     this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
   }
 
-  _createScene2() {
+  _createScene2(meshes) {
     const geo = new THREE.SphereGeometry(this.config.sphereSize);
-    let meshes = [ //Temporary shapes, feel free to change.
-      new THREE.Mesh(new THREE.OctahedronGeometry(), new THREE.MeshPhongMaterial({color: 0x33ccff})),
-      new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshPhongMaterial({color: 0xff5050})),
-      new THREE.Mesh(new THREE.IcosahedronGeometry(1), new THREE.MeshPhongMaterial({color: 0x00cc99})),
-      new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xffcc00}))
-    ]; //The option to change mid animation still there with .push or .change
+    
+    //The option to change mid animation still there with .push or .change
     
     this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer, this.config.defaultCamZ);
     
@@ -270,7 +263,6 @@ class App {
 
     if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
-      console.log(this.textAliveData.inChorus.value)
       this.MeshSlide1.next(300, this.textAliveData.inChorus.value);
       //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
       this.MeshSlide2.next(300, this.textAliveData.inChorus.value);
@@ -384,10 +376,8 @@ class App {
 
   _addListeners() {
     window.addEventListener('mousemove', (eve) => {
-      //this.mousePos[0] = eve.clientX / window.innerWidth;
-      //this.mousePos[1] = eve.clientY / window.innerHeight;
-      this.mousePos[0] = ( eve.clientX - (window.innerWidth / 2)) / window.innerWidth;
-			this.mousePos[1] = ( eve.clientY - (window.innerHeight / 2)) / window.innerHeight;
+      this.mousePos[0] = eve.clientX / window.innerWidth;
+      this.mousePos[1] = eve.clientY / window.innerHeight;
       //console.log(this.mousePos);
     })
     window.addEventListener('resize', this._resizeScreen);
