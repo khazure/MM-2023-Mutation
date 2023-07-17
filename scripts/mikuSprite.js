@@ -21,9 +21,6 @@ export default class MikuSprite {
       transparent: true,
       map: texture,
       alphaMap: alphaTexture,
-      // specularIntensity: 500,
-      emissiveIntensity: 500,
-      metalness: 1,
     });
 
     this.#mesh = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material);
@@ -88,13 +85,10 @@ export default class MikuSprite {
     this.#mesh.material.alphaMap.animate();
   }
 
+  /**
+   * Set the x rotation of the sprite plane
+   */
   setRotation(value) {
     this.#mesh.rotation.x = value;
   }
-
-  // animateRotation(value) {
-
-  // }
-
-  // _tweenRotation()
 }

@@ -250,10 +250,12 @@ class App {
    */
   _createClock() {
     this.clock = new THREE.Clock();
+    this.delta = 0;
+    this.interval = 1/150;
   }
 
   /**
-   * Updates the App's values for textAlive and animation.
+   * Updates the App
    * This runs every frame before rendering.
    */
   _update() {
@@ -269,31 +271,13 @@ class App {
     this.textAliveData.chord.currValue = getChordRatio();
     this.textAliveData.position.value = getPosition();
 
+    this._updateMikuScene();
+
     if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
     this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
       this.MeshSlide1.next(2000);
       this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
     }
-
-    if (Math.abs(this._linearToPiecewise(this.textAliveData.beat.currValue, 4) - 
-    this._linearToPiecewise(this.textAliveData.beat.prevValue, 4)) > 0.5) {
-      this.mikuSprite.nextFrame();
-      this.mikuSprite2.nextFrame();
-    }
-
-    if(getParenRatio()) {
-      this.mikuSprite2.setRotation(0);
-      this.mikuSprite.setRotation(90);
-    } else {
-      this.mikuSprite.setRotation(0);
-      this.mikuSprite2.setRotation(90);
-    }
-
-    this.mikuParticles.setRotation(THREE.MathUtils.degToRad(10));
-    //this.mikuParticles.translate(this.textAliveData.beat.currValue);
-    this.mikuParticles.incrementEntireRotation(0.002);
-
-    // this.mikuTube.updateMaterialOffset((1 - this.textAliveData.beat.currValue) / 10);
 
     //this.fullScrShapes.incrementEntireRotation((1 - this.textAliveData.chord.currValue) / 90);
     if (this.textAliveData.position.value >= this.textAliveData.SECOND_CHORUS_START.value) {
@@ -303,6 +287,33 @@ class App {
     this.fullScrShapes.incrementEntireRotation(0.002);
 
     TWEEN.update(); //If tweening.
+  }
+
+  /**
+   * Update the miku scene before render
+   */
+  _updateMikuScene() {
+    if(getParenRatio()) {
+      this.mikuSprite2.setRotation(0);
+      this.mikuSprite.setRotation(90);
+    } else {
+      this.mikuSprite.setRotation(0);
+      this.mikuSprite2.setRotation(90);
+    }
+
+    // animate heart particles
+    this.mikuParticles.setRotation(THREE.MathUtils.degToRad(10));
+    this.mikuParticles.incrementEntireRotation(-0.003);
+
+    // throttled update of sprite frames
+    this.delta += this.clock.getDelta();
+
+    if (this.delta > this.interval) {
+      this.mikuSprite.nextFrame();
+      this.mikuSprite2.nextFrame();
+
+      this.delta = this.delta % this.interval;
+    }
   }
 
   /**
