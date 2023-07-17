@@ -314,11 +314,12 @@ function resetMusic() {
   setTimeout(() => {
     qs("#top-text h1").classList.add("lyric-outro-animation");
     qs("#bottom-text h1").classList.add("lyric-outro-animation");  
+    id("speech-bubble").classList.replace("bounce-in", "lyric-outro-animation");
   }, 100);
 
-  id("speech-bubble").innerHTML = "";
   currPhrase = null;
   currWord = null;
+  
   player.video && player.requestMediaSeek(0);
 }
 
@@ -336,7 +337,7 @@ function moveGradient(event) {
   const percentageY = y / height * 100;
   qsa(".bg-texture").forEach(bg => {
     bg.style.backgroundPosition = percentageX + "%" + percentageY + "%";
-  })
+  });
 }
 
 /**
@@ -369,20 +370,22 @@ function onAppReady(app) {
  * @param {number} position - https://developer.textalive.jp/packages/textalive-app-api/interfaces/playereventlistener.html#onthrottledtimeupdate
  */
 function onThrottledTimeUpdate(position) {
-  // More precise timing information can be retrieved by `player.timer.position` at any time
 
+  // calculate timing data
   let beat = player.findBeat(position);
 
   // number from 0 to 1 representing percentage of completion of beat
   currBeatRatio = beat ? 1 - ((beat.endTime - position) / beat.duration) : null;
 
-  // animate if new chord encountered
   let chord = player.findChord(position);
 
   currChordRatio = chord ? 1 - ((chord.endTime - position) / chord.duration) : null;
 
   inChorus = (player.findChorus(player.timer.position) !== null);
 
+  parenRatio = calculateParenRatio(player.timer.position + OUTRO_DURATION);
+
+  // animate bars when in chorus
   const bars = qsa(".vertical-bar");
   if (inChorus) {
     bars[0].classList.add("chorus-vertical");
@@ -392,7 +395,11 @@ function onThrottledTimeUpdate(position) {
     bars[1].classList.remove('chorus-vertical');
   }
 
-  parenRatio = calculateParenRatio(player.timer.position + OUTRO_DURATION);
+  // if ended, change play to pause btn
+  if (position >= END_TIME - OUTRO_DURATION) {
+    id("play-btn").classList.remove("hidden");
+    id("pause-btn").classList.add("hidden");  
+  }
 }
 
 /**

@@ -30,9 +30,9 @@ Magical Mirai 2023's programming contest! It utilizes ThreeJS and TextAlive App 
 4. Go to localhost address in console
 
 ## Contributors
-khazure - designer, programmer
-SteveT10 - programmer
-LN37 - pixel artist
+- khazure - designer, programmer
+- SteveT10 - programmer
+- LN37 - pixel artist
 
 ## License
 

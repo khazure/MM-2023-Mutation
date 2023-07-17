@@ -265,10 +265,8 @@ class App {
     }
 
     // change geometry of bg shapes when in second chorus 
-    if (position >= this.textAliveData.SECOND_CHORUS_START.value) {
-      if (difference) {
+    if (position >= this.textAliveData.SECOND_CHORUS_START.value && inChorus && difference) {
         this.fullScrShapes.setGeometry(this._getRandomGeometry());
-      }
     }
 
     // rotate full screen shapes
@@ -277,7 +275,7 @@ class App {
     this.fullScrShapes.incrementEntireRotation(incrementAmount);
 
     // slight camera rotation based on mouse position
-    this.mikuScene.updateCamPos(this.mousePos[0], this.mousePos[1], new THREE.Vector3(0, 0, 0));
+    this.mikuScene.updateCamPos(this.mousePos[0] * 2, this.mousePos[1] * 2, new THREE.Vector3(0, 0, 0));
     this.scene1.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide1.getViewPos());
     this.scene2.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide2.getViewPos());
 

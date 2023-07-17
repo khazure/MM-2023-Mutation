@@ -284,6 +284,10 @@ nav#right-nav {
   margin: 0;
 }
 
+#debug-tools {
+  display: none;
+}
+
 .bg-texture {
   transition: 200ms;
 }
