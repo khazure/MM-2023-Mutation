@@ -51,6 +51,8 @@ import { Player } from "textalive-app-api";
   // keeps track of progress through paren part
   let parenRatio = null;
 
+  let currParenDuration = null;
+
   // keeps track of mouse position
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
@@ -237,13 +239,22 @@ function prepareForNewPhrase() {
   parenStart = null;
 }
 
+/**
+ * Calculates the ParenRatio and the duration of the paren part.
+ * ParenRatio: the current value in range [0, 1] representing the completion percentage 
+ * of the parentehsis part at the given position. (includes the transition times)
+ * currParenDuration: duration of the parenthesis part (not including the transition times)
+ * @param {number} position - position to calculate the parentratio relative to
+ * @returns {number} - ParenRatio if applicable, null if not
+ */
 function calculateParenRatio(position) {
   let alteredStart = null;
   parenStart && (alteredStart = parenStart - INTRO_DURATION);
   if (parenStart && currPhrase && position >= alteredStart && position <= currPhrase.endTime) {
-    const duration = (currPhrase.endTime - alteredStart) + INTRO_DURATION;
-    return (position - alteredStart) / duration;
+    currParenDuration = (currPhrase.endTime - (alteredStart + INTRO_DURATION));
+    return (position - alteredStart) / currParenDuration;
   } else {
+    currParenDuration = null;
     return null;
   }
 }
@@ -425,7 +436,7 @@ function onThrottledTimeUpdate(position) {
     qs(".grid").classList.replace("chorus", "non-chorus");
   }
 
-  parenRatio = calculateParenRatio(player.timer.position);
+  parenRatio = calculateParenRatio(player.timer.position + OUTRO_DURATION);
 }
 
 /**
@@ -500,4 +511,8 @@ export function getParenRatio() {
 
 export function getPosition() {
   return player.timer.position;
+}
+
+export function getCurrParenDuration() {
+  return currParenDuration;
 }

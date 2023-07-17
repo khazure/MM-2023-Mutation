@@ -11,7 +11,7 @@ import InstanceSphere from './InstanceSphere.js';
 import hologramShape from './hologramShape.js';
 import infiniteTubes from './infiniteTubes.js';
 import MikuSprite from './mikuSprite.js';
-import {getBeatRatio, getChordRatio, getParenRatio, getPosition} from './Lyrics.js';
+import {getBeatRatio, getChordRatio, getCurrParenDuration, getParenRatio, getPosition} from './Lyrics.js';
 import FloatShapes from './FloatShapes.js';
 import ElemScene from './ElemScene.js';
 import * as TWEEN from '@tweenjs/tween.js';
@@ -31,7 +31,8 @@ class App {
     this.config = {
       squareSize: 1.5,
       squareCount: 500,
-      sphereSize: 15
+      sphereSize: 15,
+      defaultCamZ: 10,
 
       //BELOW ARE FROM EXAMPLE, shows what stuff goes here. 
 
@@ -98,13 +99,17 @@ class App {
    * keeps track of timing data from the textAlive app
    * beat: value from [0, 1] representing the completion of the beat
    * chord: value from [0, 1] representing completion of chord
+   * position: TextAlive timing position
+   * inParen: boolean of if the previous update cycle was in a parenthesises or not
    * inChorus: boolean, true if in chorus, false if not
+   * SECOND_CHORUS_START: constant of when second chorus starts according to position
    */
   _createTextAliveTracker() {
     this.textAliveData = {
       beat: { currValue: 1.0, prevValue: 1.0 },
       chord: { currValue: 1.0, prevValue: 1.0},
       position: { value: 0 },
+      inParen: {  currValue: false, prevValue: false },
       inChorus: { value: false },
       SECOND_CHORUS_START: { value: 110764.6}
     };
@@ -146,7 +151,7 @@ class App {
    * Contains a miku sprite. 
    */
   _createMikuScene() {
-    this.mikuScene = new ElemScene(document.querySelector("#miku-scene"), this.renderer, 5);
+    this.mikuScene = new ElemScene(document.querySelector("#miku-scene"), this.renderer, 3);
     const firstMiku = {
       sheetPath: "../images/miku_sprites.png",
       alphaPath: "../images/alpha_sheet.png",
@@ -155,24 +160,25 @@ class App {
     }
 
     const secondMiku = {
-      sheetPath: "../images/miku_speak.png",
-      alphaPath: "../images/alpha_speak.png",
-      framesX: 5,
-      framesY: 2
+      sheetPath: "../images/miku_wa.png",
+      alphaPath: "../images/miku_wa_alpha.png",
+      framesX: 1,
+      framesY: 1
     }
 
     this.mikuSprite = new MikuSprite(this.mikuScene.getScene(), firstMiku, this.uniforms, 0);
     this.mikuSprite2 = new MikuSprite(this.mikuScene.getScene(), secondMiku, this.uniforms, 0);
 
+    this.mikuSprite.setRotation(0);
+    this.mikuSprite2.setRotation(Math.PI);
+
     const material = new THREE.MeshStandardMaterial({
       side: THREE.DoubleSide,
     });
 
-    this.mikuParticles = new InstanceShapes(this.mikuScene.getScene(), new THREE.ShapeGeometry(this.heartShape), material, 2000, 0);
-    this.mikuParticles.randomizeSpherePos(20);
+    this.mikuParticles = new InstanceShapes(this.mikuScene.getScene(), new THREE.ShapeGeometry(this.heartShape), material, 1500, 0);
+    this.mikuParticles.randomizeSpherePos(15);
 
-    // this.mikuBg = new Experiment(this.mikuScene.getScene(), new THREE.BoxGeometry(20, 20, 20), this.uniforms, 0);
-    // this.mikuTube = new infiniteTubes(this.mikuScene.getScene(), this.uniforms, 0);
     this.mikuBg = new hologramShape(this.mikuScene.getScene(), new THREE.SphereGeometry(20), this.uniforms, 0);
   }
 
@@ -191,7 +197,7 @@ class App {
     ];
 
 
-    this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer, 10);
+    this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer, this.config.defaultCamZ);
     this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), 6, meshes);
     //this.MeshSlide1.push(testSphere);
     //this.MeshSlide1.push(testIco);
@@ -209,7 +215,7 @@ class App {
       new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xffcc00}))
     ]; //The option to change mid animation still there with .push or .change
     
-    this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer, 10);
+    this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer, this.config.defaultCamZ);
     
     this.MeshSlide2 = new MeshSlide(this.scene2.getScene(), this.scene2.getCam(), 6, meshes);
     this.hologram = new hologramShape(this.scene2.getScene(), geo, this.uniforms, 0);
@@ -224,7 +230,7 @@ class App {
     const geo = new THREE.BoxGeometry(size, size, size);
     const mat = new THREE.MeshPhongMaterial(0xFFFFFF);
 
-    this.fullScrScene = new ElemScene(document.getElementById("graphic-grid"), this.renderer, 10);
+    this.fullScrScene = new ElemScene(document.getElementById("graphic-grid"), this.renderer, this.config.defaultCamZ);
     this.fullScrShapes = new InstanceShapes(this.fullScrScene.getScene(), geo, mat, this.config.squareCount, 0);
     this.fullScrShapes.randomizeSpherePos(45);
   }
@@ -249,11 +255,14 @@ class App {
     // update previous textAliveData
     this.textAliveData.beat.prevValue = this.textAliveData.beat.currValue;
     this.textAliveData.chord.prevValue = this.textAliveData.chord.currValue;
+    this.textAliveData.inParen.prevValue = this.textAliveData.inParen.currValue;
 
     // update stored textAliveData
     this.textAliveData.beat.currValue = getBeatRatio();
     this.textAliveData.chord.currValue = getChordRatio();
     this.textAliveData.position.value = getPosition();
+    (getParenRatio()) ? (this.textAliveData.inParen.currValue = true) 
+                      : (this.textAliveData.inParen.currValue = false);
 
     this._updateMikuScene();
 
@@ -284,17 +293,26 @@ class App {
    * Update the miku scene before render
    */
   _updateMikuScene() {
-    if(getParenRatio()) {
-      this.mikuSprite2.setRotation(0);
-      this.mikuSprite.setRotation(90);
-    } else {
-      this.mikuSprite.setRotation(0);
-      this.mikuSprite2.setRotation(90);
+    const prevParen = this.textAliveData.inParen.prevValue;
+    const currParen = this.textAliveData.inParen.currValue;
+    if (prevParen !== currParen) {
+      if (prevParen === false) {
+        // entering animation
+        // this.mikuSprite2.setRotation(0);
+        // this.mikuSprite.setRotation(90);
+        const duration = getCurrParenDuration();
+        this.mikuSprite.tweenRotation(duration, 0, 180);
+        this.mikuSprite2.tweenRotation(duration, 180, 0);
+      } else {
+        // exiting animation
+        // this.mikuSprite.setRotation(0);
+        // this.mikuSprite2.setRotation(90);
+      }
     }
 
     // animate heart particles
     this.mikuParticles.setRotation(THREE.MathUtils.degToRad(10));
-    this.mikuParticles.incrementEntireRotation(-0.003);
+    this.mikuParticles.incrementEntireRotation(0.003);
 
     // throttled update of sprite frames
     this.delta += this.clock.getDelta();
