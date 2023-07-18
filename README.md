@@ -20,12 +20,12 @@ Magical Mirai 2023's programming contest! It utilizes the TextAlive App API, Thr
 - Beat synchronized prop animations
 
 ## Building
-1. Clone the repo to your computer
-1. Install Node
-1. Navigate to the project directory in the command line
+1. Download a zip folder of the repo
+1. Make sure Node is installed
+1. Navigate to inside the project directory in the command line
 2. In the command line, run `npm install`
 3. In the command line, run `npx vite`
-4. Go to localhost address in console
+4. Go to localhost address generated in console
 
 ## Contributors
 - khazure - designer, programmer
