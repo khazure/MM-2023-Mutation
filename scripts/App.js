@@ -28,8 +28,6 @@ class App {
         new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.25), new THREE.MeshPhongMaterial({color: 0xFFFFFF}))
       ]
     }
-
-    this.resizeScreen = () => this._onResize();
   }
 
   /**
@@ -395,7 +393,9 @@ class App {
       this.MeshSlide1.reset();
       this.MeshSlide2.reset();
     });
-    window.addEventListener('resize', this._resizeScreen);
+    window.addEventListener('resize', () => {
+      this._onResize();
+    });
   }
 
   /**
@@ -408,7 +408,9 @@ class App {
   }
 
   _removeListeners() {
-    window.removeEventListener('resize', this._resizeScreen)
+    window.removeEventListener('resize', () => {
+      this._onResize();
+    })
   }
 
   /**
