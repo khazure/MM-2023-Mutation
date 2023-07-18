@@ -1,6 +1,4 @@
-# MM-2023-Mutation
-
-[description here]
+# hyper mutation
 
 ## Table of Contents
 - [Overview](#overview)
@@ -16,9 +14,10 @@ Magical Mirai 2023's programming contest! It utilizes the TextAlive App API, Thr
 
 ## Features
 
-- Feature 1: Mouse orientated movement
-- Feature 2: Music specific animations
-- Feature 3: 
+- Animated lyrics
+- Animated Miku sprite
+- Mouse movement interactivity
+- Beat synchronized prop animations
 
 ## Building
 1. Clone the repo to your computer
