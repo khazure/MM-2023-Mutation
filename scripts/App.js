@@ -268,7 +268,7 @@ class App {
     this.fullScrShapes.incrementEntireRotation(incrementAmount);
 
     // slight camera rotation based on mouse position
-    this.mikuScene.updateCamPos(this.mousePos[0] * 2, this.mousePos[1] * 2, new THREE.Vector3(0, 0, 0));
+    this.mikuScene.updateCamPos(this.mousePos[0] * 1.5, this.mousePos[1] * 1.5, new THREE.Vector3(0, 0, 0));
     this.scene1.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide1.getViewPos());
     this.scene2.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide2.getViewPos());
 
