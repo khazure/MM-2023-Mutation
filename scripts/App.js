@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import InstanceShapes from './InstanceShapes.js';
-import hologramShape from './hologramShape.js';
+import HologramShape from './HologramShape.js';
 import MikuSprite from './MikuSprite.js';
 import {getBeatRatio, getChordRatio, getCurrParenDuration, getParenRatio, getPosition, getChorus} from './Lyrics.js';
 import ElemScene from './ElemScene.js';
@@ -163,7 +163,7 @@ class App {
     this.mikuParticles = new InstanceShapes(this.mikuScene.getScene(), new THREE.ShapeGeometry(this.heartShape), material, 1500, 0);
     this.mikuParticles.randomizeSpherePos(12);
 
-    this.mikuBg = new hologramShape(this.mikuScene.getScene(), new THREE.SphereGeometry(15), this.uniforms, 0);
+    this.mikuBg = new HologramShape(this.mikuScene.getScene(), new THREE.SphereGeometry(15), this.uniforms, 0);
   }
 
   /**
@@ -175,7 +175,7 @@ class App {
 
     this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer, this.config.defaultCamZ);
     this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), this.config.shapeDist, meshes);
-    this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
+    this.hologram = new HologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
   }
 
   _createScene2(meshes) {
@@ -183,7 +183,7 @@ class App {
 
     this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer, this.config.defaultCamZ);
     this.MeshSlide2 = new MeshSlide(this.scene2.getScene(), this.scene2.getCam(), this.config.shapeDist, meshes);
-    this.hologram = new hologramShape(this.scene2.getScene(), geo, this.uniforms, 0);
+    this.hologram = new HologramShape(this.scene2.getScene(), geo, this.uniforms, 0);
   }
 
   /**

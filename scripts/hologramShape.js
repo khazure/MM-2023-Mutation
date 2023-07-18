@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export default class hologramShape {
+export default class HologramShape {
   #line;
 
   constructor(parentScene, geometry) {
