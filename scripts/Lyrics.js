@@ -1,3 +1,5 @@
+import { Player } from "textalive-app-api";
+
 'use strict';
 
 /**
