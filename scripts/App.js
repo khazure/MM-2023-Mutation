@@ -135,15 +135,15 @@ class App {
   _createMikuScene() {
     this.mikuScene = new ElemScene(document.querySelector("#miku-scene"), this.renderer, 3);
     const firstMiku = {
-      sheetPath: "../images/miku_sprites.png",
-      alphaPath: "../images/alpha_sheet.png",
+      sheetPath: "./miku_sprites.png",
+      alphaPath: "./alpha_sheet.png",
       framesX: 5,
       framesY: 2
     }
 
     const secondMiku = {
-      sheetPath: "../images/miku_wa.png",
-      alphaPath: "../images/miku_wa_alpha.png",
+      sheetPath: "./miku_wa.png",
+      alphaPath: "./miku_wa_alpha.png",
       framesX: 1,
       framesY: 1
     }

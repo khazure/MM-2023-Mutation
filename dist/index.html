@@ -9,13 +9,21 @@
     name="description"
     content="Magical Mirai 2023 programming contest entry"
   />
-  <link rel="stylesheet" href="./styles/index.css" />
-  <link rel="stylesheet" href="./styles/lyrics.css" />
+  
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=DotGothic16&family=Potta+One&family=Rampart+One&family=RocknRoll+One&family=Train+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/textalive-app-api/dist/index.js"></script>
+  <script>
+    const { Player } = TextAliveApp;
+  </script>
+  <script src="https://unpkg.com/postprocessing@6.33.0/build/index.cjs"></script>
+  
   <script type="importmap">
     {
       "imports": {
@@ -25,13 +33,8 @@
       }
     }
   </script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script src="https://unpkg.com/textalive-app-api/dist/index.js"></script>
-  <script>
-    const { Player } = TextAliveApp;
-  </script>
-  <script src="https://unpkg.com/postprocessing@6.33.0/build/index.cjs"></script>
-  <script type = "module" src="./scripts/App.js"></script>
+  <script type="module" crossorigin src="/assets/index-c3e4f6db.js"></script>
+  <link rel="stylesheet" href="/assets/index-d70cc667.css">
 </head>
 <body>
   <main>
@@ -140,5 +143,5 @@
   </main>
 </body>
 <!-- Must be after html so it can access the media div -->
-<script type="module" src="./scripts/Lyrics.js"></script>
+
 
