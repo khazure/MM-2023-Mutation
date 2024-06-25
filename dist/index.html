@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="./favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <title>Hyper Mutation</title>
+  <meta
+    name="description"
+    content="Magical Mirai 2023 programming contest entry"
+  />
+  
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=DotGothic16&family=Potta+One&family=Rampart+One&family=RocknRoll+One&family=Train+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+  
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@v0.152.2/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@v0.152.2/examples/jsm/",
+      }
+    }
+  </script>
+  <script type="module" crossorigin src="/MM-2023-Mutation/assets/index-fda9f549.js"></script>
+  <link rel="stylesheet" href="/MM-2023-Mutation/assets/index-d70cc667.css">
+</head>
+<body>
+  <main>
+    <canvas id="c" class="full-screen"></canvas>
+    <section id="loading-overlay" class="top-level full-screen">
+      <article id="loading-pop-up" class="window">
+        <div class="window-header">
+          <p>mutation.exe</p>
+          <button disabled>
+            <span class="material-symbols-outlined">
+              close
+            </span>  
+          </button>
+        </div>
+        <div class="window-body">
+          <p>Installing [mutation.exe]...</p>
+        </div>
+      </article>
+      <article id="finished-loading-pop-up" class="window hidden">
+        <div class="window-header">
+          <p>mutation.exe</p>
+          <button disabled>
+            <span class="material-symbols-outlined">
+              close
+            </span>  
+          </button>
+        </div>
+        <div class="window-body">
+          <p>Installation complete. Run [ミュウテイション.exe]?</p>
+          <button class="play-btn">Yes</button>
+          <button class="play-btn">Yes</button>
+        </div>
+      </article>
+    </section>
+    <section id="graphic-grid" class="full-screen grid">
+      <div id="scene-1" class="graphic-box"></div>
+      <div id="scene-2" class="graphic-box"></div>
+      <div id="miku-scene" class="graphic-box">
+        <div id="speech-bubble" class="lyric-outro-animation"></div>
+      </div>
+      <nav id="left-nav">
+        <button id="play-btn" class="play-btn hidden" >
+          <span class="material-symbols-outlined">
+            sound_sampler
+          </span>
+        </button>
+        <button id="pause-btn" >
+          <span class="material-symbols-outlined">
+            pause_circle
+          </span>
+        </button> 
+        <button id="reset-btn" >
+          <span class="material-symbols-outlined">
+            stop_circle
+          </span>
+        </button>
+        <!-- Below are temporary -->
+        <div id="debug-tools">
+          <button id="jump-btn">
+            <span style="font-size: 1em;">Lyrics start</span>
+          </button>
+          <button id="chorus-btn" >
+            <span style="font-size: 1em;">Chorus</span>
+          </button>
+          <button id="2nd-chorus-btn" >
+            <span style="font-size: 1em;">2nd Chorus</span>
+          </button>  
+        </div>
+      </nav>
+      <nav id="right-nav">
+        <button id="vol-up-btn">
+          <span class="material-symbols-outlined">
+            volume_up
+          </span>
+        </button>
+        <button id="vol-down-btn">
+          <span class="material-symbols-outlined">
+            volume_down_alt
+          </span>
+        </button>
+        <button id="vol-mute-btn">
+          <span class="material-symbols-outlined">
+            no_sound
+          </span>
+        </button>
+      </nav>
+      <div id="top-text" class="y2k-text-style current-container">
+        <h1>
+          <span class="hidden-visibility">placeholder</span>
+        </h1>
+      </div>
+      <div id="bottom-text" class="y2k-text-style">
+        <h1>
+          <span class="hidden-visibility">placeholder</span>
+        </h1>
+      </div>
+    </section>
+    <div class="static full-screen bottom-level bg-texture">
+    </div>
+    <div class="rainbow full-screen bottom-level bg-texture"></div>
+    <div class="full-screen bottom-level">
+      <div id="media"></div>
+      <div id="right-vertical" class="vertical-bar bottom-level"></div>
+      <div id="left-vertical" class="vertical-bar bottom-level"> 
+    </div>
+  </main>
+</body>
+<!-- Must be after html so it can access the media div -->
+
+
