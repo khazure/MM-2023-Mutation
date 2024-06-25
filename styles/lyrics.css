@@ -57,7 +57,7 @@ h1 {
   }
 }
 
-#loading-overlay {
+/* #loading-overlay {
   background-color: rgba(20, 20, 20, 0.6);
   text-align: center;
   display: flex;
@@ -69,7 +69,7 @@ h1 {
   right: 0;
   bottom: 0;
   position: absolute;
-}
+} */
 
 #speech-bubble {
   background-color: var(--default-white);
@@ -79,9 +79,11 @@ h1 {
   white-space: nowrap;
   position: absolute;
   color: var(--accent-color);
-  font-size: max(1vw, 15px);
+
+  /* top: 10vw; */
+  font-size: max(1vw, 12px);
   top: 30%;
-  left: -10%;
+  left: 5%;
   /* filter: 
   drop-shadow(2px 0 var(--light-accent))
   drop-shadow(0 2px var(--light-accent))
@@ -259,5 +261,17 @@ h1 {
   }
   100% {
     opacity: 0;
+  }
+}
+
+@media only screen and (max-width: 950px) {
+  #speech-bubble {
+    left: -20%;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  #speech-bubble {
+    left: -50%;
   }
 }

@@ -35,6 +35,12 @@ export default class MeshSlide {
   //Index of the next shape to be viewed.
   #nextIndex;
 
+  //Original Starting pool of meshes, used for resetting.
+  #startMeshes;
+
+  //Boolean Signal to let MeshSlide know that its needs to reset on next cycle.
+  #needReset;
+
   /**
    * Threejs effect:
    * Slides in meshes from an hidden positon and slides them out to an exit position.
@@ -46,10 +52,12 @@ export default class MeshSlide {
    */
   constructor(parentScene, camera, distFromCam, startMeshes = [new Mesh(new THREE.BoxGeometry())]) {
     this.#meshes = [];
+    this.#startMeshes = startMeshes.map((x) => x.clone());
     this.#parent = parentScene;
     this.changeBuffer = [];
     this.#currIndex = 0;
     this.#tweening = false;
+    this.#needReset = false;
 
     this.#createPositions(camera, distFromCam);
     this.#createMeshes(startMeshes);
@@ -71,12 +79,17 @@ export default class MeshSlide {
     }
   }
 
+  /**
+   * Sets up the initial start, view, and exit positions.
+   * 
+   * @param {THREE.Camera} camera is the camera which is looking at the view position.
+   * @param {Number} distFromCam is the distance from the camera to the view position.
+   */
   #createPositions(camera, distFromCam) {
 
     this.#view = new Vector3();
     this.#view.copy(camera.position);
     this.#view.add(new Vector3(0, -0.25, -1 * distFromCam));
-    console.log(this.#view);
 
     //Calculate distance between shapes using triangle.
     const angle = Math.tan(camera.fov / 2);
@@ -92,32 +105,70 @@ export default class MeshSlide {
     this.#exit.add(new Vector3(0, -1 * this.#bufferDist, 0));
   }
 
+  /**
+   * Adds a new mesh that can be slid in.
+   * 
+   * @param {THREE.Mesh} mesh is the new mesh to add.
+   */
   push(mesh) {
-    const temp = this.rotateMeshRandomly(mesh);
+    const temp = this.#rotateMeshRandomly(mesh);
     this.#meshes.push(temp);
-    //console.log(this.#meshes);
     this.#parent.add(temp);
-    //console.log(this.#parent);
     this.#setPosVector(this.#meshes.length - 1, this.#start);
   }
 
-  rotateMeshRandomly(mesh) {
+  /**
+   * Clones and rotates the given mesh randomaly along
+   * the x, y, and z axes.
+   * 
+   * @param {THREE.Mesh} mesh is the mesh to clone from.
+   * @returns the cloned and rotated mesh.
+   */
+  #rotateMeshRandomly(mesh) {
     let result = mesh.clone();
-    result.setRotationFromQuaternion(new Quaternion(Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI).normalize());
+    const rotateQ = new Quaternion(Math.random() * 2 * Math.PI, 
+                                   Math.random() * 2 * Math.PI, 
+                                   Math.random() * 2 * Math.PI)
+    result.setRotationFromQuaternion(rotateQ.normalize());
     result.position.copy(mesh.position);
     result.updateMatrix();
     return result;
   }
 
-  next(duration = 5000, random = false, ease = Easing.Elastic.InOut) {
+  /**
+   * Sends in the next mesh and exits the current one.
+   * Order of meshes is sequential unless selected to be random.
+   * 
+   * @param {Milliseconds} duration is the amount of time the animation will take.
+   * @param {Boolean} isRandom if true will select a random mesh as next, otherwise false.
+   * @param {TWEEN.Easing} ease is the easing function used for this animation.
+   */
+  next(duration = 5000, isRandom = false, ease) {
     //Note to self: NEVER, ever use fields or globals with time, especially inconsistent time methods.
-    let next = (this.#currIndex + 1) % this.#meshes.length; //Making this a field screws up tweens.
-    if(random) {
-      next = Math.floor(Math.random() * this.#meshes.length); 
-      while(next === this.#currIndex && this.#meshes.length > 2) { //This seems hacky... Too bad!
-        next = Math.floor(Math.random() * this.#meshes.length); //Reroll to avoid picking current.
+    this.#nextIndex = (this.#currIndex + 1) % this.#meshes.length;
+    if(isRandom) {
+      this.#nextIndex = Math.floor(Math.random() * this.#meshes.length); 
+      while(this.#nextIndex === this.#currIndex && this.#meshes.length > 2) { //This seems hacky... Too bad!
+        this.#nextIndex = Math.floor(Math.random() * this.#meshes.length); //Reroll to avoid picking current.
       }
     }
+    const next = this.#nextIndex;
+    this.#next(next, this.#currIndex, duration, ease);
+  }
+
+  /**
+   * Plays the enter animation on the mesh at the enter index, then
+   * play the exit animation on the mesh at the exit index.
+   * 
+   * Acts similar to a clock signal, where we check if we need to perform
+   * cleanup or reset upon each tween completion.
+   * 
+   * @param {Integer} enterIndex is the index of the mesh entering.
+   * @param {Integer} exitIndex is the index of the mesh exiting.
+   * @param {Milliseconds} duration is the amount of time the animation will take.
+   * @param {TWEEN.Easing} ease is the easing function used for this animation.
+   */
+  #next(enterIndex, exitIndex, duration, ease = Easing.Elastic.InOut) {
     /*//To fix misc. next() call at start:
     if(this.#tweening === undefined) {
       this.#tweening = false;
@@ -128,14 +179,21 @@ export default class MeshSlide {
       console.error("MeshSlide requires at least 2 meshes to perform .next");
     } else if (!this.#tweening) {
       this.#tweening = true; //Dependent on compiler, hopefully just 1 clock after line above.
-      const enterTween = this.#createTween(next, this.#start, this.#view, duration, ease);
-      const exitTween = this.#createTween(this.#currIndex, this.#view, this.#exit, duration, ease);
-      exitTween.onComplete(() => {
-        this.#setPosVector(this.#currIndex, this.#start);
-        this.#currIndex = next;
-        console.log(this.#currIndex);
+      const enterTween = this.#createTween(enterIndex, this.#start, this.#view, duration, Easing.Elastic.InOut);
+      const exitTween = this.#createTween(exitIndex, this.#view, this.#exit, duration, Easing.Elastic.InOut);
+      exitTween.dynamic = true;
+      exitTween.onComplete(() => { //Prepare for next tween.
+        this.#setPosVector(this.#currIndex, this.#start); //Moves shapes out of exit back to start.
+        this.#currIndex = enterIndex; //Update which shape is currently being viewed.
         this.#clearChangeBuffer();
         this.#tweening = false; //Async, needs boolean to indicate if tweening.
+        if(this.#needReset) {  //Was the reset button pushed but delay until tween finished?
+          //Stop any tween, if any.
+          enterTween.stop();
+          exitTween.stop();
+          this.#reset();
+          this.#needReset = false;
+        }
       });
 
       enterTween.start();
@@ -146,7 +204,7 @@ export default class MeshSlide {
   /**
    * Tweens the selected mesh from start position to end position.
    * Tween is returned to allow more effects and must be started 
-   * outside of the mesh
+   * outside of the mesh.
    * 
    * @param {Integer} index of the mesh to tween.
    * @param {THREE.Vector3} start is the position vector to start tween at.
@@ -165,18 +223,20 @@ export default class MeshSlide {
     return tween;
   }
 
+  /**
+   * Performs any change requests to material or geometry 
+   * in the change buffer then clears it out.
+   */
   #clearChangeBuffer() {
     const length = this.changeBuffer.length;
     for(let i = 0; i < length; i++) { 
-      //console.log("Change buffer empty 1");
       const current =  this.changeBuffer.shift();
-      //this.#setGeoHelper(current.index, current.geo);
       if(this.#currIndex == current.index) {
         this.changeBuffer.push(current) //Queue for next tween.
       } else if (current.newProp.isBufferGeometry) {
-        this.#setGeoHelper(current.index, current.newProp);
+        this.#setGeo(current.index, current.newProp);
       } else {
-        this.#setMatHelper(current.index, current.newProp);
+        this.#setMat(current.index, current.newProp);
       }
     }
   }
@@ -191,7 +251,7 @@ export default class MeshSlide {
   setGeometryAt(index, newGeo) {
     //Hidden
     if(index !== this.#currIndex && (index !== this.#nextIndex || !this.#tweening)) {
-      this.#setGeoHelper(index, newGeo);
+      this.#setGeo(index, newGeo);
     } else { //Is visable or tweening right now, change later in tween.onComplete.
       this.changeBuffer.push({index: index, newProp: newGeo});
     }
@@ -203,7 +263,7 @@ export default class MeshSlide {
    * @param {Integer} index of the mesh to change geometry.
    * @param {THREE.BufferGeometry} newGeo is the new geometery to replace the old one.
    */
-  #setGeoHelper(index, newGeo) {
+  #setGeo(index, newGeo) {
     this.#meshes[index].geometry.dispose();
     this.#meshes[index].geometry = newGeo.clone;
   }
@@ -217,7 +277,7 @@ export default class MeshSlide {
    */
   setMaterialAt(index, newMat) {
     if(index !== this.#currIndex && (index !== this.#nextIndex || !this.#tweening)) {
-      this.#setMatHelper(index, newMat);
+      this.#setMat(index, newMat);
     } else { //Is visable or tweening right now, change later in tween.onComplete.
       this.changeBuffer.push({index: index, newProp: newMat});
     }
@@ -229,7 +289,7 @@ export default class MeshSlide {
    * @param {Integer} index of the mesh to change geometry.
    * @param {THREE.Material} newMat is the new material to replace the old one.
    */
-  #setMatHelper(index, newMat) {
+  #setMat(index, newMat) {
     this.#meshes[index].material.dispose();
     this.#meshes[index].material = newMat.clone;
   }
@@ -243,10 +303,17 @@ export default class MeshSlide {
    * @param {Number} z is the new z coordinate to set.
    */
   #setPosAt(index, x, y, z) {
-    this.#meshes[index].position.set(x, y, z);
-    this.#meshes[index].geometry.computeBoundingSphere();
-    this.#meshes[index].geometry.computeBoundingBox();
-    this.#meshes[index].updateMatrix();
+    try {
+      this.#meshes[index].position.set(x, y, z);
+      this.#meshes[index].geometry.computeBoundingSphere();
+      this.#meshes[index].geometry.computeBoundingBox();
+      this.#meshes[index].updateMatrix();
+    } catch (error) {
+      //This should only occur when reseting while tweening
+
+      //This is is very bad for continued development
+      //But I don't have time to actually solve this problem... Too bad!
+    }
   }
 
   /**
@@ -256,28 +323,78 @@ export default class MeshSlide {
    * @param {THREE.Vector3} posVec is the new position vector to set.
    */
   #setPosVector(index, posVec) {
-    this.#meshes[index].position.copy(posVec);
-    this.#meshes[index].geometry.computeBoundingSphere();
-    this.#meshes[index].geometry.computeBoundingBox();
-    this.#meshes[index].updateMatrix();
+    try {
+      this.#meshes[index].position.copy(posVec);
+      this.#meshes[index].geometry.computeBoundingSphere();
+      this.#meshes[index].geometry.computeBoundingBox();
+      this.#meshes[index].updateMatrix();
+    } catch (error) {
+      //Ignore the error.
+      //This should only occur when reseting while tweening
+
+      //This is is very bad for continued development
+      //But I don't have time to actually solve this problem... Too bad!
+    }
   }
 
   /**
-   * Gets the mesh at inputted index.
-   * 
-   * 
-   * @param {Integer} index of the mesh to retrieve.
-   * @returns 
+   * Resets the MeshSlide to their original state when initialized.
+   * If tweening, we need to wait before resetting our shapes, so set
+   * the reset signal.
    */
-  getMeshAt(index) {
-    return this.#meshes[index];
+  reset() {
+    if(!this.#tweening) {
+      this.#reset();
+    } else { //Reset after finishing tween.
+      this.#needReset = true; 
+    }
   }
 
+  /**
+   * Immediately resets the MeshSlide to their original state when initialized.
+   */
+  #reset() {
+    const resetIndex = 1;
+    const timeout = 1000;
+    if(this.#currIndex !== resetIndex) { //Already in view.
+      this.#next(resetIndex, this.#currIndex, timeout);
+    } //else its already in view, don't play enter animation.
+    setTimeout(() => {
+      for(let i = this.#meshes.length - 1; i >= this.#startMeshes.length; i--) {
+        this.#meshes[i].removeFromParent(); //Remove from scene.
+        this.#meshes[i].material.dispose(); //GPU clear
+        this.#meshes[i].geometry.dispose(); //GPU clear
+        this.#meshes[i].clear(); //Clear any leftover children, if any.
+        this.#meshes.pop();
+      }
+    }, timeout);
+  }
+
+  /**
+   * Returns a copy of the mesh at the inputted index.
+   * 
+   * @param {Integer} index of the mesh to retrieve.
+   * @returns clone of mesh at inputted index.
+   */
+  getMeshAt(index) {
+    return this.#meshes[index].clone();
+  }
+
+  /**
+   * Returns the amount of meshes stored in this MeshSlide object.
+   * 
+   * @returns the amount of meshes stored in this MeshSlide object.
+   */
   getCount() {
     return this.#meshes.length;
   }
 
+  /**
+   * Returns a copy of the view position vector.
+   * 
+   * @returns a copy of the view position vector.
+   */
   getViewPos() {
-    return this.#view;
+    return new Vector3().copy(this.#view);
   }
 }

@@ -1,18 +1,9 @@
 import * as THREE from 'three';
-//Importmap recognizes three/addons
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import InstanceShapes from './InstanceShapes.js';
-import BasicShape from './BasicShape.js';
-import BasicWireframe from './BasicWireframe.js';
-import Experiment from './experiment.js';
-import Experiment2 from './Experiment2.js';
-import InstanceSphere from './InstanceSphere.js';
-import hologramShape from './hologramShape.js';
-import infiniteTubes from './infiniteTubes.js';
-import MikuSprite from './mikuSprite.js';
+import HologramShape from './HologramShape.js';
+import MikuSprite from './MikuSprite.js';
 import {getBeatRatio, getChordRatio, getCurrParenDuration, getParenRatio, getPosition, getChorus} from './Lyrics.js';
-import FloatShapes from './FloatShapes.js';
 import ElemScene from './ElemScene.js';
 import * as TWEEN from '@tweenjs/tween.js';
 import MeshSlide from './MeshSlide.js';
@@ -22,11 +13,6 @@ import { MeshPhongMaterial } from 'three';
 class App {
   constructor(element) {
     this.container = document.querySelector(element);
-
-    //Add uniforms 
-    this.uniforms = {
-      uTime: { value: 0.0 },
-    };
     
     //Values that will be used in initialization and setup
     this.config = {
@@ -39,24 +25,9 @@ class App {
         new THREE.Mesh(new THREE.OctahedronGeometry(), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
         new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
         new THREE.Mesh(new THREE.IcosahedronGeometry(1), new THREE.MeshPhongMaterial({color: 0xFFFFFF})),
-        new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xFFFFFF}))
+        new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.25), new THREE.MeshPhongMaterial({color: 0xFFFFFF}))
       ]
-
-      //BELOW ARE FROM EXAMPLE, shows what stuff goes here. 
-
-      //backgroundColor: new Color('#0d021f'),
-      //cameraSpeed: 0,
-      //cameraRadius: 4.5,
-      //particlesSpeed: 0,
-      //particlesCount: 3000,
-      //bloomStrength: 1.45,
-      //bloomThreshold: 0.34,
-      //bloomRadius: 0.5
     }
-
-    //Don't know these are needed below.
-    //this.tick = 0;
-    this._resizeScreen = () => this._onResize();
   }
 
   /**
@@ -118,7 +89,10 @@ class App {
       position: { value: 0 },
       inParen: {  currValue: false, prevValue: false },
       inChorus: { value: false },
-      SECOND_CHORUS_START: { value: 110764.6}
+      LYRICS_START: { value: 13726 },
+      FIRST_CHORUS_END: { value:  80359.1}, 
+      SECOND_CHORUS_START: { value: 110764.6},
+      SECOND_CHORUS_END: { value: 136369.4 }
     };
   }
   /**
@@ -161,21 +135,21 @@ class App {
   _createMikuScene() {
     this.mikuScene = new ElemScene(document.querySelector("#miku-scene"), this.renderer, 3);
     const firstMiku = {
-      sheetPath: "../images/miku_sprites.png",
-      alphaPath: "../images/alpha_sheet.png",
+      sheetPath: "./miku_sprites.png",
+      alphaPath: "./alpha_sheet.png",
       framesX: 5,
       framesY: 2
     }
 
     const secondMiku = {
-      sheetPath: "../images/miku_wa.png",
-      alphaPath: "../images/miku_wa_alpha.png",
+      sheetPath: "./miku_wa.png",
+      alphaPath: "./miku_wa_alpha.png",
       framesX: 1,
       framesY: 1
     }
 
-    this.mikuSprite = new MikuSprite(this.mikuScene.getScene(), firstMiku, this.uniforms, 0);
-    this.mikuSprite2 = new MikuSprite(this.mikuScene.getScene(), secondMiku, this.uniforms, 0);
+    this.mikuSprite = new MikuSprite(this.mikuScene.getScene(), firstMiku, 0);
+    this.mikuSprite2 = new MikuSprite(this.mikuScene.getScene(), secondMiku, 0);
 
     this.mikuSprite.setRotation(0);
     this.mikuSprite2.setRotation(Math.PI);
@@ -187,7 +161,7 @@ class App {
     this.mikuParticles = new InstanceShapes(this.mikuScene.getScene(), new THREE.ShapeGeometry(this.heartShape), material, 1500, 0);
     this.mikuParticles.randomizeSpherePos(12);
 
-    this.mikuBg = new hologramShape(this.mikuScene.getScene(), new THREE.SphereGeometry(15), this.uniforms, 0);
+    this.mikuBg = new HologramShape(this.mikuScene.getScene(), new THREE.SphereGeometry(15), this.uniforms, 0);
   }
 
   /**
@@ -199,12 +173,7 @@ class App {
 
     this.scene1 = new ElemScene(document.querySelector("#scene-1"), this.renderer, this.config.defaultCamZ);
     this.MeshSlide1 = new MeshSlide(this.scene1.getScene(), this.scene1.getCam(), this.config.shapeDist, meshes);
-    this.hologram = new hologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
-
-    //this.MeshSlide1.push(new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0x33ccff})));
-    //this.MeshSlide1.push();
-    //this.MeshSlide1.setGeometryAt(0, new THREE.OctahedronGeometry());
-    //this.MeshSlide1.setMaterialAt(0, new THREE.MeshPhongMaterial({color: 0xffffff}));
+    this.hologram = new HologramShape(this.scene1.getScene(), geo, this.uniforms, 0);
   }
 
   _createScene2(meshes) {
@@ -212,7 +181,7 @@ class App {
 
     this.scene2 = new ElemScene(document.querySelector("#scene-2"), this.renderer, this.config.defaultCamZ);
     this.MeshSlide2 = new MeshSlide(this.scene2.getScene(), this.scene2.getCam(), this.config.shapeDist, meshes);
-    this.hologram = new hologramShape(this.scene2.getScene(), geo, this.uniforms, 0);
+    this.hologram = new HologramShape(this.scene2.getScene(), geo, this.uniforms, 0);
   }
 
   /**
@@ -221,7 +190,7 @@ class App {
    */
   _createFullScreenScene() {
     const size = this.config.squareSize;
-    const geo = new THREE.BoxGeometry(size, size, size);
+    const geo = new THREE.SphereGeometry(size);
     const mat = new THREE.MeshPhongMaterial(0xFFFFFF);
 
     this.fullScrScene = new ElemScene(document.getElementById("graphic-grid"), this.renderer, this.config.defaultCamZ);
@@ -244,52 +213,64 @@ class App {
    */
   _update() {
     const time = this.clock.getElapsedTime();
-    this.uniforms.uTime.value = time;
 
     // update previous textAliveData
-    this.textAliveData.beat.prevValue = this.textAliveData.beat.currValue;
-    this.textAliveData.chord.prevValue = this.textAliveData.chord.currValue;
+    const prevBeat = this.textAliveData.beat.prevValue = this.textAliveData.beat.currValue;
+    const prevChord = this.textAliveData.chord.prevValue = this.textAliveData.chord.currValue;
     this.textAliveData.inParen.prevValue = this.textAliveData.inParen.currValue;
 
     // update stored textAliveData
-    this.textAliveData.beat.currValue = getBeatRatio();
-    this.textAliveData.chord.currValue = getChordRatio();
-    this.textAliveData.position.value = getPosition();
+    const currBeat = this.textAliveData.beat.currValue = getBeatRatio();
+    const currChord = this.textAliveData.chord.currValue = getChordRatio();
+    const position = this.textAliveData.position.value = getPosition();
     (getParenRatio()) ? (this.textAliveData.inParen.currValue = true) 
                       : (this.textAliveData.inParen.currValue = false);
-    this.textAliveData.inChorus.value = getChorus();
+    const inChorus = this.textAliveData.inChorus.value = getChorus();
 
     this._updateMikuScene();
 
-    // animate every textAlive half beat
-    if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
-    this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
-      //this.MeshSlide1.next(300, this.textAliveData.inChorus.value);
-      this.MeshSlide1.next(300, false);
-      //this.Slides[Math.floor(Math.random() * this.Slides.length)].next(2000);
-      this.MeshSlide2.next(300, this.textAliveData.inChorus.value);
+    let difference = false;
+    let tweenDuration = 300;
+    if (position < this.textAliveData.LYRICS_START.value) {
+      difference = (Math.abs(prevChord - currChord) > 0.5);
+      tweenDuration = 1000;
+    } else if ( position < this.textAliveData.FIRST_CHORUS_END.value 
+              || position > this.textAliveData.SECOND_CHORUS_END.value) {
+      difference = (Math.abs(prevBeat - currBeat) > 0.5);
+      tweenDuration = 700;
+    } else {
+      difference = (Math.abs(this._linearToTwoLinears(currBeat) - 
+                  this._linearToTwoLinears(prevBeat)) > 0.5);
+    }
+
+    // animate based on textAlive chord, beat, or half beat depending on song position
+    if (difference) {
+      this.MeshSlide1.next(tweenDuration, inChorus);
+      this.MeshSlide2.next(tweenDuration, inChorus);
 
       // if in chorus, add new geometries to meshSlides
-      if (this.textAliveData.inChorus.value) {
+      if (inChorus) {
         this.MeshSlide1.push( new THREE.Mesh(this._getRandomGeometry(), this._getRandomMaterial()));
         this.MeshSlide2.push( new THREE.Mesh(this._getRandomGeometry(), this._getRandomMaterial()));
       }
     }
 
     // change geometry of bg shapes when in second chorus 
-    if (this.textAliveData.position.value >= this.textAliveData.SECOND_CHORUS_START.value) {
-      if (Math.abs(this._linearToTwoLinears(this.textAliveData.beat.currValue) - 
-      this._linearToTwoLinears(this.textAliveData.beat.prevValue)) > 0.5) {
+    if (position >= this.textAliveData.SECOND_CHORUS_START.value && inChorus && difference) {
         this.fullScrShapes.setGeometry(this._getRandomGeometry());
-      }
     }
 
+    // rotate full screen shapes
+    let incrementAmount = 0;
+    (inChorus) ? (incrementAmount = (1 - currBeat) / 50) : (incrementAmount = 0.002);
+    this.fullScrShapes.incrementEntireRotation(incrementAmount);
+
+    // slight camera rotation based on mouse position
+    this.mikuScene.updateCamPos(this.mousePos[0] * 1.5, this.mousePos[1] * 1.5, new THREE.Vector3(0, 0, 0));
     this.scene1.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide1.getViewPos());
-    // this.scene2.updateCamPos(this.mousePos[0], this.mousePos[1]);
+    this.scene2.updateCamPos(this.mousePos[0] * 5, this.mousePos[1] * 5, this.MeshSlide2.getViewPos());
 
-    this.fullScrShapes.incrementEntireRotation(0.002);
-
-    TWEEN.update(); //If tweening.
+    TWEEN.update();
   }
 
   /**
@@ -301,16 +282,10 @@ class App {
     if (prevParen !== currParen) {
       if (prevParen === false) {
         // entering animation
-        // this.mikuSprite2.setRotation(0);
-        // this.mikuSprite.setRotation(90);
         const duration = getCurrParenDuration();
         this.mikuSprite.tweenRotation(duration, 0, 180);
         this.mikuSprite2.tweenRotation(duration, 180, 0);
-      } else {
-        // exiting animation
-        // this.mikuSprite.setRotation(0);
-        // this.mikuSprite2.setRotation(90);
-      }
+      } 
     }
 
     // animate heart particles
@@ -326,8 +301,6 @@ class App {
 
       this.delta = this.delta % this.interval;
     }
-
-    //this.MeshSlide1.morphAt(1, this.Clock);
   }
 
   /**
@@ -372,28 +345,19 @@ class App {
    * @returns {Geometry} - random THREE geometry
    */
   _getRandomGeometry() {
-    const extrudeSettings = {
-      steps: 2,
-      depth: 1,
-      bevelEnabled: true,
-      bevelThickness: 0.2,
-      bevelSize: 0.2,
-      bevelOffset: 0,
-      bevelSegments: 1
-    }
 
     const geos = [
-      new THREE.BoxGeometry(),
-      new THREE.CapsuleGeometry(1, 1, 4, 8),
-      new THREE.CylinderGeometry(1, 1, 2),
+      new THREE.BoxGeometry(1.25, 1.25),
+      new THREE.CapsuleGeometry(0.5, 0.8),
+      new THREE.CylinderGeometry(0.5, 0.5, 1.5),
+      new THREE.ConeGeometry(1, 1, 10),
       new THREE.DodecahedronGeometry(),
       new THREE.IcosahedronGeometry(1),
-      new THREE.OctahedronGeometry(),
+      new THREE.OctahedronGeometry(1),
       new THREE.SphereGeometry(1),
-      new THREE.TetrahedronGeometry(1),
-      new THREE.TorusGeometry(),
-      new THREE.TorusKnotGeometry(),
-      new THREE.ExtrudeGeometry(this._createHeartShape(10), extrudeSettings)
+      new THREE.TetrahedronGeometry(1.25),
+      new THREE.TorusGeometry(0.7, 0.3),
+      new THREE.TorusKnotGeometry(0.6, 0.25),
     ];
 
     return geos[Math.floor(Math.random() * geos.length)];
@@ -402,10 +366,11 @@ class App {
   _getRandomMaterial() {
     const colors = [
       0xFFFFFF,
-      0x80E8DD,
-      0xB7F6AF,
-      0xE784BA,
-      0xF9C1A0,
+      0xADFFF7,
+      0xD3FFCD,
+      0xFFD2DE,
+      0xFFE2D1,
+      0xFCFFB4,
     ]
 
     const color = colors[Math.floor(Math.random() * colors.length)];
@@ -423,9 +388,14 @@ class App {
       // this.mousePos[1] = eve.clientY / window.innerHeight;
       this.mousePos[0] = ( eve.clientX - (window.innerWidth / 2)) / window.innerWidth;
       this.mousePos[1] = ( eve.clientY - (window.innerHeight / 2)) / window.innerHeight;
-      //console.log(this.mousePos);
     })
-    window.addEventListener('resize', this._resizeScreen);
+    document.getElementById(("reset-btn")).addEventListener('click', () => {
+      this.MeshSlide1.reset();
+      this.MeshSlide2.reset();
+    });
+    window.addEventListener('resize', () => {
+      this._onResize();
+    });
   }
 
   /**
@@ -438,14 +408,15 @@ class App {
   }
 
   _removeListeners() {
-    window.removeEventListener('resize', this._resizeScreen)
+    window.removeEventListener('resize', () => {
+      this._onResize();
+    })
   }
 
   /**
    * Resizes the renderer to element's size.
    */
   _onResize() {
-    //console.log(this.mousePos);
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
   }
 }
